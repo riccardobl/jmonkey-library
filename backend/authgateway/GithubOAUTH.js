@@ -22,6 +22,8 @@ export default class GithubOAUTH {
                         "Accept": "application/json"
                     }
                 }).then(res => res.json());
+                
+                res.set('Content-Type', 'text/html');
                 res.end(`<html>
                 <head>
                     <script>    
