@@ -279,7 +279,7 @@ window.addEventListener("load", async () => {
     } else {
       Ui.setClickAction(mainMenu.appendChild(Ui.createButton("fas fa-sign-in-alt", "Login", "LogIn", undefined, [])), async () => {
         Ui.showDialog("LogIn", `
-        <span>
+        <span style="text-align:center">
           <i class="bigIcon fas fa-user"></i>
           <br />
           You will be redirected to hub.jmonkeyengine.org for authentication.
