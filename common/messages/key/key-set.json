@@ -1,0 +1,90 @@
+[
+  {
+    "?": "Create a key. Throw an error if a key with the same id alreadt exists. To modify a key it needs to be deleted and recreated.",
+    "type": [
+      "request"
+    ],
+    "userId": {
+      "?": "Owner of both the new key and the key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "?": "Id of the key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authKey": {
+      "?": "Key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "keyId": {
+      "?": "User generated unique ID for the new key",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "key": {
+      "type": "string",
+      "?": "User generated secret",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "description": {
+      "?": "User friendly description",
+      "type": "string",
+      "value": "",
+      "required": false,
+      "sanitize": {
+        "html": false
+      }
+    },
+    "expire": {
+      "?": "Expiration timestamp",
+      "type": "number",
+      "required": false,
+      "min": 1000
+    },
+    "ips": {
+      "?": "Ips allowed to interract with this key",
+      "type": "string-array",
+      "required": false,
+      "value": [],
+      "sanitize": {
+        "html": false
+      }
+    }
+  },
+  {
+    "?": "Representation of a key",
+    "type": [
+      "response"
+    ],
+    "error": {
+      "type": "string",
+      "?": "Error if any. Undefined if ok",
+      "sanitize": {
+        "html": true
+      }
+    }
+  }
+]

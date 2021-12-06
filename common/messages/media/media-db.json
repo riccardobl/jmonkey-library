@@ -1,0 +1,30 @@
+[
+    {
+        "type": [
+            "database"
+        ],
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "media": {
+            "type": "string-array",
+            "required": true,
+            "minArrayLength": 0,
+            "maxArrayLength": 4,
+            "value": []
+        }
+    }
+]

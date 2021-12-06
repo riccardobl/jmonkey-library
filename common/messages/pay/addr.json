@@ -1,0 +1,96 @@
+[
+    {
+        "?": "Request user addresses",
+        "type": [
+            "request"
+        ],
+        "userId": {
+            "?": "Id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "blockchain": {
+            "?": "The blockchain to lookup",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "?": "Respond with found addresses",
+        "type": [
+            "response"
+        ],
+        "userId": {
+            "?": "Id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "blockchain": {
+            "?": "Blockchain where the addresses are found",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "addresses": {
+            "?": "List of addresses",
+            "type": "string-array",
+            "required": true,
+            "maxArrayLength": 1000,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "error": {
+            "?": "Error if any. undefined if everything ok",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    },
+    {
+        "type": [
+            "database"
+        ],
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "Namespace of this request",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "blockchain": {
+            "type": "string",
+            "required": true,
+            "?": "",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "addresses": {
+            "type": "string-array",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        }
+    }
+]

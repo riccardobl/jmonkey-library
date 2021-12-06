@@ -1,0 +1,218 @@
+[
+    {
+        "?": "An entry",
+        "type": [
+            "request",
+            "response",
+            "database"
+        ],
+        "entryId": {
+            "?": "Unique id of the entry. If an entry with the same id is submitted, the old one is replaced.",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "?": "Id of the user that owns the entry",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "name": {
+            "?": "Name of the entry",
+            "type": "string",
+            "required": true,
+            "minLength": 2,
+            "maxLength": 64,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "repo": {
+            "?": "Source repository",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "https:\\/\\/[?&!#,=a-zA-Z0-9\\.\\/\\-]+"
+            }
+        },
+        "docs": {
+            "?": "Documentation link",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "https:\\/\\/[?&!#,=a-zA-Z0-9\\.\\/\\-]+"
+            }
+        },
+        "issues": {
+            "?": "Issues trakcer link",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "https:\\/\\/[?&!#,=a-zA-Z0-9\\.\\/\\-]+"
+            }
+        },
+        "discussions": {
+            "?": "Forum support link",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "https:\\/\\/[?&!#,=a-zA-Z0-9\\.\\/\\-]+"
+            }
+        },
+        "tags": {
+            "?": "Tags / Categories",
+            "type": "string-array",
+            "required": true,
+            "value": [],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z 0-9_,\\.@\\(\\)\\-]+"
+            }
+        },
+        "description": {
+            "?": "Description of the entry",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": true
+            }
+        },
+        "descriptionSummary": {
+            "?": "Short description of the entry",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "download": {
+            "?": "Download link",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "https:\\/\\/[?&!#,=a-zA-Z0-9\\.\\/\\-]+"
+            }
+        },
+        "usage": {
+            "?": "Usage informations",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": true
+            }
+        },
+        "license": {
+            "?": "License",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": true
+            }
+        },
+        "version": {
+            "?": "Version",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authId": {
+            "?": "Id of the key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "modId": {
+            "?": "Id of the moderator that sends the request on behalf of userId, undefined if not used",
+            "type": "string",
+            "required": false,
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "paid": {
+            "?": "True if the entry accepts payments or donations",
+            "type": "boolean",
+            "required": false
+        },
+        "paidFields": {
+            "?": "Fields hidden to users that didn't pay for the entry",
+            "type": "string-array",
+            "value": [],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z 0-9_\\-]+"
+            }
+        },
+        "suspended": {
+            "?": "Reason for which the entry is suspended. Undefined if not suspended",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": true
+            }
+        },
+        "banned": {
+            "?": "Reason for which the entry is banned. Undefined if not banned",
+            "type": "string",
+            "required": false,
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize": {
+                "html": true
+            }
+        },
+        "error": {
+            "?": "Error if any. Undefined if ok",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        },
+        "creationDate":{
+            "?":"Creation date",
+            "type":"number",
+            "required":false
+        },
+        "updateDate":{
+            "?":"Update date",
+            "type":"number",
+            "required":false
+        },
+        "likes":{
+            "?":"Update date",
+            "type":"number",
+            "required":false
+        }
+
+    }
+]

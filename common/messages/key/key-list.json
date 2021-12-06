@@ -1,0 +1,81 @@
+[
+  {
+    "?": "Retrieve a list of keys. The list is split into multiple pages.",
+    "type": [
+      "request"
+    ],
+    "page": {
+      "?": "Page to fetch",
+      "type": "number",
+      "required": true,
+      "value": 0
+    },
+    "limit": {
+      "?": "Keys per page",
+      "type": "number",
+      "required": true,
+      "min": 1,
+      "max": 100,
+      "value": 100
+    },
+    "userId": {
+      "?": "Owner of the keys to list",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "type": "string",
+      "required": true,
+      "?": "Id of the key that authorizes this request",
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authKey": {
+      "?": "Key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    }
+  },
+  {
+    "?": "Response listing the keys",
+    "type": [
+      "response"
+    ],
+    "userId": {
+      "?": "Owner of the keys ",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "keyId": {
+      "type": "string-array",
+      "?": "List of key ids",
+      "required": true,
+      "value": [],
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "error": {
+      "?": "Error that caused the request to fail. undefined is everything is ok",
+      "type": "string",
+      "sanitize": {
+        "html": true
+      }
+    }
+  }
+]

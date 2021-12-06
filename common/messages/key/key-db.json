@@ -1,0 +1,71 @@
+[
+    {
+        "?": "Representation of a key",
+        "type": [
+            "database"
+        ],
+        "userId": {
+            "?": "ID of the owner of the key",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "keyId": {
+            "type": "string",
+            "required": true,
+            "?": "User generated unique ID for this key",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "key": {
+            "type": "string",
+            "required": true,
+            "?": "User generated secret",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "description": {
+            "type": "string",
+            "value": "",
+            "required": false,
+            "?": "User friendly description",
+            "sanitize": {
+                "html": false
+            }
+        },
+        "expire": {
+            "type": "number",
+            "?": "Expiration timestamp",
+            "required": false,
+            "min": 1000
+        },
+        "ips": {
+            "type": "string-array",
+            "required": false,
+            "?": "Ips allowed to interract with this key",
+            "value": [],
+            "sanitize": {
+                "html": false
+            }
+        },
+        "isMod": {
+            "type": "boolean",
+            "?": "Is a moderator",
+            "required": true,
+            "value": false
+        },
+        "error": {
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

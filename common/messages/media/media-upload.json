@@ -1,0 +1,80 @@
+[
+    {
+        "?": "Upload media for an entry. The entry must exist beforehand",
+        "type": [
+            "request"
+        ],
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the entry to which this media is associated. The entry must exist beforehand",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "User id that owns the media and associated entry",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "modId": {
+            "type": "string",
+            "required": false,
+            "?": "Id of the mod that is sending the request on behalf of userId, if needed, otherwise undefined",
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authId": {
+            "?": "Id of the key that authorizes this request",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorizes this request",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "mediaId": {
+            "?": "Numeric id of the media",
+            "type": "number",
+            "require": true,
+            "min": 0,
+            "max": 3
+        },
+        "data": {
+            "?": "Media encoded in base64 dataUrl",
+            "type": "string",
+            "require": true
+        }
+    },
+    {
+        "type": [
+            "response"
+        ],
+        "error": {
+            "type": "string",
+            "?": "Error message if upload failed. Empty undefined if everything is fine",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

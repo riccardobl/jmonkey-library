@@ -1,0 +1,72 @@
+[
+  {
+    "?":"Check if a key is valid and owned by the userId",
+    "type": [
+      "request"
+    ],
+    "authId": {
+      "type": "string",
+      "required": true,
+      "?": "Id of the key to check",
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authKey": {
+      "?":"Key to check",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "userId": {
+      "type": "string",
+      "required": true,
+      "?": "Owner of the key",
+      "sanitize": {
+        "html": false,
+        "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    }
+  },
+  {
+    "?":"Response to a key check action",
+    "type": [
+      "response"
+    ],
+    "userId": {
+      "type": "string",
+      "required": true,
+      "?": "User that owns the key",
+      "sanitize": {
+        "html": false,
+        "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "type": "string",
+      "required": true,
+      "?": "Id of the key",
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "valid": {
+      "?": "True if the key is valid and owned by the user",
+      "type": "boolean",
+      "required": true,
+      "value": false
+    },
+    "error": {
+      "?": "Error that caused the request to fail or `undefined` if everything was fine",
+      "type": "string",
+      "sanitize": {
+        "html": true
+      }
+    }
+  }
+]

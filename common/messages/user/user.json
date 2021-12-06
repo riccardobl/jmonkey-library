@@ -1,0 +1,75 @@
+[
+    {
+        "?": "Request the details of an user",
+        "type": [
+            "request"
+        ],
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the user",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "type": [
+            "response"
+        ],
+        "userName": {
+            "?": "Username",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "displayName": {
+            "?": "Full name of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "isMod": {
+            "?": "True if user has moderation permissions",
+            "type": "boolean",
+            "required": true
+        },
+        "title": {
+            "?": "Title of the user. Eg. role",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "userId": {
+            "?": "Unique id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "avatar": {
+            "?": "Link to user profile image",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "error": {
+            "?": "Error if any. undefined if everything is ok.",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

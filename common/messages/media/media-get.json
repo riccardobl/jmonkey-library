@@ -1,0 +1,100 @@
+[
+    {
+        "?": "Get media associated to an entry",
+        "type": [
+            "request"
+        ],
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the associated entry",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the user that owns both the media and entry",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "mediaId": {
+            "type": "number",
+            "require": true,
+            "?": "Numeric id of the media to return",
+            "min": 0,
+            "max": 3
+        },
+        "modId": {
+            "?": "Id of the mod that is sending the request on behalf of userId, if needed, otherwise undefined",
+            "type": "string",
+            "required": false,
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authId": {
+            "?": "Id of the key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "?": "Response containing media and preview",
+        "type": [
+            "response"
+        ],
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the entry associated to thsi media"
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the user that owns the media and the entry to it associated",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "data": {
+            "?": "Data defining the media. Could be a base64 dataUrl or a direct url to an image or video",
+            "type": "string",
+            "require": true
+        },
+        "preview": {
+            "?": "Data defining a preview of the media. Could be a base64 dataUrl or a direct url to an image or video",
+            "type": "string",
+            "require": false
+        },
+        "blurred": {
+            "?": "Data defining a blurred preview of the media. Could be a base64 dataUrl or a direct url to an image or video",
+            "type": "string",
+            "require": false
+        },
+        "error": {
+            "?": "Error if the request failed. Or undefined if everything was fine",
+            "type": "string"
+        }
+    }
+]

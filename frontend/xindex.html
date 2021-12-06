@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <title>Library - jMonkeyEngine.org</title>
+    <script src="https://kit.fontawesome.com/288c71aa49.js" crossorigin="anonymous"></script>
+    <!-- <script src="http://wzrd.in/standalone/uuid%2Fv4@latest"></script> -->
+   
+  
+</head>
+
+<body>
+    <!-- <table id="credentials">
+        <tr>
+            <th>Namespace</th>
+            <th>Name (uid)</th>
+            <th>Passphrase (key)</th>
+            <th>Custom Note</th>
+            <th>Action</th>
+        </tr>
+
+
+    </table> -->
+
+    <article id="entry">
+        <header>
+        <h1 ><span class="editable">Entry Name</span> v<span class="editable">1.0</span> <i class="fas fa-pencil-alt editContent"></i></h1>
+        <h3 >Author: <span class="editable">something something</span> <i class="fas fa-pencil-alt editContent"></i></h3>
+        <h3 ><span class="editable">a,b,c,d</span> <i class="fas fa-pencil-alt editContent"></i></h3>
+        </header>
+        <main>
+            <div id="usage">
+                0. (optional) Add this plugin to use github packages anonymously
+                ```gradle
+                plugins {
+                    id "io.github.0ffz.github-packages" version "1.2.1"
+                }
+                ```
+                
+                1. Use the plugin to add the repo (or add it manually https://github.com/riccardobl?tab=packages)
+                ```gradle
+                repositories {
+                    maven githubPackage.invoke("riccardobl")
+                }
+                ```
+                2. Add the dependencies
+                ```gradle
+                dependencies{
+                    implementation 'wf.frk:jme3-bullet-vhacd:1.0.5'
+                    implementation "wf.frk:jme_f3b:0.92"
+                }
+
+            </div>
+            <div id="docs">
+                This is  a special purpose format that has only one goal: export scenes from blender and import them in [jMonkeyEngine](https://github.com/jMonkeyEngine/jmonkeyengine) as closely as possible with the lowest possible effort.
+                
+                This is not an alternative to [glTF](https://www.khronos.org/gltf/) or other general purpose formats, since its features are specifically designed for  [jMonkeyEngine](https://github.com/jMonkeyEngine/jmonkeyengine)  and blender, however being based on protobuf allows it to be easily adaptable and extendable.
+                
+                The  [jMonkeyEngine](https://github.com/jMonkeyEngine/jmonkeyengine)  importer comes with an experimental animation system designed around java8 functional interfaces.
+            </div>
+            <div id="repo">
+                https://github.com/riccardobl/f3b
+            </div>
+            <div id="download">
+                https://github.com/riccardobl/f3b
+            </div>
+        </main>
+    </article>
+
+</body>
+
+</html>

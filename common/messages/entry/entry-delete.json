@@ -1,0 +1,63 @@
+[
+    {
+        "?":"Delete an entry",
+        "type": [
+            "request"
+        ],
+        "authId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+   
+        "modId": {
+            "type": "string",
+            "required": false,
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "type": [
+            "response"
+        ],    
+        "error":{
+            "type":"string",
+            "sanitize": {
+                "html": true
+              }
+          }
+    }
+]

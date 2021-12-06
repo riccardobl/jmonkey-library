@@ -1,0 +1,115 @@
+[
+    {
+        "?":"Like an entry or get likes of an entry",
+        "type": [
+            "request"
+        ],
+        "authId": {
+            "type": "string",
+            "required": false,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "type": "string",
+            "required": false,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "type": "string",
+            "required": false,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "entryUserId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+   
+        "modId": {
+            "type": "string",
+            "required": false,
+            "permHints": [
+                "MOD"
+            ],
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "type": [
+            "response"
+        ],    
+        "likes":{
+            "type":"number",
+            "?":"Number of likes",
+            "requires":true,
+            "value":0
+        },
+        "likedBy":{
+            "type":"string-array",
+            "?":"User ids that liked this entry",
+            "requires":true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "error":{
+            "type":"string",
+            "sanitize": {
+                "html": true
+              }
+          }
+    },
+    {
+        "type": [
+            "database"
+        ],    
+        "userId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "entryId": {
+            "type": "string",
+            "required": true,
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "likedBy":{
+            "type":"string-array",
+            "?":"User ids that liked this entry",
+            "sanitize":{
+                "html":false,
+                "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    }
+]

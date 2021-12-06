@@ -1,0 +1,105 @@
+[
+    {
+        "?": "Request a key",
+        "type": [
+            "request"
+        ],
+        "userId": {
+            "?": "Owner of both the auth key and the requested key",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authId": {
+            "?": "Id of the key that authorizes this request",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorizes this request",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "keyId": {
+            "?": "Id of the key to get",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    },
+    {
+        "?": "Representation of a key",
+        "type": [
+            "response"
+        ],
+        "userId": {
+            "?": "ID of the owner of the key",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "keyId": {
+            "type": "string",
+            "required": true,
+            "?": "User generated unique ID for this key",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "description": {
+            "type": "string",
+            "value": "",
+            "required": false,
+            "?": "User friendly description",
+            "sanitize": {
+                "html": false
+            }
+        },
+        "expire": {
+            "type": "number",
+            "?": "Expiration timestamp",
+            "required": false,
+            "min": 1000
+        },
+        "ips": {
+            "type": "string-array",
+            "required": false,
+            "?": "Ips allowed to interract with this key",
+            "value": [],
+            "sanitize": {
+                "html": false
+            }
+        },
+        "isMod": {
+            "type": "boolean",
+            "?": "Is a moderator",
+            "required": true,
+            "value": false
+        },
+        "error": {
+            "?": "Error if any. undefined if everything is fine",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

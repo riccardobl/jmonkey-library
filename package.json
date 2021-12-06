@@ -1,0 +1,38 @@
+{
+  "dependencies": {
+    "@seald-io/nedb": "^2.2.0",
+    "cookie-parser": "^1.4.5",
+    "datauri": "^4.1.0",
+    "dompurify": "^2.3.3",
+    "express": "^4.17.1",
+    "ffmpeg": "^0.0.4",
+    "jsdom": "^18.0.0",
+    "marked": "^3.0.8",
+    "node-fetch": "^3.0.0",
+    "node-webpmux": "^3.1.0",
+    "sharp": "^0.29.3",
+    "supervisor": "^0.12.0",
+    "tmp": "^0.2.1",
+    "uuid": "^8.3.2",
+    "web3": "^1.6.1",
+    "webp-converter": "^2.3.3"
+  },
+  "type": "module",
+  "name": "jmelibrary",
+  "version": "1.0.0",
+  "main": "backend/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jMonkeyEngine/SoftwareStore.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jMonkeyEngine/SoftwareStore/issues"
+  },
+  "homepage": "https://github.com/jMonkeyEngine/SoftwareStore#readme",
+  "description": ""
+}

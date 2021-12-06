@@ -1,0 +1,56 @@
+[
+  {
+    "?": "Request an entry",
+    "type": [
+      "request"
+    ],
+    "userId": {
+      "?": "Id of the user that owns the entry",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "entryId": {
+      "?": "Id of the entry to return",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "?": "Id of the key that validates the request",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authKey": {
+      "?": "Key that validates the request",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "modId": {
+      "?": "Id of the mod that sends the request on behalf of userId and owns the auth key. Undefined if not needed.",
+      "type": "string",
+      "required": false,
+      "permHints": [
+        "MOD"
+      ],
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    }
+  }
+]

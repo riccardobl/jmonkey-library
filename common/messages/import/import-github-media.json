@@ -1,0 +1,36 @@
+[
+    {
+        "type": [
+            "request"
+        ],
+        "repo": {
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_.\\-/]+"
+            }
+        },
+        "mediaId": {
+            "type": "number",
+            "require": true
+        },
+        "userId": {
+            "type": "string",
+            "required": true,
+            "?": "Namespace of this request",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "token": {
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_.\\-/]+"
+            }
+        }
+    }
+]

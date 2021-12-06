@@ -1,0 +1,22 @@
+{
+    "discourse":{
+        "discourseUrl":"https://hub.jmonkeyengine.org",
+        "apiUser":"system",
+        "apiKey":"",
+        "secret":"",
+        "baseUrl":  "http://localhost:8080"
+    },
+    "github":{
+        "clientId":"",
+        "secret":""     
+    },
+    "reqLimit":"100mb",
+    "uploadPath":"/uploads",
+    "databasePath":"/database",
+    "port":8080,
+    "media":{
+        "blurredCoverResolution":[720,480],
+        "previewResolution":[720,480],
+        "fullSizeResolution":[1280,720]
+    }
+}

@@ -1,0 +1,95 @@
+[
+  {
+    "?": "List entries",
+    "type": [
+      "request"
+    ],
+    "page": {
+      "?": "Page to return",
+      "type": "number",
+      "required": true,
+      "value": 0
+    },
+    "limit": {
+      "?": "Entries per page",
+      "type": "number",
+      "required": true,
+      "min": 1,
+      "max": 100,
+      "value": 100
+    },
+    "authKey": {
+      "?": "Auth key to validate request",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "?": "Id of the auth key that validates this request",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "userId": {
+      "?": "User that owns the auth key",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "listHidden": {
+      "?": "Return also banned an suspended entries",
+      "type": "boolean"
+    },
+    "query": {
+      "?": "Search query",
+      "type": "string",
+      "required": false,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z# ;=0-9_\\.@\\(\\)\\-]+"
+      }
+    }
+  },
+  {
+    "?": "A list of entries",
+    "type": [
+      "response"
+    ],
+    "entryId": {
+      "?": "List of entry ids",
+      "type": "string-array",
+      "required": true,
+      "value": [],
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "userId": {
+      "?": "List of user ids that own the entries at the corresponding positions in entryId",
+      "type": "string-array",
+      "required": true,
+      "value": [],
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "error": {
+      "?": "Error if any. Undefined if ok",
+      "type": "string",
+      "sanitize": {
+        "html": true
+      }
+    }
+  }
+]

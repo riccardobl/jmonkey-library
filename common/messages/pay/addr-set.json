@@ -1,0 +1,65 @@
+[
+    {
+        "?": "Add an address. Addresses can only be added. They are never deleted.",
+        "type": [
+            "request"
+        ],
+        "userId": {
+            "?": "Id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "blockchain": {
+            "?": "Blockchain where the address is found",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authId": {
+            "type": "string",
+            "required": true,
+            "?": "Id of the key that authorizes this request",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorized this request",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "signature": {
+            "?": "Cryptographic proof of ownership of this address. The address is computed from this signature.",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false
+            }
+        }
+    },
+    {
+        "?": "Response for addr set action",
+        "type": [
+            "response"
+        ],
+        "error": {
+            "?": "Error if any. Undefined if everything is fine",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

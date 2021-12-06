@@ -1,0 +1,42 @@
+{
+    "entryList":{
+        "maxTitleLength":32,
+        "maxSummaryLength":200
+    },
+    "entriesPerPage":9,
+    "globalMessage":"This instance is a development preview. All its content will be deleted on release or anytime it's necessary.<br />The payment system runs on ethereum ropsten testnet, test coins can be obtained freely from here: <a target='_blank' href='https://faucet.ropsten.be/'>faucet.ropsten.be</a>",
+    "paymentChains":{
+        "eth-testnet":{
+            "defaultPricing":"0.00028",
+            "chainName":"Ethereum Testnet",
+            "chainId":"0x3",
+            "description":"",
+            "rpcUrls":[
+                "https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+            ],
+            "nativeCurrency": {
+                "name": "ETH",
+                "symbol": "ETH",
+                "decimals": 18,
+                "icon":"<i class='fab fa-ethereum'></i>"
+              },
+            "blockExplorerUrls":[
+                "https://ropsten.etherscan.io"
+            ],
+            "faucetUrls":[
+                "https://faucet.ropsten.be/"
+            ],
+            "factoryContract":{
+                "addr":"0xF91D8bB089c6527A496a7bd4721dE14a5bA5Af93",
+                "abi":"/common/contracts/artifacts/FactoryContract_metadata.json",
+                "source":"/common/contracts/FactoryContract.sol",
+                "refundTimeDays":14
+
+            },
+            "sellerContract":{
+                "abi":"/common/contracts/artifacts/SellerContract_metadata.json",
+                "source":"/common/contracts/SellerContract.sol"
+            }           
+        }
+    }
+}

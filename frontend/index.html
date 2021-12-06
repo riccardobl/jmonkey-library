@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <title>jMonkeyEngine | Library</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <!-- Fallback -->
+    <script src="https://jmonkeyengine.org/js/old-browser.js"></script>
+    <link rel="stylesheet" href="https://jmonkeyengine.org/css/old-browser.css">
+    <!-- / -->
+
+    <!-- JME Base -->
+    <link rel="shortcut icon" href="https://jmonkeyengine.org/favicon.ico" type="image/x-icon" />
+    <script src="/app/utils.js"></script>
+    <script src="/app/showcase.js"></script>
+    <!-- / -->
+
+    <!-- Highlight -->
+    <link href="/app/thirdparty/prismjs/prism.css" rel="stylesheet" />
+    <script src="/app/thirdparty/prismjs/prism.js"></script>
+    <!-- / -->
+
+    <!-- Other libs -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- -->
+
+    <!-- Maintenance Warn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/later/1.2.0/later.min.js"
+        integrity="sha512-4OyNDMl5KLKjS8F1ImVwUvmthM8HkXbR6vMafCmT5zBTd9I/sA3z3zM0JLBosHW6/3K2jq2RoBo/eTUNS2hOGA=="
+        crossorigin="anonymous"></script>
+    <script src="https://jmonkeyengine.org/js/maintenance/maintenance.js"></script>
+    <link rel="stylesheet" href="https://jmonkeyengine.org/js/maintenance/maintenance.css">
+    <!-- / -->
+
+    <!-- Christmas fun -->
+    <script src="https://jmonkeyengine.org/js/christmas/Christmas.js"></script>
+    <script>
+        Christmas.init(
+            "https://jmonkeyengine.org/js/christmas/",
+            ["figure.githubUser img", 'img.avatar'],
+            [
+                {
+                    type: "attribute",
+                    value: "src",
+                    transform: function (src) {
+                        if (src.startsWith("/user_avatar/hub.jmonkeyengine.org/")) {
+                            return src.substring("/user_avatar/hub.jmonkeyengine.org/".length).split("/")[0];
+                        }
+                        return src;
+                    }
+                },
+                {
+                    type: "attribute",
+                    value: "title"
+                },
+                {
+                    type: "text"
+                }
+            ],
+            ["header img.avatar"]
+        );
+    </script>
+    <!-- / -->
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://jmonkeyengine.org/css/style.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- -->
+
+    <!-- Web3 (blockchain) -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <!-- -->
+
+    <!-- App -->
+    <script type="module" src="/app/frontend.js"></script>
+    <!-- -->
+</head>
+
+<body>
+
+    <header>
+        <!-- <nav class="responsiveWidth  " id="topmenu">
+            <div  class="expandable">
+                <a href="/">
+                    <button class="genericCl responsiveIcon expandable ">
+                        <i class="fas fa-home"></i> <span>Home</span>
+                    </button>
+                </a>
+                <a href="/tags/showcase">
+                    <button class="genericCl responsiveIcon  expandable ">
+                        <i class="fas fa-images"></i> <span>Showcase</span>
+                    </button>
+                </a>
+                <a href="https://hub.jmonkeyengine.org">
+                    <button class="genericCl responsiveIcon  expandable ">
+                        <i class="fab fa-discourse"></i> <span>Discussions</span>
+                    </button>
+                </a>
+                <a href="https://store.jmonkeyengine.org">
+                    <button class="genericCl responsiveIcon  expandable ">
+                        <i class="fas fa-puzzle-piece"></i> <span>Store</span>
+                    </button>
+                </a>
+                <a href="/docs">
+                    <button class="genericCl responsiveIcon  expandable ">
+                        <i class="fas fa-book"></i> <span>Docs</span>
+                    </button>
+                </a>
+                <a href="/license">
+                    <button class="genericCl responsiveIcon  expandable toggleable toggledOffPortrait">
+                        <i class="fas fa-balance-scale-right"></i> <span>License</span>
+                    </button>
+                </a>
+            </div>
+            <div class="toggleable toggledOffPortrait expandable">
+                <a href="https://github.com/jMonkeyEngine/jmonkeyengine" rel='noopener noreferrer' target="_blank">
+                    <button class="icon toggleable toggledOffPortrait codeCl  expandable " title="Github">
+                        <i class="fab fa-github-square"></i> <span>Github</span>
+                    </button>
+                </a>
+                <a href="https://twitter.com/jmonkeyengine" rel='noopener noreferrer' target="_blank">
+                    <button class="icon twitterCl toggleable toggledOffPortrait  expandable " title="Follow on Twitter">
+                        <i class="fab fa-twitter"></i> <span>Twitter</span>
+                    </button>
+                </a>
+                <a href="https://www.youtube.com/channel/UC-Fs3R5Q6wW_XYspOXGZgPw" rel='noopener noreferrer'
+                    target="_blank">
+                    <button class="icon youtubeCl toggleable toggledOffPortrait  expandable " title="Follow on Youtube">
+                        <i class="fab fa-youtube"></i> <span>Youtube</span>
+                    </button>
+                </a>
+                <a href="https://discord.gg/Rv8sfVu" rel='noopener noreferrer' target="_blank">
+                    <button class="icon discordCl toggleable toggledOffPortrait  expandable " title="Discord">
+                        <i class="fab fa-discord"></i> <span>Discord</span>
+                    </button>
+                </a>
+                <a href="https://opencollective.com/jmonkeyengine" rel='noopener noreferrer' target="_blank">
+                    <button class="icon donateCl toggleable toggledOffPortrait  expandable " title="Donate">
+                        <i class="fas fa-donate"></i> <span>Donate!</span>
+                    </button>
+                </a>
+            </div>
+        </nav> -->
+        <div id="siteTitle" class="list hlist  responsiveWidth">
+            <div id="logo">
+                <a href="/">
+                    <img style="min-width:300px;width:20vw" src="/static/logo.png" />
+                </a>
+                <i class="toggleNavOnPortraitButton fas fa-bars" toggle="topmenu"></i>
+            </div>
+            <div id="mainMenu">
+            </div>
+        </div>
+    </header>
+
+    <main>
+     
+        
+    </main>
+    <footer>
+        © 2020 jMonkeyEngine.
+        All other trademarks, logos and featured content are property of their respective owners.
+        <br />
+        <a title="Github repo" rel='noopener nofollow noreferrer' target="_blank"
+            href="https://github.com/jMonkeyEngine/jmonkeyengine-website">
+            <i class="fab fa-github"></i> Source on Github
+        </a>
+        |
+        <a title="Report issue" rel='noopener nofollow noreferrer' target="_blank"
+            href="https://github.com/jMonkeyEngine/jmonkeyengine-website/issues">
+            <i class="fas fa-bug"></i> Report an issue
+        </a>
+        <br />
+        <br />
+        Website designed and developed by
+        <a href="https://github.com/riccardobl">Riccardo Balbo</a>
+        for the jMonkeyEngine's Community.
+    </footer>
+</body>
+
+</html>

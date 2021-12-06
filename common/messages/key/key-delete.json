@@ -1,0 +1,57 @@
+[
+  {
+    "?":"Delete a key",
+    "type": [
+      "request"
+    ],
+    "keyId": {
+      "?":"Id of the key to delete",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authId": {
+      "?":"Id of the key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "authKey": {
+      "?":"Key that authorizes this request",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    },
+    "userId": {
+      "?":"Id of the user that owns both the authKey and the key to delete",
+      "type": "string",
+      "required": true,
+      "sanitize": {
+        "html": false,
+        "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"
+      }
+    }
+  },
+  {
+    "?":"Response to a delete key action",
+    "type": [
+      "response"
+    ],
+    "error": {
+      "?":"Error that caused the request to fail. `undefined` if everything was fine",
+      "type": "string",
+      "sanitize": {
+        "html": true
+      }
+    }
+  }
+]
