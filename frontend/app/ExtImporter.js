@@ -126,7 +126,7 @@ export default class ExtImporter{
                     }).then(r => r.json());
                     res = await mediaGetApi.parse("response", res);
                     if(res.error)throw res.error;
-                    importedMedia.push(res.data);
+                    importedMedia.push([res.data,res.preview||res.data]);
                 } catch (e) {
                     console.log(e);
                     break;
