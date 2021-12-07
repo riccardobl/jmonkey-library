@@ -495,7 +495,8 @@ export default class Payment {
 
         if(!await this.read(contract.methods.isEntryBuyable(entryId)))return undefined;
         
-        const msg=await this.read(contract.methods.getEntryMessage(entryId));
+        let msg=await this.read(contract.methods.getEntryMessage(entryId));
+        msg=Utils.sanitize(msg,{html:false});
 
         return msg;
     }
