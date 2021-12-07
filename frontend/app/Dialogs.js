@@ -132,7 +132,7 @@ export default class Dialogs {
         Ui.showDialog("Enable Seller Contract 1/3", `
         <span>
             This procedure will abilitate this user 
-            to sell entries with the following address: <a target="_blank" href="${explorer}/address/${onwerAddr}" class="addr">${userAddr}</a>.
+            to sell entries with the following address: <a target="_blank" href="${explorer}/address/${userAddr}" class="addr">${userAddr}</a>.
             <br />
             <i>The procedure will require a small fee that will 
             be paid to the blockchain nodes to perform the changes.</i>

@@ -334,7 +334,7 @@ export default class Payment {
             const addrs=await this.getAddresses(Auth.getCurrentUserID(),chain);
             const lastAddr=addrs[0];        
             const currentAddr= await this.getCurrentLocalWalletAddr(chain);
-            return lastAddr==currentAddr;
+            return currentAddr&&lastAddr==currentAddr;
         }catch(e){
             return false;
         }

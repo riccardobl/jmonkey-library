@@ -92,6 +92,7 @@ export default class UiUser {
         if(!await Payment.isMetamaskEnabled()){
             const warn=await Dialogs.noMetamaskMessage();
             walletEl.content.appendChild(warn);
+            return;
         }
 
  
@@ -113,20 +114,29 @@ export default class UiUser {
             // row = connectWalletTable.addRow();
             // row.addCell(Ui.createText(chain));
             const currentWal=await Payment.getCurrentLocalWalletAddr(chain);
-            const isCurrentWalConnected=await Payment.isCurrentWalletConnected(chain);
-            const connectBtn = Ui.createButton("fas fa-plug",
-            !isCurrentWalConnected?"Connect current wallet"+(currentWal?": "+currentWal:""):
-            "The current wallet "+currentWal+" is connected.", "Connect via metamask", async () => {
-                    const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
-                    for (let i = 1; i < addrs.length; i++) {
-                        if (await Payment.isSellerContractEnabled(addrs[i], Auth.getCurrentUserID(), chain)) {
-                            await Payment.setSellerContractEnabled(false, addrs[i], Auth.getCurrentUserID(), chain);
+            // if(!currentWal){
+            //     const connectBtn = Ui.createButton("fas fa-plug",
+            //     "Unlock metamask", async () => {
+            //             await Payment.getCurrentLocalWalletAddr(chain);
+            //             Ui.reload();
+            //         });
+            //     walletEl.content.appendChild(connectBtn);
+            // }else{
+                const isCurrentWalConnected=await Payment.isCurrentWalletConnected(chain);
+                const connectBtn = Ui.createButton("fas fa-plug",
+                !isCurrentWalConnected?"Connect current wallet: "+(currentWal?currentWal:""):
+                "The current wallet "+currentWal+" is connected.", "Connect via metamask", async () => {
+                        const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
+                        for (let i = 1; i < addrs.length; i++) {
+                            if (await Payment.isSellerContractEnabled(addrs[i], Auth.getCurrentUserID(), chain)) {
+                                await Payment.setSellerContractEnabled(false, addrs[i], Auth.getCurrentUserID(), chain);
+                            }
                         }
-                    }
-                    await Payment.reconnectAddress(chain);
-                    Ui.reload();
-                },[isCurrentWalConnected?"disabled":"enabled"]);
-            walletEl.content.appendChild(connectBtn);
+                        await Payment.reconnectAddress(chain);
+                        Ui.reload();
+                    },[isCurrentWalConnected?"disabled":"enabled"]);
+                walletEl.content.appendChild(connectBtn);
+            // }
 
 
 
