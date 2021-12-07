@@ -29,7 +29,7 @@
         "displayName": {
             "?": "Full name of the user",
             "type": "string",
-            "required": true,
+            "required": false,
             "sanitize": {
                 "html": false
             }
@@ -42,7 +42,7 @@
         "title": {
             "?": "Title of the user. Eg. role",
             "type": "string",
-            "required": true,
+            "required": false,
             "sanitize": {
                 "html": false
             }
@@ -59,7 +59,7 @@
         "avatar": {
             "?": "Link to user profile image",
             "type": "string",
-            "required": true,
+            "required": false,
             "sanitize": {
                 "html": false
             }
