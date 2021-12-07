@@ -503,7 +503,7 @@ export default class UiEntry {
 
         const mainMenuRow = Ui.createSection(parentEl, ["responsiveWidth", "entryMenu"]);
 
-        if (callerId == entry.entryId || isCallerMod) {
+        if (callerId == entry.userId || isCallerMod) {
             if (editedEntry) {
                 mainMenuRow.append(Ui.createButton(
                     "fas fa-save", "Save", "Save changes", () => {
