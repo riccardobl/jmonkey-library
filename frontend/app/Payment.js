@@ -579,9 +579,9 @@ export default class Payment {
 
         await this._setChain(chain);
 
-        const addr=(await this.getAddresses(Auth.getCurrentUserID(),chain))[0];
+        const addr=(await this.getAddresses(userId,chain))[0];
 
-        const contract=await this.getSellerContract(addr,Auth.getCurrentUserID(),chain);
+        const contract=await this.getSellerContract(addr,userId,chain);
 
         const price=await this.getPrice(userId,entryId,chain);
         if(!price)throw new Error("Entry is not priced correctly or doesn't exist");
