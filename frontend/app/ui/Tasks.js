@@ -92,7 +92,7 @@ export default class Tasks {
                 setTimeout(() => {
                     console.log("Completed", taskEl);
                     taskEl.remove();
-                }, 1000);
+                }, 4000);
             } else {
                 if (task.timeout && task.timeout < Date.now()) {
                     task.done = true;
@@ -103,7 +103,7 @@ export default class Tasks {
                 taskEl.classList.add("completedTask");
                 taskEl.innerHTML = `<i class="fas fa-check-circle"></i>`;
             } else if (task.error) {
-                taskEl.classList.add("erroredTask");
+                taskEl.classList.add("completedTask");
                 taskEl.innerHTML = `<i class="far fa-times-circle"></i>`;
             } else {
                 taskEl.innerHTML = `<i class="fas fa-spinner fa-pulse"></i>`;

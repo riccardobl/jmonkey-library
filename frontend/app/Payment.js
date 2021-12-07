@@ -242,6 +242,9 @@ export default class Payment {
         if(!silent)await window.ethereum.send('eth_requestAccounts');
         this.web3[chain] = new Web3(window.ethereum);
         this.web3[chain].eth.handleRevert = true;
+        // this.web3[chain].on("error",(err)=>{
+        //     Tasks.error("error"+Date.now(),err+"");
+        // });
         return this.web3[chain];
     }
 
@@ -576,22 +579,26 @@ export default class Payment {
     }
 
     static async buy(userId,entryId,chain){
+        try{
+            await this._setChain(chain);
 
-        await this._setChain(chain);
+            const addr=(await this.getAddresses(userId,chain))[0];
 
-        const addr=(await this.getAddresses(userId,chain))[0];
+            const contract=await this.getSellerContract(addr,userId,chain);
 
-        const contract=await this.getSellerContract(addr,userId,chain);
-
-        const price=await this.getPrice(userId,entryId,chain);
-        if(!price)throw new Error("Entry is not priced correctly or doesn't exist");
-        let putchaseId=await this.getPurchaseId(userId,entryId,Auth.getCurrentUserID(),chain);
-        if(putchaseId)throw new Error("Already bought.");
-        // purchaseId=await contract.methods.buy(entryId,Auth.getCurrentUserID()).send({
-            
-        // });
-        purchaseId= await this.transact(contract.methods.buy(entryId,Auth.getCurrentUserID()),price);
-
+            const price=await this.getPrice(userId,entryId,chain);
+            if(!price)throw new Error("Entry is not priced correctly or doesn't exist");
+            let putchaseId=await this.getPurchaseId(userId,entryId,Auth.getCurrentUserID(),chain);
+            if(putchaseId)throw new Error("Already bought.");
+            // purchaseId=await contract.methods.buy(entryId,Auth.getCurrentUserID()).send({
+                
+            // });
+            purchaseId= await this.transact(contract.methods.buy(entryId,Auth.getCurrentUserID()),price);
+        }catch(err){
+            console.log(err);
+            Tasks.error("error"+Date.now(),err.message);
+            throw err;
+        }
         return purchaseId;
     }
 
