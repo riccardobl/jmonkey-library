@@ -472,7 +472,7 @@ export default class UiEntry {
             We will try to parse the source and extract the required informations. 
             <br />
             <br />
-            Supported sources: store.jmonkeyengine.org
+            Supported sources: store.jmonkeyengine.org, github.com
             
             `));
         const autoImporterRow = Ui.createSection(parentEl, ["responsiveWidth", "hlist", "searchbar"]);

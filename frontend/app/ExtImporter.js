@@ -95,7 +95,7 @@ export default class ExtImporter{
         }else if (source.startsWith("https://store.jmonkeyengine.org/")) {
             const id = source.substring("https://store.jmonkeyengine.org/".length);
 
-            const entryGetApi = new Api(await Msg.getDef("entry/entry_get"));
+            const entryGetApi = new Api(await Msg.getDef("entry/entry-get"));
 
             const msg = await entryGetApi.parse("request", {
                 userId: Auth.getCurrentUserID(),
