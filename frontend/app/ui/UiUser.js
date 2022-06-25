@@ -76,7 +76,7 @@ export default class UiUser {
 
 
 
-        await this.loadWallets(settingsEl,config);
+        await this.loadPayInfo(settingsEl,config,user);
         await this.loadKeys(settingsEl,config);
         // Ui.loading(false);
         Tasks.ok("loading");
@@ -84,150 +84,220 @@ export default class UiUser {
     }
 
 
-    static async loadWallets(settingsEl,config) {
+    static async loadPayInfo(settingsEl,config,user) {
         const paymentConfig=config.paymentChains;
-        const walletEl = Ui.createArticle("wallet", "fas fa-wallet", "Wallet");
+
+
+
+
+        const walletEl = Ui.createArticle("wallet", "fas fa-wallet", "Funding Info");
         settingsEl.appendChild(walletEl);
 
-        if(!await Payment.isMetamaskEnabled()){
-            const warn=await Dialogs.noMetamaskMessage();
-            walletEl.content.appendChild(warn);
-            return;
-        }
-
- 
-        // const connectTable = Ui.createTable(["Blockchain","Wallets","Seller"], ["breakable"]);
-        for (let chain in paymentConfig) {
+        const payinfo=await Payment.getInfo(user.userId);
        
-            
-            // const headerEl=Ui.createVList();
+             // const headerEl=Ui.createVList();
             // walletEl.appendChild(headerEl);
-            const chainTitle = Ui.createSubTitle(paymentConfig[chain].nativeCurrency.icon + " " + paymentConfig[chain].chainName);
-            walletEl.content.appendChild(chainTitle);
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fas fa-bolt"></i> Bitcoin Lightning Address`));
+        walletEl.content.appendChild(Ui.createParagraph(`From here you can configure your lightning address to receive p2p 
+        ₿itcoin donations throught the lightning network.
+        <br>
+        You can obtain your lightning address from a <a href="https://lightningaddress.com/#providers" target="_blank">provider</a> that supports the standard, such as the browser wallet add-on <a href="https://getalby.com">Alby</a>.
+        <br>
+        Users will be able to donate from any lightning wallet.
+        <br>
+        Leave empty to disable.
+        
+        `));
+        const lnAddrEl = Ui.createInputField();
+        lnAddrEl.value = payinfo["ln-address"]||"";
+        lnAddrEl.placeholder="user@yournode.ln"
+        walletEl.content.appendChild(lnAddrEl);
+        walletEl.content.appendChild(Ui.createParagraph(`Note: by adding a lightning address 
+        you will be also eligible to receive the experimental Split-Donations from jme-initializer.
+        `));
+        // let row = Ui.createHList();
+        // walletEl.content.appendChild(row);
+        // row.appendChild(Ui.createText("Lightning Address:    "));
+        // const lnAddr = Ui.createInputField();
+        // lnAddr.value = payinfo["ln-address"]||"";
+        // row.appendChild(lnAddr);
 
-            if(!await Payment.isCurrentWalletConnected(chain)){
-                const warn=await Dialogs.walletNotConnectedMessage();
-                walletEl.content.appendChild(warn);
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-paypal"></i> Paypal Donation URL`));
+        walletEl.content.appendChild(Ui.createParagraph(`From here you can add a PayPal donation url that will be used to show a "donate with PayPal" 
+        button on your published entries that are marked to receive donations. You can generate a donation URL from this page: <a target="_blank" href="https://www.paypal.com/donate/buttons?type=S&fromManage=true">PayPal - Donate Button</a>.
+        <br>
+        Leave this empty to disable donations with PayPal.
+        `));
+        const paypalUrlEl = Ui.createInputField();
+        paypalUrlEl.value = payinfo["paypal-id"]?"https://www.paypal.com/donate/?hosted_button_id="+payinfo["paypal-id"]:"";
+        paypalUrlEl.placeholder="https://www.paypal.com/donate/?hosted_button_id=XXXXXXXX"
+        walletEl.content.appendChild(paypalUrlEl);
+
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-patreon"></i> Patreon Page`));
+        walletEl.content.appendChild(Ui.createText(`From here you can add a patreon page to your account. 
+        <br>
+        A button to support you on patreon will be shown on your published entries that are marked for receiving donations.
+        <br>
+        Leave this empty to disable.`));
+        const patreonUrlEl = Ui.createInputField();
+        patreonUrlEl.value = payinfo["patreon-id"]?"https://patreon.com/"+payinfo["patreon-id"]:"";
+        patreonUrlEl.placeholder="https://patreon.com/XXXXXXXX"
+        walletEl.content.appendChild(patreonUrlEl);
+
+        walletEl.content.appendChild( Ui.createText("<br><br>"));
+        walletEl.content.appendChild(Ui.createButton("","Save changes","Save changes.",async ()=>{
+            let lnAddr=lnAddrEl.value;
+            let paypalId=paypalUrlEl.value;
+            if(paypalId){
+                paypalId=paypalId.split("?hosted_button_id=")[1];
+            }
+            let patreonId=patreonUrlEl.value;
+            if(patreonId){
+                patreonId=patreonId.split("patreon.com/")[1].split("/")[0]
+            }
+            try{
+                Tasks.completable("savingPayinfo","Saving...",{},true);
+                await Payment.setInfo(user.userId,lnAddr,paypalId,patreonId);
+                Tasks.ok("savingPayinfo");
+            }catch(e){
+                Tasks.error("savingPayinfo",e+"");
+                Tasks.error("savingPayinfoErr",e+"");
             }
 
+        }));
 
-            // row = connectWalletTable.addRow();
-            // row.addCell(Ui.createText(chain));
-            const currentWal=await Payment.getCurrentLocalWalletAddr(chain);
-            // if(!currentWal){
-            //     const connectBtn = Ui.createButton("fas fa-plug",
-            //     "Unlock metamask", async () => {
-            //             await Payment.getCurrentLocalWalletAddr(chain);
-            //             Ui.reload();
-            //         });
-            //     walletEl.content.appendChild(connectBtn);
-            // }else{
-                const isCurrentWalConnected=await Payment.isCurrentWalletConnected(chain);
-                const connectBtn = Ui.createButton("fas fa-plug",
-                !isCurrentWalConnected?"Connect current wallet: "+(currentWal?currentWal:""):
-                "The current wallet "+currentWal+" is connected.", "Connect via metamask", async () => {
-                        const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
-                        for (let i = 1; i < addrs.length; i++) {
-                            if (await Payment.isSellerContractEnabled(addrs[i], Auth.getCurrentUserID(), chain)) {
-                                await Payment.setSellerContractEnabled(false, addrs[i], Auth.getCurrentUserID(), chain);
-                            }
-                        }
-                        await Payment.reconnectAddress(chain);
-                        Ui.reload();
-                    },[isCurrentWalConnected?"disabled":"enabled"]);
-                walletEl.content.appendChild(connectBtn);
-            // }
+        // const connectTable = Ui.createTable(["Blockchain","Wallets","Seller"], ["breakable"]);
+        // for (let chain in paymentConfig) {
+       
+            
+        //     // const headerEl=Ui.createVList();
+        //     // walletEl.appendChild(headerEl);
+        //     const chainTitle = Ui.createSubTitle(paymentConfig[chain].nativeCurrency.icon + " " + paymentConfig[chain].chainName);
+        //     walletEl.content.appendChild(chainTitle);
+
+        //     if(!await Payment.isCurrentWalletConnected(chain)){
+        //         const warn=await Dialogs.walletNotConnectedMessage();
+        //         walletEl.content.appendChild(warn);
+        //     }
 
 
+        //     // row = connectWalletTable.addRow();
+        //     // row.addCell(Ui.createText(chain));
+        //     const currentWal=await Payment.getCurrentLocalWalletAddr(chain);
+        //     // if(!currentWal){
+        //     //     const connectBtn = Ui.createButton("fas fa-plug",
+        //     //     "Unlock metamask", async () => {
+        //     //             await Payment.getCurrentLocalWalletAddr(chain);
+        //     //             Ui.reload();
+        //     //         });
+        //     //     walletEl.content.appendChild(connectBtn);
+        //     // }else{
+        //         const isCurrentWalConnected=await Payment.isCurrentWalletConnected(chain);
+        //         const connectBtn = Ui.createButton("fas fa-plug",
+        //         !isCurrentWalConnected?"Connect current wallet: "+(currentWal?currentWal:""):
+        //         "The current wallet "+currentWal+" is connected.", "Connect via metamask", async () => {
+        //                 const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
+        //                 for (let i = 1; i < addrs.length; i++) {
+        //                     if (await Payment.isSellerContractEnabled(addrs[i], Auth.getCurrentUserID(), chain)) {
+        //                         await Payment.setSellerContractEnabled(false, addrs[i], Auth.getCurrentUserID(), chain);
+        //                     }
+        //                 }
+        //                 await Payment.reconnectAddress(chain);
+        //                 Ui.reload();
+        //             },[isCurrentWalConnected?"disabled":"enabled"]);
+        //         walletEl.content.appendChild(connectBtn);
+        //     // }
 
 
-            const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
-            for (let i = 0; i < addrs.length; i++) {
-                const addr = addrs[i];
-
-                walletEl.content.appendChild(Ui.createSubSubTitle('<i class="fas fa-cube"></i> Address: ' + addr+(i!=0?" (disconnected)":""), ["breakable"]));
-                // row = addressesTable.addRow();
-                // row.addCell(Ui.createText(chain));
-                // row.addCell(Ui.createText(addr));
-
-                const sellerContract = await Payment.getSellerContract(addr, Auth.getCurrentUserID(), chain);
-                // console.log(sellerContract);
-                if (sellerContract) {
-                    const isEnabled = await Payment.isSellerContractEnabled(addr, Auth.getCurrentUserID(), chain);
-
-                    let row = Ui.createHList();
-                    walletEl.content.appendChild(row);
-                    row.appendChild(Ui.createText("Account Type:"));
-                    row.appendChild(Ui.createText("Buyer & Seller" + (!isEnabled ? "(disabled)" : "")));
-
-                    row = Ui.createHList();
-                    walletEl.content.appendChild(row);
-
-                    row.appendChild(Ui.createText("Seller Contract:    "));
-                    row.appendChild(Ui.createText(sellerContract.options.address));
 
 
-                    const balances = await Payment.getSellerContractBalance(addr, Auth.getCurrentUserID(), chain);
-                    row = Ui.createHList();
-                    walletEl.content.appendChild(row);
-                    row.appendChild(Ui.createText("Balance in contract Free/Locked:    "));
-                    row.appendChild(Ui.createText(`${await Payment.toHumanValue(balances.available,chain)} ${paymentConfig[chain].nativeCurrency.symbol} / ${await Payment.toHumanValue(balances.available.add(balances.locked),chain)} ${paymentConfig[chain].nativeCurrency.symbol}`));
+        //     const addrs = await Payment.getAddresses(Auth.getCurrentUserID(), chain);
+        //     for (let i = 0; i < addrs.length; i++) {
+        //         const addr = addrs[i];
 
-                    row = Ui.createHList();
-                    walletEl.content.appendChild(row);
-                    row.appendChild(Ui.createText("Earnings since contract creation:    "));
-                    row.appendChild(Ui.createText(`${await Payment.toHumanValue(balances.total,chain)} ${paymentConfig[chain].nativeCurrency.symbol}`));
+        //         walletEl.content.appendChild(Ui.createSubSubTitle('<i class="fas fa-cube"></i> Address: ' + addr+(i!=0?" (disconnected)":""), ["breakable"]));
+        //         // row = addressesTable.addRow();
+        //         // row.addCell(Ui.createText(chain));
+        //         // row.addCell(Ui.createText(addr));
 
-                    row = Ui.createHList();
-                    walletEl.content.appendChild(row);
+        //         const sellerContract = await Payment.getSellerContract(addr, Auth.getCurrentUserID(), chain);
+        //         // console.log(sellerContract);
+        //         if (sellerContract) {
+        //             const isEnabled = await Payment.isSellerContractEnabled(addr, Auth.getCurrentUserID(), chain);
 
-                    const withdrawBtn=Ui.createButton("fas fa-money-check-alt", `Withdraw ${await Payment.toHumanValue(balances.available,chain)} ${paymentConfig[chain].nativeCurrency.symbol}`, "", async () => {
-                        await Payment.withdraw(addr, Auth.getCurrentUserID(),chain);
-                    });
-                    if(balances.available<=0){
-                        withdrawBtn.classList.add("disabled");
-                    }
-                    row.appendChild(withdrawBtn);
+        //             let row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+        //             row.appendChild(Ui.createText("Account Type:"));
+        //             row.appendChild(Ui.createText("Buyer & Seller" + (!isEnabled ? "(disabled)" : "")));
+
+        //             row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+
+        //             row.appendChild(Ui.createText("Seller Contract:    "));
+        //             row.appendChild(Ui.createText(sellerContract.options.address));
+
+
+        //             const balances = await Payment.getSellerContractBalance(addr, Auth.getCurrentUserID(), chain);
+        //             row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+        //             row.appendChild(Ui.createText("Balance in contract Free/Locked:    "));
+        //             row.appendChild(Ui.createText(`${await Payment.toHumanValue(balances.available,chain)} ${paymentConfig[chain].nativeCurrency.symbol} / ${await Payment.toHumanValue(balances.available.add(balances.locked),chain)} ${paymentConfig[chain].nativeCurrency.symbol}`));
+
+        //             row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+        //             row.appendChild(Ui.createText("Earnings since contract creation:    "));
+        //             row.appendChild(Ui.createText(`${await Payment.toHumanValue(balances.total,chain)} ${paymentConfig[chain].nativeCurrency.symbol}`));
+
+        //             row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+
+        //             const withdrawBtn=Ui.createButton("fas fa-money-check-alt", `Withdraw ${await Payment.toHumanValue(balances.available,chain)} ${paymentConfig[chain].nativeCurrency.symbol}`, "", async () => {
+        //                 await Payment.withdraw(addr, Auth.getCurrentUserID(),chain);
+        //             });
+        //             if(balances.available<=0){
+        //                 withdrawBtn.classList.add("disabled");
+        //             }
+        //             row.appendChild(withdrawBtn);
                     
 
-                    if (isEnabled) {
-                        if(addr==await Payment.getCurrentLocalWalletAddr(chain)){
-                            row.appendChild(Ui.createButton("fas fa-window-close", "Disable Seller Contract", "", async () => {
-                                // console.log("Disable",addr);
-                                await Payment.setSellerContractEnabled(false, addr, Auth.getCurrentUserID(), chain);
-                            }));
-                        }
-                    } else if (i == 0) {
-                        row.appendChild(Ui.createButton("fas fa-window-close", "Enable Seller Contract", "", async () => {
-                            Dialogs.showEnableSellerDialog(addr,paymentConfig[chain],async ()=>{
-                                await Payment.setSellerContractEnabled(true, addr, Auth.getCurrentUserID(), chain);
-                            });
+        //             if (isEnabled) {
+        //                 if(addr==await Payment.getCurrentLocalWalletAddr(chain)){
+        //                     row.appendChild(Ui.createButton("fas fa-window-close", "Disable Seller Contract", "", async () => {
+        //                         // console.log("Disable",addr);
+        //                         await Payment.setSellerContractEnabled(false, addr, Auth.getCurrentUserID(), chain);
+        //                     }));
+        //                 }
+        //             } else if (i == 0) {
+        //                 row.appendChild(Ui.createButton("fas fa-window-close", "Enable Seller Contract", "", async () => {
+        //                     Dialogs.showEnableSellerDialog(addr,paymentConfig[chain],async ()=>{
+        //                         await Payment.setSellerContractEnabled(true, addr, Auth.getCurrentUserID(), chain);
+        //                     });
                                     
 
                     
-                        }));
-                    }
-                 } else if (i == 0) {
-                    let row = Ui.createHList();
-                    walletEl.content.appendChild(row);
-                    row.appendChild(Ui.createText("Account Type:"));
-                    row.appendChild(Ui.createText("Buyer"));
-                    row = Ui.createHList();
-                    walletEl.content.appendChild(row);
+        //                 }));
+        //             }
+        //          } else if (i == 0) {
+        //             let row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
+        //             row.appendChild(Ui.createText("Account Type:"));
+        //             row.appendChild(Ui.createText("Buyer"));
+        //             row = Ui.createHList();
+        //             walletEl.content.appendChild(row);
 
-                    row.appendChild(Ui.createButton("fas fa-money-check-alt", "Enable Seller Contract", "", async () => {
-                        // await Payment.setChain(chain);
-                        if(addr!=await Payment.getCurrentLocalWalletAddr(chain)){
-                            alert("Please select the account "+addr+ " on metamask");
-                        }else{
-                            await Payment.createSellerContract(chain);
-                        }
-                        // Ui.reload();
+        //             row.appendChild(Ui.createButton("fas fa-money-check-alt", "Enable Seller Contract", "", async () => {
+        //                 // await Payment.setChain(chain);
+        //                 if(addr!=await Payment.getCurrentLocalWalletAddr(chain)){
+        //                     alert("Please select the account "+addr+ " on metamask");
+        //                 }else{
+        //                     await Payment.createSellerContract(chain);
+        //                 }
+        //                 // Ui.reload();
 
-                    }));
-                }
-            }
-        }
+        //             }));
+        //         }
+        //     }
+        // }
     }
 
 

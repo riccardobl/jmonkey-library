@@ -158,6 +158,12 @@
                 "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
             }
         },
+     
+        "funding": {
+            "?": "Enable funding for this entry",
+            "type": "boolean",
+            "required": false
+        },
         "paid": {
             "?": "True if the entry accepts payments or donations",
             "type": "boolean",
@@ -212,7 +218,50 @@
             "?":"Update date",
             "type":"number",
             "required":false
+        },
+
+     
+        "maven-artifacts":{
+            "?":"List of artifacts. group:id:version",
+            "type":"string-array",
+            "required":false            ,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "maven-repos":{
+            "?":"List of maven repos",
+            "type":"string-array",
+            "required":false,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "platforms":{
+            "?":"Platforms supported by this library. Possible options: MOBILE_ANDROID DESKTOP_WINDOWS DESKTOP_LINUX DESKTOP_MACOS VR_WINDOWS VR_LINUX VR_MACOS",
+            "type":"string-array",
+            "required":true,
+            "value":["DESKTOP_LINUX","DESKTOP_WINDOWS","DESKTOP_MACOS"],
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z 0-9_]+"
+            }
+        },
+
+ 
+        "category":{
+            "?":"Category",
+            "type":"options",
+            "options":{
+                "GUI":"GUI",
+                "GENERAL":"GENERAL",
+                "NETWORKING":"NETWORKING",
+                "PHYSICS":"PHYSICS"
+            },
+            "value":"GENERAL",
+            "required":false            
         }
+        
 
     }
 ]

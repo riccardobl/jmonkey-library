@@ -28,6 +28,7 @@ export default class Api {
             ) {
                 if(typeof entryDef["sanitize"]!="undefined"){
                     value=Utils.sanitize(value,entryDef["sanitize"]);
+                    Utils.checkString(value,entryDef["sanitize"]);
 
                     // try{
                     //     Utils.checkString(value,entryDef["sanitize"]);

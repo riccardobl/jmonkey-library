@@ -124,7 +124,7 @@ export default class Tasks {
                 }
             } else {
                 taskEl.classList.remove("important");
-                if (task.lockPage == currentPage && task.reload) {
+                if (task.done && task.lockPage == currentPage && task.reload) {
                     Ui.reload();
                 }
             }

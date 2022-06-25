@@ -131,15 +131,18 @@ export default class Utils {
         return JSON.parse(JSON.stringify(data));
     }
 
+    static checkString(text, options) {
+        let filter = options.filter;
+        if (filter) {
+            if(typeof filter=="string"){
+                filter=new RegExp("^" + filter + "$");
+            } 
+            if (!filter.test(text)) {
+
+                throw new Error("Invalid string. "+text+" Filtered by " + filter);
+            }
+        }
     // FIXME: This is broken JSDOM won't preserve attribute order.
-    // static checkString(text, options) {
-    //     const filter = options.filter;
-    //     if (filter) {
-    //         if (!new RegExp("^" + filter + "$").test(text)) {
-    //             console.trace();
-    //             throw "Invalid string. "+text+" Filtered by " + filter;
-    //         }
-    //     }
 
     //     text=text.trim();
     //     // const html = options.html;
@@ -153,7 +156,7 @@ export default class Utils {
     //     }
         
 
-    //     return true;
-    // }
+        return true;
+    }
 }
 

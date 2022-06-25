@@ -9,12 +9,17 @@ export default class Ui {
 
 
     }
+    static createDiv(classes){
+        const el=document.createElement("div");
+        this.addClasses(el,classes);
+        return el;
+    }
     static createSection(parent, classes) {
         const sc = document.createElement("section");
         classes.forEach(cl => {
             if (cl != "") sc.classList.add(cl);
         });
-        parent.appendChild(sc);
+        if(parent)parent.appendChild(sc);
         return sc;
     };
 
@@ -51,8 +56,10 @@ export default class Ui {
             const headRow = table.appendChild(createRow());
             header.forEach(content => headRow.appendChild(createCell(this.createText(content), true)));
         }
-        table.addRow = () => {
+        table.addRow = (classes) => {
             const tr = table.appendChild(createRow());
+            this.addClasses(tr, classes);
+
             tr.addCell = (content, classes) => {
                 const td = tr.appendChild(createCell(content, false));
                 this.addClasses(td, classes);
@@ -64,6 +71,12 @@ export default class Ui {
         return table;
     }
 
+    static createParagraph(text, classes) {
+        const el = document.createElement("p");
+        if (classes) classes.forEach(c => el.classList.add(c));
+        el.innerHTML = text;
+        return el;
+    }
     static createText(text, classes) {
         const el = document.createElement("span");
         if (classes) classes.forEach(c => el.classList.add(c));
@@ -171,6 +184,7 @@ export default class Ui {
         }
     }
 
+
     static createInputField(def, type) {
         const input = document.createElement("input");
         input.setAttribute("type", type || "text");
@@ -246,6 +260,58 @@ export default class Ui {
         });
         return editButton;
     }
+
+    static createToggle(text,onToggle,toggled,enabled, left){
+        if(!toggled)toggled=false;
+        if(typeof enabled==="undefined")enabled=true;
+        const toggleBtn = document.createElement("span");
+        toggleBtn.classList.add("toggleBtn");
+
+        const toggleBtnText = document.createElement("span");
+        toggleBtnText.innerText = text+" ";
+
+        const toggleBtnIcon = document.createElement("i");
+        toggleBtnIcon.className = "fas fa-check-square";
+        toggleBtn.append(toggleBtnIcon);
+        if(left){
+            toggleBtn.append(toggleBtnIcon);
+
+            toggleBtn.append(toggleBtnText);
+
+        }else{
+            toggleBtn.append(toggleBtnText);
+            toggleBtn.append(toggleBtnIcon);
+
+        }
+
+
+
+        const toggle = (toggled, transparent) => {
+            if (toggled) {
+                toggleBtnIcon.classList = "far fa-square";
+                if (!transparent) onToggle(false);
+                toggled = false;
+
+            } else {
+                toggleBtnIcon.classList = "fas fa-check-square";
+
+                if (!transparent) onToggle(true);
+                toggled = true;
+
+            }
+            return toggled;
+        };
+        toggle(!toggled, true);
+        if(enabled){
+            toggleBtn.addEventListener("click", ev => {
+                toggled = toggle(toggled);
+            });
+        }else{
+            toggleBtn.classList.add("disabled");
+        }
+        return toggleBtn;
+    }
+
     static createEditorFor(forElement, label, editArea, onContentPull, onEdit, onToggle, toggled, attachEditorTo, attachButtonTo, onEditButtonClick, paid, onPaidToggle) {
 
         let editAreaEl = this.toEl(editArea);
@@ -409,7 +475,7 @@ export default class Ui {
 
     static createHList(classes) {
         const list = document.createElement("div");
-        this.addClasses(list, ["list", "hlist", "dataset"]);
+        this.addClasses(list, ["list", "hlist"]);
         this.addClasses(list, classes);
         return list;
     }

@@ -1,0 +1,71 @@
+[
+
+    {
+        "?": "Respond with found pay info",
+        "type": [
+            "response",            
+            "request",
+            "database"
+
+        ],
+        "authId": {
+            "?": "Id of the key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "authKey": {
+            "?": "Key that authorizes this request",
+            "type": "string",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
+        "userId": {
+            "?": "Id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },      
+        "ln-address": {
+            "?":"Lightning address. Empty to disable",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z .@:0-9_\\-]+"
+            }
+        },
+        "paypal-id": {
+            "?":"PayPal donation ID. Empty to disable",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9]+"
+            }
+        },
+        "patreon-id": {
+            "?":"Patreon page ID. Empty to disable",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z :0-9_\\-]+"
+            }
+        },
+        "error": {
+            "?": "Error if any. undefined if everything ok",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

@@ -231,7 +231,7 @@ window.addEventListener("load", async () => {
 
   document.body.querySelector("header").append(Ui.createMessage("", config.globalMessage));
 
-  await Payment.init(config.paymentChains);
+  await Payment.init();
 
   Abi.init("", (root, path) => {
     if (!path) throw new Error("Path is undefined?");
@@ -250,6 +250,9 @@ window.addEventListener("load", async () => {
       // Ui.setClickAction(mainMenu.appendChild(Ui.createButton("fas fa-tree", "My Entries", "", undefined, [])), `#entries!user=${Auth.getCurrentUserID()}`, [], true, true)
 
       Ui.setClickAction(mainMenu.appendChild(Ui.createButton("fas fa-plus", "New Entry", "New Entry", undefined, [])), async () => {
+
+    
+
         UiEntry.loadEntry(parentEl, {
           "entryId": Utils.uuidv4(),
           "userId": Auth.getCurrentUserID(),
@@ -259,6 +262,7 @@ window.addEventListener("load", async () => {
           "description": "This is a new entry",
           "descriptionSummary": "This is a new entry",
           "version": "1.0",
+          "funding":true,
           "tags": ["new"]
         }, [], true, true)
 

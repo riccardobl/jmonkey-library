@@ -1,0 +1,45 @@
+[
+    {
+        "?": "Request a lightning invoice",
+        "type": [
+            "request"
+        ],
+        "ln-address": {
+            "?":"Lightning address.",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z .@:0-9_\\-]+"
+            }
+        },
+        "amountSatoshis": {
+            "?": "Page to return",
+            "type": "number",
+            "required": true,
+            "min": 1000,
+            "value": 1000
+        }
+    },
+    {
+        "?": "Invoice",
+        "type": [
+            "response"
+        ],
+        "invoice": {
+            "?":"Lightning address.",
+            "type": "string",
+            "required": false,
+            "sanitize": {
+                "html": false
+            }
+        },
+        "error": {
+            "?": "Error if any. undefined if everything ok",
+            "type": "string",
+            "sanitize": {
+                "html": true
+            }
+        }
+    }
+]

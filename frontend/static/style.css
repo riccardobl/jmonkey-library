@@ -2,6 +2,19 @@ body{
     /* overflow: auto; */
     
 }
+
+h2,
+h3 {
+ margin-top:0.5rem;
+ margin-bottom:0.4rem;
+}
+section > article > div.content > h2:first-child,section > article > div.content > h1:first-child,section > article > div.content > h3:first-child{
+    margin-top:0;
+}
+section>article>div.content nav{
+    line-height:80%;
+    margin-top:auto;
+}
 .editing{
     padding:2px;
     border:0.09rem dotted var(--highlightedColor);
@@ -42,6 +55,7 @@ main > section.withSideMenu article:nth-child(2) nav{
     padding-top:0;
     align-items:stretch!important;
     width: 100%;
+
 }
 
 main > section article > .content{
@@ -249,7 +263,6 @@ nav editor label{
 *>i.fas:first-child,
 *>i.fab:first-child {
     padding-right:.3rem;
-    padding-left:.4rem;
 }
 h1>i.fas:first-child,
 h1>i.fab:first-child {
@@ -338,6 +351,19 @@ section.suspended h1,section.banned h1{
 .okText{
     color:var(--donateColor);
 }
+
+button.donateClPatreon{
+    background-color: #ff424d!important;
+}
+
+button.donateClLightning{
+    background-color: #f7931a!important;
+}
+
+button.donateClPaypal{
+    background-color: #0079C1!important;
+}
+
 
 /* .warn a {
     text-decoration: underline;
@@ -431,6 +457,7 @@ background-size: 100%; */
 
 section > article > div.content{
     display:block;    
+    flex-grow:1;
 }
 
 .clickable{
@@ -544,7 +571,28 @@ block-size: fit-content;
     margin:auto;
 }
 
+window .list > * {
+    margin:.5em!important;
 
+}
+.justify-left{
+    justify-content: left!important;
+}
+
+.justify-center{
+    justify-content: center!important;
+}
+
+
+.justify-right{
+    justify-content: right!important;
+}
+
+.hlist{
+
+    align-items: center;
+    justify-content: left;
+}
 
 .hlist.dataset{
 
@@ -577,8 +625,8 @@ nav li,nav h3{
 window{
     width:auto;
     height:auto;
-    max-width:80vw;
-    max-height:80vh;
+    max-width:90vw;
+    max-height:99vh;
     position:fixed;
     z-index:99;
     background-color: var(--background2);
@@ -617,7 +665,7 @@ window sub{
 }
 
 window input[type=text],window input[type=search]{
-    width:90%;
+    /* width:90%; */
 }
 
 window .content{
@@ -626,7 +674,7 @@ window .content{
 window .buttons{
     /* margin-top:auto; */
     display:flex;
-    margin-top:3rem;
+    margin-top:1rem;
     text-align: center;
 
 
@@ -637,8 +685,8 @@ window .buttons > button{
 
 window h1,window h2,window h3{
     font-size: 3rem;
-    margin-bottom:3rem;
-    margin-top:2rem;
+    margin-bottom:1rem;
+    margin-top:1rem;
     text-align: center;
 }
 
@@ -666,11 +714,11 @@ section#showcase  .showcaseElement > .blur
     border-radius: 0.6rem 0.6rem 3rem 3rem;
 
 }
-section>article>div.content>nav>ul li button {
-    margin: 0.1rem;
-   }
+/* section>article>div.content>nav>ul li button { */
+    /* margin: 0.1rem; */
+   /* } */
 section.hlist > article > div.content > nav > ul li > * {
-    margin-left:0.1rem;
+    margin-left:0.05rem;
 }
 
 section#showcase .showcaseElement > .blur{
@@ -925,3 +973,34 @@ main{
     transition: opacity .5s;
     opacity: 1; 
 } */
+
+td.smallest{
+    width: 0px!important;
+    white-space: nowrap!important;
+}
+
+.text-left{
+    text-align: left!important;
+}
+
+#confirmationWindow {
+    text-align: center;
+}
+
+#qrcontainer{
+    background-color:#fff;
+    padding:1em;
+    text-align:center;
+    border-radius:1em;
+    width:100%;
+    max-width: 300px;
+}
+#confirmationWindow #qrcontainer{
+    margin:auto!important;
+
+}
+
+#qrcontainer img{
+    margin:auto!important;
+
+}

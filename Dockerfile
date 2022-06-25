@@ -3,7 +3,7 @@ FROM node:16
 ENV CONFIG=''
 ENV BACKEND_CONFIG=''
 ENV CONFIG_PATH=''
-
+ENV JME_INITIALIZER_LIBRARIES_PATH="https://raw.githubusercontent.com/jMonkeyEngine/jme-initializer/master/libraries.json"
 
 RUN apt update &&  apt -y install ffmpeg && apt clean
 

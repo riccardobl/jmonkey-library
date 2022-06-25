@@ -2,11 +2,13 @@
   "dependencies": {
     "@seald-io/nedb": "^2.2.0",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "datauri": "^4.1.0",
     "dompurify": "^2.3.3",
     "express": "^4.17.1",
     "ffmpeg": "^0.0.4",
     "jsdom": "^18.0.0",
+    "lnurl-pay": "^0.2.3",
     "marked": "^3.0.8",
     "node-fetch": "^3.0.0",
     "node-webpmux": "^3.1.0",

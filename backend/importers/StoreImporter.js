@@ -85,31 +85,31 @@ export default class StoreImporter {
         entry.tags.push(data.category.parent.name);
         entry.tags.push(data.id);
 
-        if(data.buildData){
-            let usage="Add this software to your project\n```gradle";
+        // if(data.buildData){
+        //     let usage="Add this software to your project\n```gradle";
 
-            {
-                usage+="\nrepositories {\n"
-                data.buildData.repositories.split(",").forEach(r=>{
-                    usage+="    "+r+"\n";
-                });
-                usage+="\n}\n\n"
-            }
-            {
-                usage+="\dependencies {\n"
-                data.buildData.hostedDependencies.split(",").forEach(r=>{
-                    usage+="    "+r+"\n";
-                });
-                usage+="\n}"
+        //     {
+        //         usage+="\nrepositories {\n"
+        //         data.buildData.repositories.split(",").forEach(r=>{
+        //             usage+="    "+r+"\n";
+        //         });
+        //         usage+="\n}\n\n"
+        //     }
+        //     {
+        //         usage+="\dependencies {\n"
+        //         data.buildData.hostedDependencies.split(",").forEach(r=>{
+        //             usage+="    "+r+"\n";
+        //         });
+        //         usage+="\n}"
                 
-            }
+        //     }
 
-            usage+="\n```";
+        //     usage+="\n```";
 
-            entry.usage=usage;
+        //     entry.usage=usage;
             
 
-        }
+        // }
 
         entry.version = data.versionData.version;
         entry.license = "";

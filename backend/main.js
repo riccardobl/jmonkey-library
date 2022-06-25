@@ -17,7 +17,9 @@ import createDOMPurify from 'dompurify';
 import GithubOAUTH from "./authgateway/GithubOAUTH.js"
 import Database from "./Database.js";
 import DiscourseGateway from "./authgateway/DiscourseGateway.js";
-
+import JmeInitializerIndex from './ext/JmeInitializerIndex.js';
+import SplitDonations from "./ext/SplitDonation.js";
+import ExpressCors from 'cors';
 async function loadConfigs(onlyPublic){
     if(process.env.CONFIG_PATH){
         let config=await Fs.readFile(Path.join(process.env.CONFIG_PATH,"config.json"));
@@ -65,6 +67,8 @@ const server = Express()
 
 
 {
+    server.set('json spaces', 2)
+    server.use(ExpressCors());
     server.use(CookieParser());
     server.use(Express.json({limit:config.reqLimit}));
     server.use("/", Express.static("./frontend"));
@@ -174,6 +178,21 @@ if(config.paymentChains){
     console.info("Init payment manager...");
     await PaymentManager.init(register,config.paymentChains)
 }
+
+try{
+    JmeInitializerIndex.init(server,config);
+}catch(e){
+    console.error(e);
+}
+
+
+try{
+    SplitDonations.init(server);
+}catch(e){
+    console.error(e);
+}
+
+
 
 {
     server.listen(port, () => console.log(`HTTP server listening on port ${port}`));

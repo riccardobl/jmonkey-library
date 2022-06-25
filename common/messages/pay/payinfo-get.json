@@ -1,0 +1,17 @@
+[
+    {
+        "?": "Request user Pay info",
+        "type": [
+            "request"
+        ],
+        "userId": {
+            "?": "Id of the user",
+            "type": "string",
+            "required": true,
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        }
+    }
+]

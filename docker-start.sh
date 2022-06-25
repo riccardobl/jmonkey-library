@@ -31,8 +31,8 @@ then
 
 else #Dev
 
-    if [ "$PORT" = "" ];then export PORT="8080"; fi
-    export ARGS="-it --rm -p8080:$PORT -v$PWD/backend:/app/backend -v$PWD/frontend:/app/frontend -v$PWD/common:/app/common"
+    if [ "$PORT" = "" ];then export PORT="8081"; fi
+    export ARGS="-it --rm -p8081:$PORT -v$PWD/backend:/app/backend -v$PWD/frontend:/app/frontend -v$PWD/common:/app/common"
     export DOCKERFILE="$PWD/Dockerfile.dev"
 
     # Prepare configuration

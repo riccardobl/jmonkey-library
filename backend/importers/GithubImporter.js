@@ -125,26 +125,30 @@ export default class GithubImporter {
     }
 
     static extractUsageContent(content){
-        if(true)return [undefined,content];
-        // TODO: figure out a better way to extract gradle coordinates.
-        if(!content||content=="")return undefined;
-        const lcContent=content.toLowerCase();
-        let index=-1;
-        if(index==-1)index=lcContent.indexOf("\n## usage");
-        if(index==-1)index=lcContent.indexOf("\n## gradle");
-        if(index==-1)index=lcContent.indexOf("\n## maven");
-        if(index==-1)return [undefined,content];
-    
-        let usage=content;
-        usage=usage.substring(index+2);       
-        const lastIndex=usage.indexOf("\n## ")
-        if(!lastIndex)lastIndex=usage.length;
-        usage=usage.substring(0,lastIndex);
-        usage=usage.substring(usage.indexOf("\n"));
-        
-        
-        content=content.substring(0,index)+content.substring(index+lastIndex);
-        return [usage,content];
+        const dom=JSDOM.fragment(`<div>${content}</div>`);
+        const codeEls=dom.querySelectorAll("code");
+        for(const codeEl of codeEls){
+            const code = codeEl.innerText;
+
+            let repos=/^\s*repositories\s*{\s*([^}]+)/img.exec(code);
+            if(repos&&repos[1]){
+                repos=repos[1];
+                repos=repos.replace(/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img,"$1");
+                repos=repos.split("\n");
+            } else repos=[];
+
+            let deps=/^\s*dependencies\s*{\s*([^}]+)/img.exec(code);
+            if(deps&&deps[1]){
+                deps=deps[1];
+                deps=deps.split("\n");
+                deps = deps.map(d=>d.split(" ",1)[1]);
+            } else deps=[];
+
+            return [repos,deps];
+
+            
+        }
+        return [undefined,undefined];
     }
 
     static extractTitleContent(content){
@@ -240,8 +244,8 @@ export default class GithubImporter {
         readme.content=Utils.renderMarkdown(readme.content);
         readme.content=await this.fixLinks(source,readme.content,token);
         
-        let usage;
-        [usage,readme.content]=this.extractUsageContent(readme.content);        
+        let repos,artifacts;
+        [repos,artifacts]=this.extractUsageContent(readme.content);        
 
         let title;
         [title,readme.content]=this.extractTitleContent(readme.content);
@@ -259,7 +263,8 @@ export default class GithubImporter {
         entry.issues=`https://github.com/${source}/issues`;
         entry.version=release?this.clean(release.tag_name):"SNAPSHOT";
         entry.license=license.file?license.content:undefined;
-        entry.usage=usage;        
+        entry["maven-repos"]=repos;        
+        entry["maven-artifacts"]=artifacts;        
 
         return entry;
 

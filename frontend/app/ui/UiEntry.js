@@ -8,6 +8,9 @@ import Payment from "../Payment.js";
 import ExtImporter from "../ExtImporter.js";
 import Tasks from './Tasks.js';
 import Dialogs from '../Dialogs.js';
+import DeepLink from '../thirdparty/DeepLink.js';
+import VanillaQR from "../thirdparty/VanillaQR.js";
+
 export default class UiEntry {
 
 
@@ -52,7 +55,7 @@ export default class UiEntry {
     static async loadEntry(parentEl, entry, media, editMode, forceSave) {
         // Get entry def api
         const def = (await Entries.getApi()).getDefByType("database");
-
+        entry=await (await Entries.getApi()).parse("database",entry,false);
         // Ui.loading(true, "Loading " + entry.entryId + (editMode ? " in edit mode..." : "..."), 10000);
         // Ui.waitTask("loading","Loading "+ entry.entryId + (editMode ? " in edit mode..." : "..."),{},false,false,10000);
         Tasks.completable("loading", "Loading entry " + entry.entryId + "...", {}, true, false, undefined, false);
@@ -178,6 +181,8 @@ export default class UiEntry {
 
         const firstRowEl = Ui.createSection(parentEl, ["responsiveWidth", "withSideMenu"]);
 
+
+
         // DESCRIPTION
         const descriptionEl = Ui.createArticle("description", "fas fa-paragraph", "Description");
         firstRowEl.appendChild(descriptionEl);
@@ -192,14 +197,19 @@ export default class UiEntry {
             );
         }
 
+
+        
         // DETAILS
         const menuElArt = Ui.createArticle("details", "fas fa-bars", "Details");
         firstRowEl.appendChild(menuElArt);
         const menuEl = Ui.createMenu();
         menuElArt.content.append(menuEl);
 
+        
+       
         // Payments
         await this.loadPayment(parentEl, menuEl, entry, editedEntry, editMode, onSaveListeners);
+
 
         // Buttons
         if (entry.download || entry.repo || editMode) {
@@ -376,34 +386,234 @@ export default class UiEntry {
 
         udateEl.addItem(Ui.createText(`${updateDate.toLocaleDateString()} - ${updateDate.toLocaleTimeString()}`))
 
-        const secondRowEl = Ui.createSection(parentEl, ["responsiveWidth", entry.usage && entry.license ? "withSide" : ""]);
+        const secondRowEl = Ui.createSection(parentEl, ["responsiveWidth", entry["maven-artifacts"] && entry.license &&!editMode ? "withSide" : ""]);
 
         // USAGE & LICENSE
-        if (entry.usage || editMode) {
-            const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
-            secondRowEl.appendChild(usageEl);
-            usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
-            if (editMode) Ui.createEditorFor(
-                usageEl.content,
-                "Usage Instructions: Supports Markdown and basic HTML",
-                `<textarea></textarea>`,
-                (el) => el.value = entry.usage || "",
-                (e) => editedEntry.usage = e.target.value || "",
-                (toggled, editArea) => {
-                    if (!toggled) delete editedEntry.usage;
-                    else editedEntry.usage = editArea.value;
-                },
-                entry.usage,
-                undefined, undefined, undefined,
-                editedEntry.paidFields && entry.paidFields.includes("usage"),
-                (toggle) => {
-                    if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                    if (toggle) editedEntry.paidFields.push("usage")
-                    else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
-                }
-            );
-        }
+        if(!editMode){
+            if (entry["maven-artifacts"] ) {
+                const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
+                secondRowEl.appendChild(usageEl);
+                let content=``;
 
+                
+
+
+                content+=`<h3>Gradle Coordinates</h3>
+
+                <pre class="language-gradle">`;
+                
+
+                let githubPackageRegistry=false;
+    
+                let repoContent=`repositories {\n`;
+                
+                for( const repo of entry["maven-repos"]){
+                    if(repo.startsWith("https://github.com/")){
+                        const [,,,ghowner,ghrepo, ]=repo.split("/");
+                        repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
+                        githubPackageRegistry=true;
+                    }else if(repo.startsWith("http")  ){
+                        repoContent+=`    maven { url "${repo}" }\n`;
+                    }else{
+                        repoContent+=`    ${repo}\n`;
+                    }
+                }
+                repoContent+=`}\n\n`;
+
+                if(githubPackageRegistry){
+                    content+=`\nplugins {\n    id "io.github.0ffz.github-packages" version "1.2.1"\n}\n\n`;
+                }
+
+                content+=repoContent;
+
+                content+=`dependencies {\n`;
+                for( const artifact of entry["maven-artifacts"]){
+                    content+=`    implementation "${artifact}"\n`;
+                }
+
+                content+=`}\n</pre>`;
+                usageEl.content.innerHTML+=content;
+
+                
+                // usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
+                // if (editMode) Ui.createEditorFor(
+                //     usageEl.content,
+                //     "Usage Instructions: Supports Markdown and basic HTML",
+                //     `<textarea></textarea>`,
+                //     (el) => el.value = entry.usage || "",
+                //     (e) => editedEntry.usage = e.target.value || "",
+                //     (toggled, editArea) => {
+                //         if (!toggled) delete editedEntry.usage;
+                //         else editedEntry.usage = editArea.value;
+                //     },
+                //     entry.usage,
+                //     undefined, undefined, undefined,
+                //     editedEntry.paidFields && entry.paidFields.includes("usage"),
+                //     (toggle) => {
+                //         if (!editedEntry.paidFields) editedEntry.paidFields = [];
+                //         if (toggle) editedEntry.paidFields.push("usage")
+                //         else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
+                //     }
+                // );
+            }
+        }else{
+            if (editMode) {
+                const thirdRowEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
+    
+                
+             
+                const jmeInitializerEl =  Ui.createArticle("maven", "fas fa-rocket", "Deployment",["content","text-left"]);
+                thirdRowEl.appendChild(jmeInitializerEl);
+
+
+                jmeInitializerEl.content.appendChild(Ui.createSubTitle("Supported Platforms"));
+                jmeInitializerEl.content.appendChild(Ui.createSubSubTitle("Mobile"));
+                jmeInitializerEl.content.appendChild( Ui.createToggle("Android",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="MOBILE_ANDROID");
+                    if(v)editedEntry.platforms.push("MOBILE_ANDROID");                    
+                },editedEntry.platforms.indexOf("MOBILE_ANDROID")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild(Ui.createSubSubTitle("Desktop"));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("Linux",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="DESKTOP_LINUX");
+                    if(v)editedEntry.platforms.push("DESKTOP_LINUX");
+                },editedEntry.platforms.indexOf("DESKTOP_LINUX")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("Windows",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="DESKTOP_WINDOWS");
+                    if(v)editedEntry.platforms.push("DESKTOP_WINDOWS");
+                },editedEntry.platforms.indexOf("DESKTOP_WINDOWS")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("MacOS",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="DESKTOP_MACOS");
+                    if(v)editedEntry.platforms.push("DESKTOP_MACOS");
+                },editedEntry.platforms.indexOf("DESKTOP_MACOS")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild(Ui.createSubSubTitle("VR"));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("VR Linux",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="VR_LINUX");
+                    if(v)editedEntry.platforms.push("VR_LINUX");
+                },editedEntry.platforms.indexOf("VR_LINUX")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("VR Windows",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="VR_WINDOWS");
+                    if(v)editedEntry.platforms.push("VR_WINDOWS");
+                },editedEntry.platforms.indexOf("VR_WINDOWS")!=-1,true,true));
+
+                jmeInitializerEl.content.appendChild( Ui.createToggle("VR MacOS",(v)=>{
+                    editedEntry.platforms=editedEntry.platforms.filter(p=>p!="VR_MACOS");
+                    if(v)editedEntry.platforms.push("VR_MACOS");
+                },editedEntry.platforms.indexOf("VR_MACOS")!=-1,true,true));
+          
+            
+                jmeInitializerEl.content.appendChild(Ui.createSubTitle("Maven/Gradle Artifacts"));
+                jmeInitializerEl.content.appendChild(Ui.createText(`
+                    List of maven artifacts needed to use this entry.
+                `));
+            
+                const artifactsTables=Ui.createTable(["Group","Artifact","Version<br>( use $VERSION for last version )",""],["text-left"])
+               
+    
+    
+                jmeInitializerEl.content.appendChild(artifactsTables);
+    
+                const reloadArtifactsTable=()=>{
+                    artifactsTables.querySelectorAll("tr.generated").forEach(el=>el.remove());
+                    let row;
+                    if( editedEntry["maven-artifacts"]){
+                        for(let i=0;i<editedEntry["maven-artifacts"].length;i++){
+                            const art=editedEntry["maven-artifacts"][i];
+                            row=artifactsTables.addRow(["generated"]);
+                            const [group,repo,version]=art.split(":");
+                            row.addCell(Ui.createText(group));
+                            row.addCell(Ui.createText(repo));
+                            row.addCell(Ui.createText(version));
+                            row.addCell(Ui.createButton(undefined,"x","Remove this artifact",()=>{
+                                editedEntry["maven-artifacts"].splice(i,1);
+                                if(editedEntry["maven-artifacts"].length==0)editedEntry["maven-artifacts"]=undefined;
+                                reloadArtifactsTable();
+                            }),["smallest"]);
+    
+                        }
+                    }
+                    
+                    row=artifactsTables.addRow(["generated"]);
+                    let newGroupEl,newArtifactEl,newVersionEl;
+                    row.addCell(newGroupEl=Ui.createInputField(def["maven-artifacts"],"text"));
+                    row.addCell(newArtifactEl=Ui.createInputField(def["maven-artifacts"],"text"));
+                    row.addCell(newVersionEl=Ui.createInputField(def["maven-artifacts"],"text"));
+                    row.addCell(Ui.createButton(undefined,"+","Add artifacts",()=>{
+                        const v=`${newGroupEl.value}:${newArtifactEl.value}:${newVersionEl.value}`;
+                        if(!editedEntry["maven-artifacts"])editedEntry["maven-artifacts"]=[];
+                        editedEntry["maven-artifacts"].push(v);
+                        reloadArtifactsTable();
+                    }),["smallest"]);
+                };
+                reloadArtifactsTable();
+    
+                jmeInitializerEl.content.appendChild(Ui.createSubTitle("Additional Maven/Gradle Repositories"));
+                const repoTable=Ui.createTable(["Maven Repositories",""],["text-left"]);
+                jmeInitializerEl.content.appendChild(Ui.createText(`
+                Extra repositories needed to use this entry.
+            `));
+            jmeInitializerEl.content.appendChild(repoTable);
+    
+                const reloadRepoTable=()=>{
+                    repoTable.querySelectorAll("tr.generated").forEach(el=>el.remove());
+                    let row;
+                    if( editedEntry["maven-repos"]){
+                        for(let i=0;i<editedEntry["maven-repos"].length;i++){
+                            const repo=editedEntry["maven-repos"][i];
+                            row=repoTable.addRow(["generated"]);
+                            row.addCell(Ui.createText(repo));
+                            row.addCell(Ui.createButton(undefined,"x","Remove this repo",()=>{
+                                editedEntry["maven-repos"].splice(i,1);
+                                if(editedEntry["maven-repos"].length==0)editedEntry["maven-repos"]=undefined;
+                                reloadRepoTable();
+                            }),["smallest"]);
+                        }
+                    }
+                    
+                    row=repoTable.addRow(["generated"]);
+        
+                    const repoInput=Ui.createInputField(def["maven-repos"],"text");
+                    repoInput.setAttribute("placeholder","mavenCentral()");
+                    row.addCell(repoInput);
+                    row.addCell(Ui.createButton(undefined,"+","Add repo",()=>{
+                        if(!editedEntry["maven-repos"])editedEntry["maven-repos"]=[];
+                        editedEntry["maven-repos"].push(repoInput.value);
+                        reloadRepoTable();
+                    }),["smallest"]);
+                };
+                reloadRepoTable();
+        }
+            // if (entry.usage || editMode) {
+        //     const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
+        //     secondRowEl.appendChild(usageEl);
+        //     usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
+        //     if (editMode) Ui.createEditorFor(
+        //         usageEl.content,
+        //         "Usage Instructions: Supports Markdown and basic HTML",
+        //         `<textarea></textarea>`,
+        //         (el) => el.value = entry.usage || "",
+        //         (e) => editedEntry.usage = e.target.value || "",
+        //         (toggled, editArea) => {
+        //             if (!toggled) delete editedEntry.usage;
+        //             else editedEntry.usage = editArea.value;
+        //         },
+        //         entry.usage,
+        //         undefined, undefined, undefined,
+        //         editedEntry.paidFields && entry.paidFields.includes("usage"),
+        //         (toggle) => {
+        //             if (!editedEntry.paidFields) editedEntry.paidFields = [];
+        //             if (toggle) editedEntry.paidFields.push("usage")
+        //             else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
+        //         }
+        //     );
+        // }
+    }
 
         if (entry.license || editMode) {
             const licenseEl = Ui.createArticle("license", "fas fa-id-badge", "License");
@@ -430,6 +640,132 @@ export default class UiEntry {
             );
         }
 
+
+        
+
+        // Jme initializer
+        // if (editMode) {
+        //     const thirdRowEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
+
+       
+
+
+        //     const jmeInitializerEl =  Ui.createArticle("maven", "fas fa-rocket", "JME Initializer",["content","text-left"]);
+        //     thirdRowEl.appendChild(jmeInitializerEl);
+      
+        //     jmeInitializerEl.content.appendChild(Ui.createText(`
+        //         From this section you can specify the maven coordinates of your library to be included in jme initializer./
+        //     `));
+        //     jmeInitializerEl.content.appendChild(Ui.createSubTitle("Artifacts"));
+        //     jmeInitializerEl.content.appendChild(Ui.createText(`
+        //         List of maven artifacts needed to use this entry.
+        //     `));
+        
+        //     const artifactsTables=Ui.createTable(["Group","Artifact","Version<br>( use $VERSION for last version )",""],["text-left"])
+           
+
+
+        //     jmeInitializerEl.content.appendChild(artifactsTables);
+
+        //     const reloadArtifactsTable=()=>{
+        //         artifactsTables.querySelectorAll("tr.generated").forEach(el=>el.remove());
+        //         let row;
+        //         if( editedEntry["maven-artifacts"]){
+        //             for(let i=0;i<editedEntry["maven-artifacts"].length;i++){
+        //                 const art=editedEntry["maven-artifacts"][i];
+        //                 row=artifactsTables.addRow(["generated"]);
+        //                 const [group,repo,version]=art.split(":");
+        //                 row.addCell(Ui.createText(group));
+        //                 row.addCell(Ui.createText(repo));
+        //                 row.addCell(Ui.createText(version));
+        //                 row.addCell(Ui.createButton(undefined,"x","Remove this artifact",()=>{
+        //                     editedEntry["maven-artifacts"].splice(i,1);
+        //                     if(editedEntry["maven-artifacts"].length==0)editedEntry["maven-artifacts"]=undefined;
+        //                     reloadArtifactsTable();
+        //                 }),["smallest"]);
+
+        //             }
+        //         }
+                
+        //         row=artifactsTables.addRow(["generated"]);
+        //         let newGroupEl,newArtifactEl,newVersionEl;
+        //         row.addCell(newGroupEl=Ui.createInputField(def["maven-artifacts"],"text"));
+        //         row.addCell(newArtifactEl=Ui.createInputField(def["maven-artifacts"],"text"));
+        //         row.addCell(newVersionEl=Ui.createInputField(def["maven-artifacts"],"text"));
+        //         row.addCell(Ui.createButton(undefined,"+","Add artifacts",()=>{
+        //             const v=`${newGroupEl.value}:${newArtifactEl.value}:${newVersionEl.value}`;
+        //             if(!editedEntry["maven-artifacts"])editedEntry["maven-artifacts"]=[];
+        //             editedEntry["maven-artifacts"].push(v);
+        //             reloadArtifactsTable();
+        //         }),["smallest"]);
+        //     };
+        //     reloadArtifactsTable();
+
+        //     jmeInitializerEl.content.appendChild(Ui.createSubTitle("Additional Repositories"));
+        //     const repoTable=Ui.createTable(["Maven Repositories",""],["text-left"]);
+        //     jmeInitializerEl.content.appendChild(Ui.createText(`
+        //     Extra repositories needed to use this entry.
+        // `));
+        // jmeInitializerEl.content.appendChild(repoTable);
+
+        //     const reloadRepoTable=()=>{
+        //         repoTable.querySelectorAll("tr.generated").forEach(el=>el.remove());
+        //         let row;
+        //         if( editedEntry["maven-repos"]){
+        //             for(let i=0;i<editedEntry["maven-repos"].length;i++){
+        //                 const repo=editedEntry["maven-repos"][i];
+        //                 row=repoTable.addRow(["generated"]);
+        //                 row.addCell(Ui.createText(repo));
+        //                 row.addCell(Ui.createButton(undefined,"x","Remove this repo",()=>{
+        //                     editedEntry["maven-repos"].splice(i,1);
+        //                     if(editedEntry["maven-repos"].length==0)editedEntry["maven-repos"]=undefined;
+        //                     reloadRepoTable();
+        //                 }),["smallest"]);
+        //             }
+        //         }
+                
+        //         row=repoTable.addRow(["generated"]);
+    
+        //         const repoInput=Ui.createInputField(def["maven-repos"],"text");
+        //         repoInput.setAttribute("placeholder","mavenCentral()");
+        //         row.addCell(repoInput);
+        //         row.addCell(Ui.createButton(undefined,"+","Add repo",()=>{
+        //             if(!editedEntry["maven-repos"])editedEntry["maven-repos"]=[];
+        //             editedEntry["maven-repos"].push(repoInput.value);
+        //             reloadRepoTable();
+        //         }),["smallest"]);
+        //     };
+        //     reloadRepoTable();
+
+           
+
+
+          
+            // jmeInitializerEl.appendChild(Ui.createToggle("Add entity to jme-initializer"));
+            // jmeInitializerEl.appendChild(Ui.creast);
+
+
+            // usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
+            // if (editMode) Ui.createEditorFor(
+            //     usageEl.content,
+            //     "Usage Instructions: Supports Markdown and basic HTML",
+            //     `<textarea></textarea>`,
+            //     (el) => el.value = entry.usage || "",
+            //     (e) => editedEntry.usage = e.target.value || "",
+            //     (toggled, editArea) => {
+            //         if (!toggled) delete editedEntry.usage;
+            //         else editedEntry.usage = editArea.value;
+            //     },
+            //     entry.usage,
+            //     undefined, undefined, undefined,
+            //     editedEntry.paidFields && entry.paidFields.includes("usage"),
+            //     (toggle) => {
+            //         if (!editedEntry.paidFields) editedEntry.paidFields = [];
+            //         if (toggle) editedEntry.paidFields.push("usage")
+            //         else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
+            //     }
+            // );
+        // }
 
         // COMMENTS
         //     if (hubUrl) {
@@ -702,163 +1038,360 @@ export default class UiEntry {
     }
 
     static async loadPayment(parentEl, menuEl, entry, editedEntry, editMode, onSaveListeners) {
-        if (!await Auth.isLoggedIn() && (entry.paid || editMode)) {
-            const section = menuEl.addSection("");
-
-            section.addItem(Ui.createWarningMessage("", `<b>LogIn required.</b>
-            <br />
-            <br />
-            This entry has paid features that are accessible only to logged in users.
-            `));
-
+        const payinfo=await Payment.getInfo(entry.userId);
+        let hasPayInfo=payinfo["ln-address"]||payinfo["paypal-id"]||payinfo["patreon-id"];
+        hasPayInfo=hasPayInfo?true:false
+        if(editMode){
+            const section = menuEl.addSection("Funding");
+            const el=Ui.createDiv(["editorButtons"])
+            section.append(el);
+            el.append(Ui.createToggle("Enable Funding",(v)=>{
+                editedEntry.funding=v;
+            },entry.funding&&hasPayInfo,hasPayInfo?true:false));
             return;
         }
-        const userId = entry.userId;
-        const entryId = entry.entryId;
+
+        if(!hasPayInfo||!entry.funding)return;
+  
+        const section = menuEl.addSection("Funding");
+        // section.addItem(Ui.createText("Support the developer and this project"));
+
+        if(payinfo["ln-address"]){
+            const lightning = section.addItem(Ui.createButton("fas fa-bolt",
+                `Donate ₿ on Lightning`, "Support this developer with a donation in Bitcoin on the Lightning Network", async () => {
+               
+            // const content = Ui.toEl(`
+            //     <span>                                           
+            //         <iframe sandbox="allow-forms allow-modals allow-popups allow-scripts allowpaymentrequest" src="https://www.paypal.com/donate/?hosted_button_id=${payinfo["paypal-id"]}" ></iframe>
+            //     </span>
+            // `);
+            const invoiceReqDef=await (await Payment.getLnInvoiceApi()).getDefByType("request");
+            
+            const lnEl=Ui.createVList();
+
+           let row;
+            let column;
+            
+            column=Ui.createVList();
+            lnEl.append(column);
+
+            row=Ui.createHList();
+            column.append(row);
+
+            row.append(Ui.createText("Sats:"));
+            const inputSats=Ui.createInputField(invoiceReqDef,"text");
+            inputSats.value=3000;
+            row.append(inputSats);
 
 
-        const config = await Config.get();
-        const chain = Object.keys(config.paymentChains)[0];
+            row=Ui.createHList(["justify-left"]);
+            column.append(row);
+            row.append(Ui.createText("Value in USD:"));
+            row.appendChild(row=Ui.createHList(["justify-right"]));
 
-        if (entry.paid || editMode) {
+            const usdEl=Ui.createText("0");
+            row.append(usdEl);
 
-            if (!await Payment.isCurrentWalletConnected(chain)) {
-                // if (entry.paid||editMode) {
-                const section = menuEl.addSection("");
-                section.addItem(Ui.createWarningMessage("", `Wallet is not connected.
-                <br />
-                Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">connect a wallet</a> to enable payment options.`));
+            row=Ui.createHList(["justify-left"]);
+            column.append(row);
+            row.append(Ui.createText("Value in Bitcoin:"));
 
+            row.appendChild(row=Ui.createHList(["justify-right"]));
 
-                return;
-            } else if (editMode && !await Payment.isSellerContractEnabled((await Payment.getAddresses(userId, chain))[0], userId, chain)) {
-                if (entry.paid || editMode) {
-                    const section = menuEl.addSection("");
-                    section.addItem(Ui.createWarningMessage("", `The current user is not a seller.
-                <br />
-                Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">enable the seller contract</a> for this user
-                to use payment features.`));
+            const btcEl=Ui.createText("0");
+            row.append(btcEl);
+            
+            const updateValues=()=>{
+                const sats=parseFloat(inputSats.value);
+                const btc=sats*0.00000001;
+                const usd=btc*20000;
+                let v=`${Math.floor(usd*10.)/10.} $`;
+                console.log(v);
+                usdEl.innerText=v;
 
-                }
-                return;
-            }
+                v=`${Math.floor(btc*100000.)/100000.} ₿`;
+                btcEl.innerText=v;
+            };
 
+            inputSats.addEventListener("input",updateValues);
+            updateValues();
+            // row=Ui.createVList();
+            // lnEl.append(row);
+            // row.append(Ui.createText("USD:"));
 
-            const purchaseId = await Payment.getPurchaseId(userId, entryId, Auth.getCurrentUserID(), chain);
-            console.log("Paid entry", entry.paid);
-            let price = (await Payment.getPrice(userId, entryId, chain)) || 0;
+            // const inputUSD=Ui.createInputField(invoiceReqDef,"text");
+            // row.append(inputUSD);
 
-            if (!entry.paid && !editMode && !purchaseId) return;
-            if( !purchaseId&&price==0&&!editMode)return;
+         
+         
 
-            const symbol = config.paymentChains[chain].nativeCurrency.symbol;
-
-            const initialPrice = await Payment.getPrice(userId, entryId, chain) || 0;
-            const initialText = await Payment.getMessage(userId, entryId, chain) || "Donate";
-
-            console.log(config.paymentChains[chain]);
-            let text = await Payment.getMessage(userId, entryId, chain) || "Donate";
-            onSaveListeners.push(async () => {
-                // (async () => {
-                    if (price <= 0) Ui.error("Can't sell for <=0");
-                    console.log("Sell for", price, editedEntry.paid);
-                    if (editedEntry.paid) {
-                        if (price != initialPrice || text != initialText) {
-                            await Payment.sell(entry.entryId, price, text, chain);
-                        }
-                    } else if (!editedEntry.paid && entry.paid) {
-                        await Payment.unsell(entry.entryId, chain);
-                    }
-                // })();
-            });
-
-            let menuPaySectionEl;
-
-            if (purchaseId && !editMode) { // If entry has been purchased
-                const price = await Payment.getPurchasePrice(userId, purchaseId, chain);
-                const message = await Payment.getPurchaseMessage(userId, purchaseId, chain);
-                menuPaySectionEl = menuEl.addSection(message);
-                const shownPrice=(await Payment.toHumanValue(price, chain));
-
-                menuPaySectionEl.addItem(Ui.createText(`<i class="fas fa-check"></i> You paid ` + shownPrice + ` ${symbol}`));
-                const isRefundable = await Payment.isPurchaseRefundable(userId, purchaseId, chain);
-                
-                menuPaySectionEl.addItem(Ui.createButton("fas fa-exchange-alt", isRefundable ? "Request a refund" : "Refund time expired",
-                    "Request a refund", async () => {
-                        if (!isRefundable) return;
-                        const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
-                        const sellerContract= (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
-
-                        Dialogs.showRefundDialog(config.paymentChains[chain],sellerContract,shownPrice,async ()=>{
-                       await Payment.refund(entry.userId, entry.entryId, chain);
-
-                        })
-                    }, [isRefundable ? "enabled" : "disabled"]));
-            }
-
-            // if ((price && entry.paid) || editMode) { // If entry is a paid entry or in editmode
-            if (!menuPaySectionEl) menuPaySectionEl = menuEl.addSection(!editMode ? text : "Payment Settings");
-
-            if (!purchaseId  || editMode) { // If never bought  or edit mode        
-                let shownPrice = await Payment.toHumanValue(price, chain);
-                if (shownPrice == 0) shownPrice = config.paymentChains[chain].defaultPricing;
-                const buyButtonEl = menuPaySectionEl.addItem(Ui.createButton("fas fa-shopping-cart",
-                    "Pay " + shownPrice + " " + symbol, "Pay", async () => {
-                        if (!editMode) {
-                            const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
-                            Dialogs.showBuyDialog(config.paymentChains[chain],sellerAddr,
-                                (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
-                                ,shownPrice,async ()=>{
-                                await Payment.buy(entry.userId, entry.entryId, chain);
+            Ui.showDialog(`Donate Bitcoin`, lnEl,
+                [
+                    {
+                        text: `<i class="fas fa-times"></i> Cancel`,
+                        action: undefined
+                    },
+                    {
+                        text: `Generate Invoice <i class="fas fa-bolt"></i>`,
+                        action: async ()=>{
+                     
+                            const invoice=await Payment.getLnInvoice(payinfo["ln-address"],3000);
+                            
+                         
+                            const invoiceEL =Ui.createVList();
+                            invoiceEL.append(Ui.createText("Pay this lightning invoice"));
+                            const qr = new VanillaQR({
+                                url: "lightning:" + invoice,
+                                size: 512,
+                                colorLight: "#ffffff",
+                                colorDark: "#000000",
+                                toTable: false,
+                                ecclevel: 1,
+                                noBorder: true
                             });
-                        }
-                    }, ["donateCl"])); // BUY
 
-                if (editMode) { // EDITOR FOR BUY
-                    if (editedEntry.paid) {
-                        parentEl.classList.add("paid");
-                    } else {
-                        parentEl.classList.remove("paid");
+                            const qrCodeEl =Ui.createDiv();
+                            qrCodeEl.setAttribute("id","qrcontainer");
+             
+                            
+                            const qrImgEl=qr.toImage("jpg");
+
+                            invoiceEL.append(qrCodeEl);
+                            qrCodeEl.appendChild(qrImgEl);
+
+
+                            const invoiceData =Ui.createInputField(undefined,"text");
+                            invoiceData.setAttribute("readonly",true);
+                            invoiceData.value=invoice;
+                            invoiceEL.append(invoiceData);
+                            invoiceEL.addEventListener("click",()=>{
+                                invoiceData.focus();
+                                invoiceData.select();
+                                document.execCommand('copy');
+                                Tasks.ok("copiedLNInvoice","Copied.");
+                            });
+
+
+                            Ui.showDialog(`Your Lightning Invoice`, invoiceEL,
+                            [
+                                {
+                                    text: `<i class="fas fa-times"></i> Close`,
+                                    action: undefined
+                                },
+                                {
+                                    text: `<i class="fas fa-times"></i> Open in Wallet`,
+                                    action: async ()=>{
+                                        const webln=await WebLN.requestProvider();
+                                        if(webln){
+                                            Tasks.ok("sentLNInvoice","Lightning payment sent.");
+                                            webln.sendPayment(invoice);
+                                        }else{                                        
+                                            const invoiceUri='lightning:'+invoice;
+                                            if(!await DeepLink.check(invoiceUri)){
+                                                Tasks.fail("notFoundAppLNInvoice","Lightning wallet not found.");
+                                            }else{
+                                                Tasks.ok("sentLNInvoice","Lightning payment sent.");
+                                            }
+                                            window.open(invoiceUri);
+                                        }
+                                    }
+                                }
+                                
+                            ]
+                        );
+                        }
                     }
-                    Ui.createEditorFor( // PRICE EDITOR
-                        buyButtonEl,
-                        "Price: ",
-                        Ui.createInputField(shownPrice),
-                        async (el) => {
-                            el.value = shownPrice;
-                            price = await Payment.fromHumanValue(el.value, chain);
-
-                        },
-                        async (e) => {
-                            price = await Payment.fromHumanValue(e.target.value, chain);
-                        },
-                        (toggled, editArea) => {
-                            if (!toggled) {
-                                delete editedEntry.paidFields;
-                                delete editedEntry.paid;
-                                parentEl.classList.remove("paid");
-                            } else {
-                                editedEntry.paid = true
-                                parentEl.classList.add("paid");
-                            }
-                        },
-                        entry.paid
-                    );
-
-                    Ui.createEditorFor( // TITLE EDITOR
-                        menuPaySectionEl.addItem(Ui.createText("Title: " + text)),
-                        "Title: ",
-                        Ui.createInputField(text),
-                        (el) => {
-                            el.value = text;
-                        },
-                        (e) => {
-                            text = e.target.value;
-                        }
-                    );
-                }
-            }
-            // }
+                ]
+            );
+            }, ["donateCl", "donateClLightning"])); // BUY
         }
+        
+        if(payinfo["paypal-id"]){
+            const paypal = section.addItem(Ui.createButton("fab fa-paypal",
+                `Donate with PayPal`, "Support this developer with a PayPal donation",async ()=>{
+                    Tasks.completable("popupPaypal", "Opening PayPal page...", {}, false);
+                    try{
+                        let params = `toolbar=no,menubar=no,width=600,height=800`
+                        window.open( `https://www.paypal.com/donate/?hosted_button_id=${payinfo["paypal-id"]}`,"donatePaypal",params);
+                        Tasks.ok("popupPaypal");
+                    }catch(e){
+                        console.log(e);                        
+                    }
+                } ,["donateCl", "donateClPaypal"])); // BUY
+        }
+ 
+        if(payinfo["patreon-id"]){
+            const patreon = section.addItem(Ui.createButton("fab fa-patreon",
+                `Support on Patreon`, "Support this developer on patreon",  async ()=>{
+                    Tasks.completable("popupPatreon", "Opening Patreon page...", {}, false);
+                    try{
+                        window.open(`https://patreon.com/${payinfo["patreon-id"]}`);
+                        Tasks.ok("popupPatreon");
+                    }catch(e){
+                        console.log(e);                        
+                    }
+                },
+                ["donateCl", "donateClPatreon"])
+            );
+        }
+ 
+        // if (!await Auth.isLoggedIn() && (entry.paid || editMode)) {
+        //     const section = menuEl.addSection("");
+
+        //     section.addItem(Ui.createWarningMessage("", `<b>LogIn required.</b>
+        //     <br />
+        //     <br />
+        //     This entry has paid features that are accessible only to logged in users.
+        //     `));
+
+        //     return;
+        // }
+        // const userId = entry.userId;
+        // const entryId = entry.entryId;
+
+
+        // const config = await Config.get();
+        // const chain = Object.keys(config.paymentChains)[0];
+
+        // if (entry.paid || editMode) {
+
+        //     if (!await Payment.isCurrentWalletConnected(chain)) {
+        //         // if (entry.paid||editMode) {
+        //         const section = menuEl.addSection("");
+        //         section.addItem(Ui.createWarningMessage("", `Wallet is not connected.
+        //         <br />
+        //         Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">connect a wallet</a> to enable payment options.`));
+
+
+        //         return;
+        //     } else if (editMode && !await Payment.isSellerContractEnabled((await Payment.getAddresses(userId, chain))[0], userId, chain)) {
+        //         if (entry.paid || editMode) {
+        //             const section = menuEl.addSection("");
+        //             section.addItem(Ui.createWarningMessage("", `The current user is not a seller.
+        //         <br />
+        //         Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">enable the seller contract</a> for this user
+        //         to use payment features.`));
+
+        //         }
+        //         return;
+        //     }
+
+
+        //     const purchaseId = await Payment.getPurchaseId(userId, entryId, Auth.getCurrentUserID(), chain);
+        //     console.log("Paid entry", entry.paid);
+        //     let price = (await Payment.getPrice(userId, entryId, chain)) || 0;
+
+        //     if (!entry.paid && !editMode && !purchaseId) return;
+        //     if( !purchaseId&&price==0&&!editMode)return;
+
+        //     const symbol = config.paymentChains[chain].nativeCurrency.symbol;
+
+        //     const initialPrice = await Payment.getPrice(userId, entryId, chain) || 0;
+        //     const initialText = await Payment.getMessage(userId, entryId, chain) || "Donate";
+
+        //     console.log(config.paymentChains[chain]);
+        //     let text = await Payment.getMessage(userId, entryId, chain) || "Donate";
+        //     onSaveListeners.push(async () => {
+        //         // (async () => {
+        //             if (price <= 0) Ui.error("Can't sell for <=0");
+        //             console.log("Sell for", price, editedEntry.paid);
+        //             if (editedEntry.paid) {
+        //                 if (price != initialPrice || text != initialText) {
+        //                     await Payment.sell(entry.entryId, price, text, chain);
+        //                 }
+        //             } else if (!editedEntry.paid && entry.paid) {
+        //                 await Payment.unsell(entry.entryId, chain);
+        //             }
+        //         // })();
+        //     });
+
+        //     let menuPaySectionEl;
+
+        //     if (purchaseId && !editMode) { // If entry has been purchased
+        //         const price = await Payment.getPurchasePrice(userId, purchaseId, chain);
+        //         const message = await Payment.getPurchaseMessage(userId, purchaseId, chain);
+        //         menuPaySectionEl = menuEl.addSection(message);
+        //         const shownPrice=(await Payment.toHumanValue(price, chain));
+
+        //         menuPaySectionEl.addItem(Ui.createText(`<i class="fas fa-check"></i> You paid ` + shownPrice + ` ${symbol}`));
+        //         const isRefundable = await Payment.isPurchaseRefundable(userId, purchaseId, chain);
+                
+        //         menuPaySectionEl.addItem(Ui.createButton("fas fa-exchange-alt", isRefundable ? "Request a refund" : "Refund time expired",
+        //             "Request a refund", async () => {
+        //                 if (!isRefundable) return;
+        //                 const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
+        //                 const sellerContract= (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
+
+        //                 Dialogs.showRefundDialog(config.paymentChains[chain],sellerContract,shownPrice,async ()=>{
+        //                await Payment.refund(entry.userId, entry.entryId, chain);
+
+        //                 })
+        //             }, [isRefundable ? "enabled" : "disabled"]));
+        //     }
+
+        //     // if ((price && entry.paid) || editMode) { // If entry is a paid entry or in editmode
+        //     if (!menuPaySectionEl) menuPaySectionEl = menuEl.addSection(!editMode ? text : "Payment Settings");
+
+        //     if (!purchaseId  || editMode) { // If never bought  or edit mode        
+        //         let shownPrice = await Payment.toHumanValue(price, chain);
+        //         if (shownPrice == 0) shownPrice = config.paymentChains[chain].defaultPricing;
+        //         const buyButtonEl = menuPaySectionEl.addItem(Ui.createButton("fas fa-shopping-cart",
+        //             "Pay " + shownPrice + " " + symbol, "Pay", async () => {
+        //                 if (!editMode) {
+        //                     const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
+        //                     Dialogs.showBuyDialog(config.paymentChains[chain],sellerAddr,
+        //                         (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
+        //                         ,shownPrice,async ()=>{
+        //                         await Payment.buy(entry.userId, entry.entryId, chain);
+        //                     });
+        //                 }
+        //             }, ["donateCl"])); // BUY
+
+        //         if (editMode) { // EDITOR FOR BUY
+        //             if (editedEntry.paid) {
+        //                 parentEl.classList.add("paid");
+        //             } else {
+        //                 parentEl.classList.remove("paid");
+        //             }
+        //             Ui.createEditorFor( // PRICE EDITOR
+        //                 buyButtonEl,
+        //                 "Price: ",
+        //                 Ui.createInputField(shownPrice),
+        //                 async (el) => {
+        //                     el.value = shownPrice;
+        //                     price = await Payment.fromHumanValue(el.value, chain);
+
+        //                 },
+        //                 async (e) => {
+        //                     price = await Payment.fromHumanValue(e.target.value, chain);
+        //                 },
+        //                 (toggled, editArea) => {
+        //                     if (!toggled) {
+        //                         delete editedEntry.paidFields;
+        //                         delete editedEntry.paid;
+        //                         parentEl.classList.remove("paid");
+        //                     } else {
+        //                         editedEntry.paid = true
+        //                         parentEl.classList.add("paid");
+        //                     }
+        //                 },
+        //                 entry.paid
+        //             );
+
+        //             Ui.createEditorFor( // TITLE EDITOR
+        //                 menuPaySectionEl.addItem(Ui.createText("Title: " + text)),
+        //                 "Title: ",
+        //                 Ui.createInputField(text),
+        //                 (el) => {
+        //                     el.value = text;
+        //                 },
+        //                 (e) => {
+        //                     text = e.target.value;
+        //                 }
+        //             );
+        //         }
+        //     }
+        //     // }
+        // }
     }
 }

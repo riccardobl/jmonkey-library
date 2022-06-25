@@ -64,6 +64,7 @@
                 "html": false
             }
         },
+        
         "error": {
             "?": "Error if any. undefined if everything is ok.",
             "type": "string",
