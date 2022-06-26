@@ -127,30 +127,51 @@ export default class GithubImporter {
     static extractUsageContent(content){
         console.info("Content ",content);
         const dom=JSDOM.fragment(`<div>${content}</div>`);
-        let outRepos=undefined;
-        let outDeps=undefined;
+        let outRepos=[];
+        let outDeps=[];
+        let found=false;
         dom.querySelectorAll("code").forEach(codeEl=>{
+            if(found)return;
+
             const code = codeEl.innerHTML;
-            console.log("Code :"+code);
-            let repos=/^\s*repositories\s*{\s*([^}]+)/img.exec(code);
-            if(repos&&repos[1]){
-                repos=repos[1];
-                repos=repos.replace(/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img,"$1");
-                repos=repos.split("\n");
-            } else repos=[];
+            // let repos=/^\s*repositories\s*{\s*([^}]+)/img.exec(code);
+            // if(repos&&repos[1]){
+            //     repos=repos[1];
+            //     repos=repos.replace(/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img,"$1");
+            //     repos=repos.split("\n");
+            // } else repos=[];
+
+            let repos=[];
+            let repo;
+            const rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
+            while((repo=rx.exec(code))!=null){
+                if(repo&&repo[1]){
+                    repo=repo[1];
+                    repos.push(repo);
+                }               
+            }
+         
 
             let deps=/^\s*dependencies\s*{\s*([^}]+)/img.exec(code);
             if(deps&&deps[1]){
                 deps=deps[1];
                 deps=deps.split("\n");
-                deps = deps.map(d=>d.split(" ",1)[1]);
+                deps = deps.map(d=>{
+                    d=d.trim();
+                    d=d.split(" ");
+                    d.shift();
+                    d= d.join(" ").trim();                    
+                    d=d.substring(1);
+                    d=d.substring(0,d.length-1);
+                    return d;
+                });
             } else deps=[];
-            console.log(repos,deps);
-            outRepos = repos;
-            outDeps = deps;
 
-            
+            outRepos.push(...repos.filter(v=>v));
+            outDeps.push(...deps.filter(v=>v));            
+            found=deps.length>0;
         });
+
         return [outRepos,outDeps];
     }
 
