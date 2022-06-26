@@ -168,16 +168,11 @@ if(config.github){
 }
 
 // const paymentGateway=new PaymentGateway();
-if(config.paymentChains){
-    console.log("Init abi parser...")
-    Abi.init(Path.resolve("../common"),async (root,path)=>{
-        const filePath=Path.join(root,path);
-        return  Fs.readFile(filePath);
-    });
+
 
     console.info("Init payment manager...");
     await PaymentManager.init(register,config.paymentChains)
-}
+
 
 try{
     JmeInitializerIndex.init(server,config);
