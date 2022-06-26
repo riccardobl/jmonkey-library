@@ -21,7 +21,7 @@ export default class Utils {
                     console.error(e);
                 }
             } 
-            setTimeout(loadNext,100);
+            setTimeout(loadNext,1);
         };
         loadNext();
         

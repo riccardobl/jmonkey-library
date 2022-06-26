@@ -125,11 +125,13 @@ export default class GithubImporter {
     }
 
     static extractUsageContent(content){
+        console.info("Content ",content);
         const dom=JSDOM.fragment(`<div>${content}</div>`);
-        const codeEls=dom.querySelectorAll("code");
-        for(const codeEl of codeEls){
-            const code = codeEl.innerText;
-
+        let outRepos=undefined;
+        let outDeps=undefined;
+        dom.querySelectorAll("code").forEach(codeEl=>{
+            const code = codeEl.innerHTML;
+            console.log("Code :"+code);
             let repos=/^\s*repositories\s*{\s*([^}]+)/img.exec(code);
             if(repos&&repos[1]){
                 repos=repos[1];
@@ -143,12 +145,13 @@ export default class GithubImporter {
                 deps=deps.split("\n");
                 deps = deps.map(d=>d.split(" ",1)[1]);
             } else deps=[];
-
-            return [repos,deps];
+            console.log(repos,deps);
+            outRepos = repos;
+            outDeps = deps;
 
             
-        }
-        return [undefined,undefined];
+        });
+        return [outRepos,outDeps];
     }
 
     static extractTitleContent(content){

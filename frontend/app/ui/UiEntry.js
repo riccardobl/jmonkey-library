@@ -15,6 +15,11 @@ export default class UiEntry {
 
 
     static async load(parentEl, userId, entryId) {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
         // Ui.loading(true, "Loading... ", 10000);
         Tasks.completable("loading", "Loading entry...", {}, true, false, undefined, false);
         // Ui.waitTask("loading","Loading entry...",{},false,false,10000);
