@@ -19,7 +19,7 @@ export default  class DiscourseGateway extends AuthGateway{
                 const sso=req.query.sso;
                 const sig=req.query.sig;
                 const authId=req.cookies['authId'];
-                const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+                const ip = req.socket.remoteAddress 
                 let [credentialData]=this.verify(authId,secret,sso,sig,[ip]);
                 credentialData=await KeysManager.set(credentialData,true,false);
                 console.log("Auth confirmed",credentialData);

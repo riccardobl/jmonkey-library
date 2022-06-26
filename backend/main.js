@@ -87,7 +87,7 @@ function register(path, apiReq, apiResp, callback) {
 
         try {
             let data = req.body;
-            const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+            const ip =  req.socket.remoteAddress;
             data = await apiReq.parse("request", data, false);
 
             data = await callback(data, ip,async (hints)=>{
