@@ -98,7 +98,7 @@ export default class SplitDonations{
                         "type": "lightning-address",
                         "description": entry.name,
                         "id":entry.userId+"/"+entry.entryId,
-                        "enabled":true,
+                        "enabled":false,
                         "weight": 0.6
                     };
                     targets.unshift(target);              
