@@ -88,18 +88,20 @@ export default class JmeInitializerIndex{
                         }
                     }
 
-                    const library={
-                        key: entry.userId + "/" + entry.entryId,
-                        displayName: `${entry.name} <i class="fa-solid fa-puzzle-piece" title="Community library" ></i> - <a target="_blank" href="${config.libraryUrl}/#!entry=${entry.userId}/${entry.entryId}" title="Open library page"><i class="fa-solid fa-question"></i></a>`,
-                        category: entry.category||"GENERAL",
-                        descriptionText: entry.descriptionSummary,
-                        artifacts: artifacts,
-                        additionalMavenRepos: repos,
-                        compatiblePlatforms: compatiblePlatforms,
-                        compatibleDeployments: compatibleDeployments
-                    };
-                    if(!libraries.find(l=>l.key==library.key)){
-                        libraries.push(library);
+                    if(artifacts.length>0){
+                        const library={
+                            key: entry.userId + "/" + entry.entryId,
+                            displayName: `${entry.name} <i class="fa-solid fa-puzzle-piece" title="Community library" ></i> - <a target="_blank" href="${config.libraryUrl}/#!entry=${entry.userId}/${entry.entryId}" title="Open library page"><i class="fa-solid fa-question"></i></a>`,
+                            category: entry.category||"GENERAL",
+                            descriptionText: entry.descriptionSummary,
+                            artifacts: artifacts,
+                            additionalMavenRepos: repos,
+                            compatiblePlatforms: compatiblePlatforms,
+                            compatibleDeployments: compatibleDeployments
+                        };
+                        if(!libraries.find(l=>l.key==library.key)){
+                            libraries.push(library);
+                        }
                     }
                 }
 
@@ -111,7 +113,8 @@ export default class JmeInitializerIndex{
 
     static async init (server,config){
         server.get("/ext/initializer/libraries.json", async (req, res) => {
-            res.json(await this.getLibrary(config))
+            res.setHeader("Cache-Control","no-cache");
+            res.json(await this.getLibrary(config));
             res.end();
         });
     }

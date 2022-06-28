@@ -110,6 +110,7 @@ export default class SplitDonations{
 
     static async init (server){
         server.get("/ext/splitdonation/targets.json", async (req, res) => {
+            res.setHeader("Cache-Control","no-cache");
             res.json(await this.get())
             res.end();
         });
