@@ -391,11 +391,11 @@ export default class UiEntry {
 
         udateEl.addItem(Ui.createText(`${updateDate.toLocaleDateString()} - ${updateDate.toLocaleTimeString()}`))
 
-        const secondRowEl = Ui.createSection(parentEl, ["responsiveWidth", entry["maven-artifacts"] && entry.license &&!editMode ? "withSide" : ""]);
+        const secondRowEl = Ui.createSection(parentEl, ["responsiveWidth", entry["maven-artifacts"]&&entry["maven-artifacts"].length>0 && entry.license &&!editMode ? "withSide" : ""]);
 
         // USAGE & LICENSE
         if(!editMode){
-            if (entry["maven-artifacts"] ) {
+            if (entry["maven-artifacts"]&&entry["maven-artifacts"].length>0 ) {
                 const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
                 secondRowEl.appendChild(usageEl);
                 let content=``;
