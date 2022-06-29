@@ -92,7 +92,7 @@ export default class Tasks {
                 setTimeout(() => {
                     console.log("Completed", taskEl);
                     taskEl.remove();
-                }, 4000);
+                }, 1000);
             } else {
                 if (task.timeout && task.timeout < Date.now()) {
                     task.done = true;
