@@ -6,7 +6,7 @@ export default class Tasks {
     static init() {
         const r=() => {
             this.renderTasks();
-            setTimeout(r,2000);
+            setTimeout(r,100);
         }
         r();
         

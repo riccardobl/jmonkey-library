@@ -889,7 +889,7 @@ nav ul,nav li{
       /* opacity:1;
       transition: opacity 1s; */
       animation-name: unblur;
-    animation-duration: 1s;
+    animation-duration: 0.5s;
     animation-fill-mode: forwards;
     /* opacity:1;
     filter:   blur(0px) ; */
