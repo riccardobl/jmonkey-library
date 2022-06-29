@@ -7,6 +7,10 @@ import Utils from "../../common/Utils.js";
 import { JSDOM } from 'jsdom';
 import Webp from 'webp-converter';
 import Tmp from 'tmp';
+import Crypto from 'crypto';
+import marked from 'marked';
+
+import createDOMPurify from 'dompurify';
 
 export default class GithubImporter {
     static initApi(register){
@@ -89,12 +93,17 @@ export default class GithubImporter {
     }
 
     static async fetchReadme(repo,token) {
-        const possibleMatches = [
-            "README.md", "README.MD", "readme.md", "Readme.md", "ReadME.md",
-            "README.txt", "README.TXT", "readme.txt", "Readme.txt", "ReadME.txt",
-            "README", "readme", "Readme", "ReadME"
-        ]
-        return this.fetchFile(repo, possibleMatches,token);
+        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme`,token).then(res=>res.json());
+
+       const content= await this.fetch(readmeData.download_url,token).then(res=>res.text());
+
+       return {file:"README",content:content};
+        // const possibleMatches = [
+        //     "README.md", "README.MD", "readme.md", "Readme.md", "ReadME.md",
+        //     "README.txt", "README.TXT", "readme.txt", "Readme.txt", "ReadME.txt",
+        //     "README", "readme", "Readme", "ReadME"
+        // ]
+        // return this.fetchFile(repo, possibleMatches,token);
     }
 
     static async fetchLicense(repo,token) {
@@ -143,11 +152,19 @@ export default class GithubImporter {
 
             let repos=[];
             let repo;
-            const rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
+            let rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
             while((repo=rx.exec(code))!=null){
                 if(repo&&repo[1]){
                     repo=repo[1];
                     repos.push(repo);
+                }               
+            }
+            
+            rx=/^\s*maven\s*githubPackage\.invoke\s*\(\s*['"]+([^'"]+)["']+/img;
+            while((repo=rx.exec(code))!=null){
+                if(repo&&repo[1]){
+                    repo=repo[1];
+                    repos.push("https://github.com/"+repo);
                 }               
             }
          
@@ -158,11 +175,32 @@ export default class GithubImporter {
                 deps=deps.split("\n");
                 deps = deps.map(d=>{
                     d=d.trim();
-                    d=d.split(" ");
+                    d=d.split(/[ (]/);
                     d.shift();
-                    d= d.join(" ").trim();                    
-                    d=d.substring(1);
-                    d=d.substring(0,d.length-1);
+                    d= d.join(" ").trim();     
+                    console.log(d);
+                    if(d.indexOf("group:")!=-1&&d.indexOf("name:")!=-1){
+                        let group=/group: ["']([^"']+)/i.exec(d);
+                        let name=/name: ["']([^"']+)/i.exec(d);
+                        let version=/version: ["']([^"']+)/i.exec(d);
+
+                        if(group)group=group[1];
+                        if(name)name=name[1];
+                        if(version)version=version[1];
+                        else version="$VERSION";
+                        
+                        if(group&&name&&version){
+                            d=`${group}:${name}:${version}`;
+                        }else{
+                            d=undefined;
+                        }
+                        
+                    }else{
+                        d=d.substring(1);
+                        d=d.substring(0,d.length-1);
+                    }
+                    
+                    
                     return d;
                 });
             } else deps=[];
@@ -357,3 +395,14 @@ export default class GithubImporter {
 };
 
 
+async function main(){
+    const window = new JSDOM('').window;
+
+    const DOMPurify = createDOMPurify(window);
+
+    await Utils.init(Crypto,marked,fetch,DOMPurify);
+
+    console.log(await GithubImporter.getEntry("jmePhonon/jmePhonon"));
+}
+
+main();
