@@ -49,18 +49,23 @@ export default class Media {
     // }
     static async getAll(userId,entryId, nMedia ) {
         const out = [];
+        const promises=[];
         for (let i = 0; i < nMedia; i++) {
-            let res;
             try{
-                res=await this.get(userId,entryId,i);
-                out.push([res.data,res.preview||res.data,res.blurred]);
-            }catch(e){
-                out.push([undefined,undefined,undefined]);
+                promises.push(this.get(userId,entryId,i));
 
+            }catch(e){
                 console.error(e);
             }
         }
-
+        (await Promise.allSettled(promises)).forEach(res=>{
+            if(res.status=="fulfilled"){
+                res=res.value;
+                out.push([res.data,res.preview||res.data,res.blurred]);
+            }else{
+                out.push([undefined,undefined,undefined]);
+            }
+        })
         return out;
     }
     static async set(userId,  entryId, mediaId) {

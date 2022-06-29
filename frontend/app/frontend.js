@@ -12,6 +12,7 @@ import Payment from "./Payment.js"
 import Abi from "/common/Abi.js";
 import Tasks from "./ui/Tasks.js";
 import UrlParams from "./UrlParams.js";
+import Msg from "./Msg.js";
 
 
 // function processEntry(parent, entry, write) {
@@ -200,6 +201,7 @@ window.addEventListener("load", async () => {
   // if (initialized) return;
   // initialized = true;
   config = await Config.get();
+  Msg.setApiVersion(config.apiVersion||"1.0");
 
   UrlParams.init();
   Utils.init(window.crypto, window.marked, window.fetch, window.DOMPurify);

@@ -105,10 +105,20 @@ export default class UiListEntries {
         for (let i in entries) {
             const entryId = entries[i].entryId;
             const userId = entries[i].userId;
-            Utils.enqueue(async () => {
-                const entry = await Entries.get(userId, entryId);
 
-                const r = await Media.get(userId, entryId, 0);
+
+
+            const entryP =  Entries.get(userId, entryId);
+            const mediaP =  Media.get(userId, entryId, 0);
+            const authorUserP =  Auth.getUser(userId);
+
+            const [entry,r,authorUser] = await Promise.all([entryP,mediaP,authorUserP]);
+            // const entry = await Entries.get(userId, entryId);
+            // const r = await Media.get(userId, entryId, 0);
+            // const authorUser = await Auth.getUser(entry.userId);
+
+            Utils.enqueue(async () => {
+
                 const media = r.data;
                 const preview = r.preview;
                 const blurred = r.blurred;
@@ -135,7 +145,6 @@ export default class UiListEntries {
 
 
                 const authorSectionEl = detailsEl.addSection();
-                const authorUser = await Auth.getUser(entry.userId);
                 const authorEl = Ui.createUserElement(authorUser);
                 authorSectionEl.addItem(authorEl);
 
