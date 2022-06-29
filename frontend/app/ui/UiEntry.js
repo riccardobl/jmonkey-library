@@ -432,7 +432,8 @@ export default class UiEntry {
                 content+=repoContent;
 
                 content+=`dependencies {\n`;
-                for( const artifact of entry["maven-artifacts"]){
+                for( let artifact of entry["maven-artifacts"]){
+                    artifact=artifact.replace("$VERSION", entry.version)
                     content+=`    implementation "${artifact}"\n`;
                 }
 
