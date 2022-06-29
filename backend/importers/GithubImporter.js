@@ -394,15 +394,3 @@ export default class GithubImporter {
     }
 };
 
-
-async function main(){
-    const window = new JSDOM('').window;
-
-    const DOMPurify = createDOMPurify(window);
-
-    await Utils.init(Crypto,marked,fetch,DOMPurify);
-
-    console.log(await GithubImporter.getEntry("jmePhonon/jmePhonon"));
-}
-
-main();
