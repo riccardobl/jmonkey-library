@@ -87,7 +87,8 @@ function register(path, apiReq, apiResp, callback) {
 
         try {
             let data = req.body;
-            const ip =  req.socket.remoteAddress;
+            let ip =  req.socket.remoteAddress;
+            if(ip.startsWith("::ffff:"))ip=ip.substring("::ffff:".length);
             data = await apiReq.parse("request", data, false);
 
             data = await callback(data, ip,async (hints)=>{
