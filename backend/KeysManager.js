@@ -45,7 +45,7 @@ export default  class KeysManager{
     }
 
     static async validate(userId,keyId,key,ip){
-        if(!userId||!keyId||!key)return false;
+        if(!userId||!keyId||!key)return false;        
         console.log("Validate",userId,keyId,key,ip);
         const keyE=await this.get(userId,keyId);
         if(!keyE){
@@ -77,7 +77,9 @@ export default  class KeysManager{
             console.log("Key is invalid",userId,keyId,keyE.key,key);
             return false;
         }
-        if(keyE.ips&&keyE.ips.length>0&&ip&&keyE.ips.indexOf(ip)==-1){
+
+        const keyIps=keyE.ips.filter(ip=>ip);
+        if(keyIps&&keyIps.length>0&&ip&&keyIps.indexOf(ip)==-1){
             console.log("Ip not authorized.");
             return false;
 
