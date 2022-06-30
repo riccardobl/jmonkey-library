@@ -6,6 +6,8 @@ import Api from '../../common/Api.js';
 import fetch from 'node-fetch';
 import Fs from 'fs';
 import KeysManager from "../KeysManager.js";
+import BackendUtils from '../BackendUtils.js';
+
 export default  class DiscourseGateway extends AuthGateway{
     static async init (server,options,register){
         const {secret,baseUrl,discourseUrl,apiKey,apiUser} = options;
@@ -19,8 +21,9 @@ export default  class DiscourseGateway extends AuthGateway{
                 const sso=req.query.sso;
                 const sig=req.query.sig;
                 const authId=req.cookies['authId'];
-                let ip = req.socket.remoteAddress 
-                if(ip.startsWith("::ffff:"))ip=ip.substring("::ffff:".length);
+                
+                const ip =  await BackendUtils.getIp(req);
+
 
                 let [credentialData]=this.verify(authId,secret,sso,sig,[ip]);
                 credentialData=await KeysManager.set(credentialData,true,false);

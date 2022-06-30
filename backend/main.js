@@ -19,6 +19,7 @@ import Database from "./Database.js";
 import DiscourseGateway from "./authgateway/DiscourseGateway.js";
 import JmeInitializerIndex from './ext/JmeInitializerIndex.js';
 import SplitDonations from "./ext/SplitDonation.js";
+import BackendUtils from './BackendUtils.js'
 import ExpressCors from 'cors';
 async function loadConfigs(onlyPublic){
     if(process.env.CONFIG_PATH){
@@ -51,6 +52,8 @@ async function loadConfigs(onlyPublic){
 
 const config=await loadConfigs();
 const port = config.port;
+
+await BackendUtils.init(config);
 
 await Database.setBasePath(config.databasePath);
 const server = Express()
@@ -87,8 +90,8 @@ function register(path, apiReq, apiResp, callback) {
 
         try {
             let data = req.body;
-            let ip =  req.socket.remoteAddress;
-            if(ip.startsWith("::ffff:"))ip=ip.substring("::ffff:".length);
+            let ip =  await BackendUtils.getIp(req);
+            
             data = await apiReq.parse("request", data, false);
 
             data = await callback(data, ip,async (hints)=>{

@@ -1,4 +1,5 @@
 {
+    "ipInHeader":"CF-Connecting-IP"
     "discourse":{
         "discourseUrl":"https://hub.jmonkeyengine.org",
         "apiUser":"system",
