@@ -307,8 +307,8 @@ export default class GithubImporter {
         entry.repo = `https://github.com/${source}/tree/${branch}`;
         entry.docs = info.has_wiki?`https://github.com/${source}/wiki`:readme.file;
         entry.website =  info.homepage;
-        entry.description = readme.content || " ";
-        entry.descriptionSummary = this.clean(info.description)||" ";
+        entry.description = readme.content ||   entry.name;
+        entry.descriptionSummary = this.clean(info.description)||  entry.name;
         entry.tags = info.topics;
         entry.download=release?release.html_url:`https://github.com/${source}/releases`;
         entry.issues=`https://github.com/${source}/issues`;
