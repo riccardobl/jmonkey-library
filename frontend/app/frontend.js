@@ -201,7 +201,7 @@ window.addEventListener("load", async () => {
   // if (initialized) return;
   // initialized = true;
   config = await Config.get();
-  Msg.setApiVersion(config.apiVersion||"1.0");
+  // Msg.setApiVersion(config.apiVersion||"1.0");
 
   UrlParams.init();
   Utils.init(window.crypto, window.marked, window.fetch, window.DOMPurify);

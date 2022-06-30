@@ -37,14 +37,14 @@ export default class GithubImporter {
     
 
     static async onImportEntry(data,ip){
-        const entry=await this.getEntry(data.repo,data.token);
+        const entry=await this.getEntry(data.repo,data.token,data.branch);
         entry.userId=data.userId;
         return entry;
     }
 
 
     static async onImportMedia(data,ip){
-        const media=await this.getMedia(data.repo,data.mediaId,data.token);
+        const media=await this.getMedia(data.repo,data.mediaId,data.token,data.branch);
         return {
             entryId:"entry",
             userId:data.userId,
@@ -59,9 +59,9 @@ export default class GithubImporter {
 
     }
 
-    static async fetchFile(repo,possibleMatches,token){
+    static async fetchFile(repo,possibleMatches,token, branch){
         const info=await this.getRepoInfos(repo,token);
-        const branch=info.default_branch||"main";
+        branch=branch||info.default_branch||"main";
 
         const url=(file)=>`https://raw.githubusercontent.com/${repo}/${branch}/${file}`;
         for(let i in possibleMatches){
@@ -81,9 +81,9 @@ export default class GithubImporter {
     }
 
 
-    static async listFiles(repo,token){
+    static async listFiles(repo,token,branch){
         const info=await this.getRepoInfos(repo,token);
-        const branch=info.default_branch||"main";
+        branch=branch||info.default_branch||"main";
         const url=`https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`;
         const tree=await this.fetch(url,token).then(res=>res.json());
         return tree.tree;
@@ -92,27 +92,24 @@ export default class GithubImporter {
         
     }
 
-    static async fetchReadme(repo,token) {
-        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme`,token).then(res=>res.json());
+    static async fetchReadme(repo,token,branch) {
+        branch=branch||info.default_branch||"main";
+
+        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(branch)}`,token).then(res=>res.json());
 
        const content= await this.fetch(readmeData.download_url,token).then(res=>res.text());
 
-       return {file:"README",content:content};
-        // const possibleMatches = [
-        //     "README.md", "README.MD", "readme.md", "Readme.md", "ReadME.md",
-        //     "README.txt", "README.TXT", "readme.txt", "Readme.txt", "ReadME.txt",
-        //     "README", "readme", "Readme", "ReadME"
-        // ]
-        // return this.fetchFile(repo, possibleMatches,token);
+       return {file:readmeData.html_url,content:content};
+
     }
 
-    static async fetchLicense(repo,token) {
+    static async fetchLicense(repo,token,branch) {
         const possibleMatches = [
             "LICENSE.md", "LICENSE.MD", "license.md", "License.md",
             "LICENSE.txt", "LICENSE.TXT", "license.txt", "License.txt",
             "LICENSE", "license", "License"
         ];
-        return this.fetchFile(repo, possibleMatches,token);
+        return this.fetchFile(repo, possibleMatches,token,branch);
     }
 
     static async fetchLastRelease(repo,token){
@@ -143,12 +140,6 @@ export default class GithubImporter {
             if(found)return;
 
             const code = codeEl.innerHTML;
-            // let repos=/^\s*repositories\s*{\s*([^}]+)/img.exec(code);
-            // if(repos&&repos[1]){
-            //     repos=repos[1];
-            //     repos=repos.replace(/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img,"$1");
-            //     repos=repos.split("\n");
-            // } else repos=[];
 
             let repos=[];
             let repo;
@@ -228,11 +219,6 @@ export default class GithubImporter {
             content=Utils.sanitize(content,{html:true});
         }
         return [title,content];
-        // if(content.startsWith("# ")){
-        //     return content.substring(0, content.indexOf("\n")).substring(2);
-        // }
-        // return undefined;
-
     }
 
     static clean(txt){
@@ -240,16 +226,17 @@ export default class GithubImporter {
         return txt.replace(/[^A-Za-z0-9\- .,_]+/g,"");
 
     }
-    static async cliCall(source,token){
+    static async cliCall(source,token,branch){
         if (!source.startsWith("https://github.com/")) throw new Error("Invalid github url " + url);
         const id = source.substring("https://github.com/".length);
+        branch=branch||info.default_branch||"main";
 
         const entry=await this.getEntry(id,token);
         const media=[];
         let mediaId=0;
         while(true){
             try{
-                const data=await this.getMedia(id,mediaId,token);
+                const data=await this.getMedia(id,mediaId,token,branch);
                 mediaId++;
                 if(!data) throw "Undefined media";
                 media.push(data);
@@ -264,8 +251,9 @@ export default class GithubImporter {
         };
     }
 
-    static async fixLinks(source,content,token){
+    static async fixLinks(source,content,token,branch){
         const info = await this.getRepoInfos(source,token);
+        branch=branch||info.default_branch||"main";
 
         const dom =  JSDOM.fragment(`<div>`+content+`</div>`);
         const toAbs=(link,raw)=>{
@@ -273,9 +261,9 @@ export default class GithubImporter {
             if(link&&!link.startsWith("http://")&&!link.startsWith("https://")){
                 if(link.startsWith("/"))link=link.substring(1);
                 if(raw){                    
-                    link=`https://raw.githubusercontent.com/${source}/${info.default_branch}/${link}`;
+                    link=`https://raw.githubusercontent.com/${source}/${branch}/${link}`;
                 }else{
-                    link=`https://github.com/${source}/tree/${info.default_branch}/${link}`;
+                    link=`https://github.com/${source}/tree/${branch}/${link}`;
                 }
             }
             return link;
@@ -294,17 +282,18 @@ export default class GithubImporter {
         return content;
     }
 
-    static async getEntry(source,token) {
+    static async getEntry(source,token,branch) {
         const info = await this.getRepoInfos(source,token);
+        branch=branch||info.default_branch||"main";
 
-        const readme=await this.fetchReadme(source,token);
-        const license=await this.fetchLicense(source,token);
-        const release=await this.fetchLastRelease(source,token);
+        const readme=await this.fetchReadme(source,token,branch);
+        const license=await this.fetchLicense(source,token,branch);
+        const release=await this.fetchLastRelease(source,token,branch);
         license.content=Utils.renderMarkdown(license.content);
-        license.content=await this.fixLinks(source,license.content,token);
+        license.content=await this.fixLinks(source,license.content,token,branch);
 
         readme.content=Utils.renderMarkdown(readme.content);
-        readme.content=await this.fixLinks(source,readme.content,token);
+        readme.content=await this.fixLinks(source,readme.content,token,branch);
         
         let repos,artifacts;
         [repos,artifacts]=this.extractUsageContent(readme.content);        
@@ -315,11 +304,11 @@ export default class GithubImporter {
         const entry = {};
         entry.entryId = info.name;
         entry.name = this.clean(title)||info.name;
-        entry.repo = `https://github.com/${source}`;
-        entry.docs = info.has_wiki?`https://github.com/${source}/wiki`:(readme.file?`https://github.com/${readme.file}`:undefined);
+        entry.repo = `https://github.com/${source}/tree/${branch}`;
+        entry.docs = info.has_wiki?`https://github.com/${source}/wiki`:readme.file;
         entry.website =  info.homepage;
-        entry.description = readme.content;
-        entry.descriptionSummary = this.clean(info.description);
+        entry.description = readme.content || " ";
+        entry.descriptionSummary = this.clean(info.description)||" ";
         entry.tags = info.topics;
         entry.download=release?release.html_url:`https://github.com/${source}/releases`;
         entry.issues=`https://github.com/${source}/issues`;
@@ -332,23 +321,24 @@ export default class GithubImporter {
 
     }
 
-    static async getMedia(source,mediaId,token) {
+    static async getMedia(source,mediaId,token,branch) {
         const info = await this.getRepoInfos(source,token);
 
+        branch=branch||info.default_branch||"main";
 
-        let mediaFiles=(await this.listFiles(source,token)).filter(f=>{
+        let mediaFiles=(await this.listFiles(source,token,branch)).filter(f=>{
             const path=f.path;
             return (path.startsWith("media/")||path.startsWith("screenshots/")||path.startsWith("screenshot/"))&&(path.endsWith(".jpg")||path.endsWith(".webp")||path.endsWith(".png")||path.endsWith(".webm")||path.endsWith(".mp4"));
         });
 
         mediaFiles=mediaFiles.map(mediaFile=>{
             mediaFile=mediaFile.path;
-            return `https://raw.githubusercontent.com/${source}/${info.default_branch}/${mediaFile}`
+            return `https://raw.githubusercontent.com/${source}/${branch}/${mediaFile}`
         })
 
-        const readme=await this.fetchReadme(source,token);
+        const readme=await this.fetchReadme(source,token,branch);
         readme.content=Utils.renderMarkdown(readme.content);
-        readme.content=await this.fixLinks(source,readme.content,token);
+        readme.content=await this.fixLinks(source,readme.content,token,branch);
         JSDOM.fragment(readme.content).querySelectorAll("img").forEach((el)=>{
             const l=el.getAttribute("src");
             if(l.endsWith(".png")||l.endsWith(".jpg")||l.endsWith(".webp")
@@ -362,28 +352,9 @@ export default class GithubImporter {
 
         let mediaFile=mediaFiles[mediaId];
         if(!mediaFile)throw "media not found";
-        // mediaFile=mediaFile.path;
 
         let buffer=await this.fetch(mediaFile,token).then(res=>res.buffer());
         let ext=mediaFile.substring(mediaFile.lastIndexOf("."));
-
-        // const tmpFile = Tmp.fileSync();
-        // const tmpFile2 = Tmp.fileSync();
-        // try{         
-        //     Fs.writeFileSync(tmpFile.name,buffer);
-        //     if(ext==".gif"){
-        //         await Webp.gwebp(tmpFile.name,tmpFile2.name,"-q 80");
-        //     }else{
-        //         await Webp.cwebp(tmpFile.name,tmpFile2.name,"-q 80");
-        //     }
-        //     buffer=Fs.readFileSync(tmpFile2.name);
-
-        //     ext=".webp";
-        // }catch(e){
-        //     console.error(e);
-        // }
-        // tmpFile.removeCallback();
-        // tmpFile2.removeCallback();
 
         const parser = new DatauriParser();
         let dataUrl=await parser.format(ext, buffer).content; 

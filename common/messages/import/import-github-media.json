@@ -15,6 +15,15 @@
             "type": "number",
             "require": true
         },
+        "branch": {
+            "type": "string",
+            "require": false,
+            "?": "Branch of the repo",
+            "sanitize": {
+                "html": false,
+                "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"
+            }
+        },
         "userId": {
             "type": "string",
             "required": true,
