@@ -79,8 +79,10 @@ export default  class KeysManager{
         }
 
         const keyIps=keyE.ips.filter(ip=>ip);
+        
         if(keyIps&&keyIps.length>0&&ip&&keyIps.indexOf(ip)==-1){
             console.log("Ip not authorized.");
+            console.log("Authorized ips",keyIps);
             return false;
 
         }
