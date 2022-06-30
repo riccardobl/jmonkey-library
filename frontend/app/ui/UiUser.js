@@ -303,9 +303,17 @@ export default class UiUser {
 
     static async loadKeys(settingsEl,config) {
 
-        const keysEl = Ui.createArticle("userKeys", "fas fa-key", "Access Keys", []);
+        const keysEl = Ui.createArticle("userKeys", "fas fa-key", "Auth Keys", []);
+     
+        keysEl.content.appendChild(Ui.toEl(`
+        <p>
+            From here you can create Auth Keys to use the library apis.
+            <br>
+            <i> You should create one Auth Key per app or service. </i>
+        </p>
+        `));
         settingsEl.appendChild(keysEl);
-        const keysTableEl = keysEl.content.appendChild(Ui.createTable(["UserID", "KeyID", "KEY", "Description", "IPs", ""]));
+        const keysTableEl = keysEl.content.appendChild(Ui.createTable(["UserID", "AuthID", "AuthKey", "Description", "IP Whitelist (csv)", ""]));
         const keys = (await Auth.getAllKeys());
         keys.forEach(key => {
             const row = keysTableEl.addRow();
@@ -339,13 +347,36 @@ export default class UiUser {
             row.addCell(Ui.createText(Auth.getCurrentUserID()));
             const keyId = Ui.createInputField();
             keyId.value = "New_Key" + keys.length;
+            keyId.addEventListener("click",()=>{
+                keyId.setCustomValidity(`The name of this key.`);
+                keyId.reportValidity();              
+            });
+
             row.addCell(keyId);
             const key = Ui.createInputField();
-            key.value = Utils.uuidv4();
+            const value=Utils.uuidv4();
+            key.value = value;
+            key.addEventListener("input",()=>{
+                key.value=value;
+            });
+
+            key.addEventListener("click",()=>{
+                key.setCustomValidity(`An auto-generated unique passphrase.`);
+                key.reportValidity();              
+            });
             row.addCell(key);
             const desc = Ui.createInputField();
+            desc.addEventListener("click",()=>{
+                desc.setCustomValidity(`An optional annotation to describe where and why this key is used.`);
+                desc.reportValidity();              
+            });
+            
             row.addCell(desc);
             const ips = Ui.createInputField();
+            ips.addEventListener("click",()=>{
+                ips.setCustomValidity(`A CSV list of IPs that can use this key. Leave empty to whitelist every IP.`);
+                ips.reportValidity();              
+            });
             row.addCell(ips);
 
             const actionsEl = document.createElement("div");
