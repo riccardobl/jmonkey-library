@@ -56,11 +56,18 @@ export default  class KeysManager{
             console.log("Key is invalid",userId,keyId,keyE.key,key);
             return false;
         }
-        if(keyE.ips&&keyE.ips.length>0&&ip&&keyE.ips.indexOf(ip)==-1){
+
+
+        const keyIps=keyE.ips.filter(ip=>ip);
+        
+        if(keyIps&&keyIps.length>0&&ip&&keyIps.indexOf(ip)==-1){
             console.log("Ip not authorized.");
+            console.log("Authorized ips",keyIps);
             return false;
 
         }
+
+     
         console.log("Valid");
         return true;
     }
