@@ -92,7 +92,7 @@ export default class Tasks {
                 setTimeout(() => {
                     console.log("Completed", taskEl);
                     taskEl.remove();
-                }, 1000);
+                }, task.error?6000:1000);
             } else {
                 if (task.timeout && task.timeout < Date.now()) {
                     task.done = true;
@@ -111,7 +111,9 @@ export default class Tasks {
             taskEl.innerHTML += ` ${task.text}`;
             const currentPage = location.href.split("!")[1] || "";
 
-            if (!task.done && !task.error) {
+            if(task.error){
+                taskEl.classList.add("important");
+            }else if (!task.done && !task.error) {
                 if (typeof task.lockPage == "string" && task.lockPage == currentPage) {
                     taskEl.classList.add("important");
                     lock=true;
@@ -162,6 +164,7 @@ export default class Tasks {
                 };
             }
             if (oldTask) {
+                oldTask.text=text;
                 console.log("Complete waiting task " + id);
                 oldTask.error = true;
                 this.setTasks(waitingTasks)

@@ -1,5 +1,5 @@
 {
-    "ipInHeader":"CF-Connecting-IP"
+    "ipInHeader":"X-Forwarded-For"
     "discourse":{
         "discourseUrl":"https://hub.jmonkeyengine.org",
         "apiUser":"system",

@@ -1011,7 +1011,7 @@ td.smallest{
     position:fixed;
     opacity: 0.99;
     margin:auto;
-    top:0vh;
+    bottom:4vh;
     max-width: 600px;
     width:100vw;
     min-height: 0;

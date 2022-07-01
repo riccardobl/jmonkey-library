@@ -11,10 +11,10 @@
                 "filter": "[A-Za-z0-9_.\\-/]+"
             }
         },
-        "branch": {
+        "ref": {
             "type": "string",
             "require": false,
-            "?": "Branch of the repo",
+            "?": "Ref to use (eg. branch or tag)",
             "sanitize": {
                 "html": false,
                 "filter": "[A-Za-z0-9_\\.@\\(\\)\\-]+"

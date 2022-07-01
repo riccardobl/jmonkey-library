@@ -37,14 +37,14 @@ export default class GithubImporter {
     
 
     static async onImportEntry(data,ip){
-        const entry=await this.getEntry(data.repo,data.token,data.branch);
+        const entry=await this.getEntry(data.repo,data.token,data.ref);
         entry.userId=data.userId;
         return entry;
     }
 
 
     static async onImportMedia(data,ip){
-        const media=await this.getMedia(data.repo,data.mediaId,data.token,data.branch);
+        const media=await this.getMedia(data.repo,data.mediaId,data.token,data.ref);
         return {
             entryId:"entry",
             userId:data.userId,
@@ -59,11 +59,11 @@ export default class GithubImporter {
 
     }
 
-    static async fetchFile(repo,possibleMatches,token, branch){
+    static async fetchFile(repo,possibleMatches,token, ref){
         const info=await this.getRepoInfos(repo,token);
-        branch=branch||info.default_branch||"main";
+        ref=ref||info.default_branch||"main";
 
-        const url=(file)=>`https://raw.githubusercontent.com/${repo}/${branch}/${file}`;
+        const url=(file)=>`https://raw.githubusercontent.com/${repo}/${ref}/${file}`;
         for(let i in possibleMatches){
             const possibleMatch=possibleMatches[i];
             const d=url(possibleMatch);
@@ -81,10 +81,10 @@ export default class GithubImporter {
     }
 
 
-    static async listFiles(repo,token,branch){
+    static async listFiles(repo,token,ref){
         const info=await this.getRepoInfos(repo,token);
-        branch=branch||info.default_branch||"main";
-        const url=`https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`;
+        ref=ref||info.default_branch||"main";
+        const url=`https://api.github.com/repos/${repo}/git/trees/${ref}?recursive=1`;
         const tree=await this.fetch(url,token).then(res=>res.json());
         return tree.tree;
       
@@ -92,10 +92,10 @@ export default class GithubImporter {
         
     }
 
-    static async fetchReadme(repo,token,branch) {
-        branch=branch||info.default_branch||"main";
+    static async fetchReadme(repo,token,ref) {
+        ref=ref||info.default_branch||"main";
 
-        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(branch)}`,token).then(res=>res.json());
+        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(ref)}`,token).then(res=>res.json());
 
        const content= await this.fetch(readmeData.download_url,token).then(res=>res.text());
 
@@ -103,13 +103,13 @@ export default class GithubImporter {
 
     }
 
-    static async fetchLicense(repo,token,branch) {
+    static async fetchLicense(repo,token,ref) {
         const possibleMatches = [
             "LICENSE.md", "LICENSE.MD", "license.md", "License.md",
             "LICENSE.txt", "LICENSE.TXT", "license.txt", "License.txt",
             "LICENSE", "license", "License"
         ];
-        return this.fetchFile(repo, possibleMatches,token,branch);
+        return this.fetchFile(repo, possibleMatches,token,ref);
     }
 
     static async fetchLastRelease(repo,token){
@@ -226,17 +226,17 @@ export default class GithubImporter {
         return txt.replace(/[^A-Za-z0-9\- .,_]+/g,"");
 
     }
-    static async cliCall(source,token,branch){
+    static async cliCall(source,token,ref){
         if (!source.startsWith("https://github.com/")) throw new Error("Invalid github url " + url);
         const id = source.substring("https://github.com/".length);
-        branch=branch||info.default_branch||"main";
+        ref=ref||info.default_branch||"main";
 
         const entry=await this.getEntry(id,token);
         const media=[];
         let mediaId=0;
         while(true){
             try{
-                const data=await this.getMedia(id,mediaId,token,branch);
+                const data=await this.getMedia(id,mediaId,token,ref);
                 mediaId++;
                 if(!data) throw "Undefined media";
                 media.push(data);
@@ -251,9 +251,9 @@ export default class GithubImporter {
         };
     }
 
-    static async fixLinks(source,content,token,branch){
+    static async fixLinks(source,content,token,ref){
         const info = await this.getRepoInfos(source,token);
-        branch=branch||info.default_branch||"main";
+        ref=ref||info.default_branch||"main";
 
         const dom =  JSDOM.fragment(`<div>`+content+`</div>`);
         const toAbs=(link,raw)=>{
@@ -261,9 +261,9 @@ export default class GithubImporter {
             if(link&&!link.startsWith("http://")&&!link.startsWith("https://")){
                 if(link.startsWith("/"))link=link.substring(1);
                 if(raw){                    
-                    link=`https://raw.githubusercontent.com/${source}/${branch}/${link}`;
+                    link=`https://raw.githubusercontent.com/${source}/${ref}/${link}`;
                 }else{
-                    link=`https://github.com/${source}/tree/${branch}/${link}`;
+                    link=`https://github.com/${source}/tree/${ref}/${link}`;
                 }
             }
             return link;
@@ -282,18 +282,18 @@ export default class GithubImporter {
         return content;
     }
 
-    static async getEntry(source,token,branch) {
+    static async getEntry(source,token,ref) {
         const info = await this.getRepoInfos(source,token);
-        branch=branch||info.default_branch||"main";
+        ref=ref||info.default_branch||"main";
 
-        const readme=await this.fetchReadme(source,token,branch);
-        const license=await this.fetchLicense(source,token,branch);
-        const release=await this.fetchLastRelease(source,token,branch);
+        const readme=await this.fetchReadme(source,token,ref);
+        const license=await this.fetchLicense(source,token,ref);
+        const release=await this.fetchLastRelease(source,token,ref);
         license.content=Utils.renderMarkdown(license.content);
-        license.content=await this.fixLinks(source,license.content,token,branch);
+        license.content=await this.fixLinks(source,license.content,token,ref);
 
         readme.content=Utils.renderMarkdown(readme.content);
-        readme.content=await this.fixLinks(source,readme.content,token,branch);
+        readme.content=await this.fixLinks(source,readme.content,token,ref);
         
         let repos,artifacts;
         [repos,artifacts]=this.extractUsageContent(readme.content);        
@@ -304,7 +304,7 @@ export default class GithubImporter {
         const entry = {};
         entry.entryId = info.name;
         entry.name = this.clean(title)||info.name;
-        entry.repo = `https://github.com/${source}/tree/${branch}`;
+        entry.repo = `https://github.com/${source}/tree/${ref}`;
         entry.docs = info.has_wiki?`https://github.com/${source}/wiki`:readme.file;
         entry.website =  info.homepage;
         entry.description = readme.content ||   entry.name;
@@ -321,24 +321,24 @@ export default class GithubImporter {
 
     }
 
-    static async getMedia(source,mediaId,token,branch) {
+    static async getMedia(source,mediaId,token,ref) {
         const info = await this.getRepoInfos(source,token);
 
-        branch=branch||info.default_branch||"main";
+        ref=ref||info.default_branch||"main";
 
-        let mediaFiles=(await this.listFiles(source,token,branch)).filter(f=>{
+        let mediaFiles=(await this.listFiles(source,token,ref)).filter(f=>{
             const path=f.path;
             return (path.startsWith("media/")||path.startsWith("screenshots/")||path.startsWith("screenshot/"))&&(path.endsWith(".jpg")||path.endsWith(".webp")||path.endsWith(".png")||path.endsWith(".webm")||path.endsWith(".mp4"));
         });
 
         mediaFiles=mediaFiles.map(mediaFile=>{
             mediaFile=mediaFile.path;
-            return `https://raw.githubusercontent.com/${source}/${branch}/${mediaFile}`
+            return `https://raw.githubusercontent.com/${source}/${ref}/${mediaFile}`
         })
 
-        const readme=await this.fetchReadme(source,token,branch);
+        const readme=await this.fetchReadme(source,token,ref);
         readme.content=Utils.renderMarkdown(readme.content);
-        readme.content=await this.fixLinks(source,readme.content,token,branch);
+        readme.content=await this.fixLinks(source,readme.content,token,ref);
         JSDOM.fragment(readme.content).querySelectorAll("img").forEach((el)=>{
             const l=el.getAttribute("src");
             if(l.endsWith(".png")||l.endsWith(".jpg")||l.endsWith(".webp")

@@ -385,19 +385,22 @@ export default class UiUser {
             const deleteBtn = Ui.createButton(undefined, "+", "Create new Key");
             actionsEl.appendChild(deleteBtn);
             Ui.setClickAction(deleteBtn, async () => {
-                Tasks.completable("createKey","Creating key...",{},true);
+                try{
+                    Tasks.completable("createKey","Creating key...",{},true);
 
-                const ipss = ips.value.split(",");
+                    const ipss = ips.value.split(",");
 
-                await Auth.setKey({
-                    userId: Auth.getCurrentUserID(),
-                    keyId: keyId.value,
-                    key: key.value,
-                    description: desc.value,
-                    ips: ipss.length > 0 ? ipss : undefined
-                });
-                Tasks.ok("createKey");
-
+                    await Auth.setKey({
+                        userId: Auth.getCurrentUserID(),
+                        keyId: keyId.value,
+                        key: key.value,
+                        description: desc.value,
+                        ips: ipss.length > 0 ? ipss : undefined
+                    });
+                    Tasks.ok("createKey");
+                }catch(e){
+                    Tasks.error("createKey",""+e);
+                }
                 //reload
             })
             row.addCell(actionsEl);
