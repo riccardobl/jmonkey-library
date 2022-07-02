@@ -171,40 +171,48 @@ window.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    document.querySelectorAll("[toggle]").forEach(el => {
-        const toggleId = el.getAttribute("toggle");
-        if (!toggleId) return;
-        const parent = document.querySelector("#" + toggleId);
-        if (!parent) return;
-        el.addEventListener("click", () => {
-            parent.querySelectorAll(".expandable").forEach(el2 => {
-                if (el2.classList.contains("expandedOnPortrait"))
-                    el2.classList.remove("expandedOnPortrait");
-                else el2.classList.add("expandedOnPortrait");
 
-            });
-            parent.querySelectorAll(".toggleable").forEach(el2 => {
-                let toggled = el2.classList.contains("toggledOn");
-                let toggledPortrait = el2.classList.contains("toggledOnPortrait");
-                let notToggledPortrait = el2.classList.contains("toggledOffPortrait");
-                toggled = toggled || toggledPortrait;
-                const portrait = notToggledPortrait || toggledPortrait;
-                console.log("Toggle ", toggled ? "on" : "off'")
-                if (toggled) {
-                    // el.removeAttribute("toggled",false);
-                    el2.classList.add(portrait ? "toggledOffPortrait" : "toggledOff");
-                    el2.classList.remove("toggledOn");
-                    el2.classList.remove("toggledOnPortrait");
+    const toggleMainMenu=(parent)=>{
+        parent.querySelectorAll(".expandable").forEach(el2 => {
+            if (el2.classList.contains("expandedOnPortrait"))
+                el2.classList.remove("expandedOnPortrait");
+            else el2.classList.add("expandedOnPortrait");
 
-                } else {
-                    // el.setAttribute("toggled",true);
-                    el2.classList.remove("toggledOff");
-                    el2.classList.remove("toggledOffPortrait");
-                    el2.classList.add(portrait ? "toggledOnPortrait" : "toggledOn");
-
-                }
-            });
         });
-    })
+        parent.querySelectorAll(".toggleable").forEach(el2 => {
+            let toggled = el2.classList.contains("toggledOn");
+            let toggledPortrait = el2.classList.contains("toggledOnPortrait");
+            let notToggledPortrait = el2.classList.contains("toggledOffPortrait");
+            toggled = toggled || toggledPortrait;
+            const portrait = notToggledPortrait || toggledPortrait;
+            console.log("Toggle ", toggled ? "on" : "off'")
+            if (toggled) {
+                // el.removeAttribute("toggled",false);
+                el2.classList.add(portrait ? "toggledOffPortrait" : "toggledOff");
+                el2.classList.remove("toggledOn");
+                el2.classList.remove("toggledOnPortrait");
 
+            } else {
+                // el.setAttribute("toggled",true);
+                el2.classList.remove("toggledOff");
+                el2.classList.remove("toggledOffPortrait");
+                el2.classList.add(portrait ? "toggledOnPortrait" : "toggledOn");
+
+            }
+        });
+    };
+
+    const setToggler=()=>{
+        let found=false;
+        for(const el of document.querySelectorAll("[toggle]")){
+            const toggleId = el.getAttribute("toggle");
+            if (!toggleId) break;
+            const parent = document.querySelector("#" + toggleId);
+            if (!parent) break;
+            el.addEventListener("click",()=>toggleMainMenu(parent));
+            found=true;
+        }
+        if(!found)setTimeout(setToggler,1000);
+    };
+    setToggler();
 });

@@ -774,26 +774,31 @@ export default class UiEntry {
         // }
 
         // COMMENTS
-        //     if (hubUrl) {
-        //         const thirdRow = Ui.createSection(parentEl, ["responsiveWidth"]);
-        //         const commentsEl = Ui.createArticle(thirdRow, "fa-comments", "Comments");
-        //         commentsEl.innerHtml = ` <div class="content" id='discourse-comments'></div>
-        //     <script type="text/javascript">
-        //             const eurl=${commentsOriginUrl} ;
+        let discourseUrl = (await Config.get()).discourse.discourseUrl;
+        if(!discourseUrl.endsWith("/"))discourseUrl=discourseUrl+"/";
+        console.info("Has dfiscourse embed",discourseUrl);
+        if (discourseUrl) {
+            const thirdRow = Ui.createSection(parentEl, ["responsiveWidth"]);
+            const commentsEl = Ui.createArticle("comments",  "fa-comments", "Comments");
+            thirdRow.appendChild(commentsEl);
+            const eurl = window.location.href;
+            const discourseUsername = await Auth.getUser(entry.userId);
 
-        //             DiscourseEmbed = { 
-        //               discourseUrl: '${hubUrl}',
-        //               discourseEmbedUrl: eurl
-        //             };
+            
+            commentsEl.content.innerHTML = ` <div class="content" id='discourse-comments'></div>`;
+            window.DiscourseEmbed = { 
+                discourseUrl: discourseUrl,
+                discourseEmbedUrl: eurl,
+                discourseUserName: discourseUsername.userName
+              };
 
-        //             (function() {
-        //               var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
-        //               d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
-        //               (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
-        //             })();
-        //           </script>
-        //   `;
-        // }
+              (function() {
+                var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+                d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+              })();
+        }
+        
 
         setTimeout(() => {
             Prism.highlightAll();
@@ -845,6 +850,9 @@ export default class UiEntry {
 
         const mainMenuRow = Ui.createSection(parentEl, ["responsiveWidth", "entryMenu"]);
 
+
+
+
         if (callerId == entry.userId || isCallerMod) {
             if (editedEntry) {
                 mainMenuRow.append(Ui.createButton(
@@ -877,19 +885,21 @@ export default class UiEntry {
 
 
                         Ui.showDialog("Suspend Entry", dialogContent, [
+                          
                             {
-                                text: "Cancel",
-                                action: async () => {
-
-                                }
-                            },
-                            {
-                                text: `Suspend  <i class="fas fa-dungeon"></i>`,
+                                text: `<i class="fas fa-dungeon"></i> Suspend`,
+                                important:true,
                                 action: async () => {
                                     editedEntry.suspended = reasonEl.value || "No reason";
                                     console.log("Suspend with reason", reasonEl.value);
 
                                     saveEntry();
+                                }
+                            },
+                            {
+                                text: "Cancel",
+                                action: async () => {
+
                                 }
                             }
                         ])
@@ -919,18 +929,20 @@ export default class UiEntry {
                     const reasonEl = dialogContent.querySelector("input");
 
                     Ui.showDialog("Block Entry", dialogContent, [
+                        
                         {
-                            text: "Cancel",
-                            action: async () => {
-
-                            }
-                        },
-                        {
-                            text: `Block  <i class="fas fa-gavel"></i>`,
+                            text: `<i class="fas fa-gavel"></i> Block `,
+                            important:true,
                             action: async () => {
                                 editedEntry.banned = reasonEl.value || "No reason";
                                 console.log("Ban with reason", reasonEl.value);
                                 saveEntry();
+                            }
+                        },
+                        {
+                            text: "Cancel",
+                            action: async () => {
+
                             }
                         }
                     ])
@@ -944,6 +956,26 @@ export default class UiEntry {
                 }));
             }
         }
+
+        const reloadLikes = (likeButton) => {
+            Entries.getLikes(entry.userId, entry.entryId).then(res => {
+                if(Auth.getCurrentUserID()&&res.likedBy.indexOf(Auth.getCurrentUserID())!=-1 ){
+                    likeButton.classList.add("highlightedCl");
+                }else{
+                    likeButton.classList.remove("highlightedCl");
+                }
+                likeButton.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
+            });
+        };
+
+        const likeButton = Ui.createButton(
+            "fas fa-spinner fa-spin", "Likes", "", async () => {
+                likeButton.querySelector("i").setAttribute("class","fas fa-spinner fa-spin");
+                await Entries.toggleLike(entry.userId, entry.entryId)
+                reloadLikes(likeButton)
+        });
+        mainMenuRow.append(likeButton);
+        reloadLikes(likeButton);
     }
 
     static async loadWarns(parentEl, entry) {
@@ -1133,12 +1165,10 @@ export default class UiEntry {
 
             Ui.showDialog(`Donate Bitcoin`, lnEl,
                 [
+                   
                     {
-                        text: `<i class="fas fa-times"></i> Cancel`,
-                        action: undefined
-                    },
-                    {
-                        text: `Generate Invoice <i class="fas fa-bolt"></i>`,
+                        text: `<i class="fas fa-bolt"></i> Generate Invoice`,
+                        important:true,
                         action: async ()=>{
                      
                             const invoice=await Payment.getLnInvoice(payinfo["ln-address"],3000);
@@ -1178,14 +1208,12 @@ export default class UiEntry {
                             });
 
 
-                            Ui.showDialog(`Your Lightning Invoice`, invoiceEL,
+                            Ui.showDialog(`<i class="fa-solid fa-bolt fa-bounce"></i> Lightning Invoice`, invoiceEL,
                             [
+                          
                                 {
-                                    text: `<i class="fas fa-times"></i> Close`,
-                                    action: undefined
-                                },
-                                {
-                                    text: `<i class="fas fa-times"></i> Open in Wallet`,
+                                    text: `<i class="fa-solid fa-rocket"></i> Open with App`,
+                                    important:true,
                                     action: async ()=>{
                                         const webln=await WebLN.requestProvider();
                                         if(webln){
@@ -1201,11 +1229,19 @@ export default class UiEntry {
                                             window.open(invoiceUri);
                                         }
                                     }
+                                },
+                                {
+                                    text: `<i class="fas fa-times"></i> Close`,
+                                    action: undefined
                                 }
                                 
                             ]
                         );
                         }
+                    },
+                    {
+                        text: `<i class="fas fa-times"></i> Cancel`,
+                        action: undefined
                     }
                 ]
             );

@@ -35,7 +35,7 @@ export default class Auth {
         req.authId = this.getCurrentKeyID();
         if ( onBehalfOf&&onBehalfOf != this.getCurrentUserID()) {
             req.userId = onBehalfOf;
-            req.modId = this.getCurrentUserID();
+            if(this.isCurrentUserMod())req.modId = this.getCurrentUserID();
         } else {
             req.userId = this.getCurrentUserID();
         }

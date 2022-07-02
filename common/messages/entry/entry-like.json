@@ -30,7 +30,7 @@
         },
         "entryUserId": {
             "type": "string",
-            "required": true,
+            "required": false,
             "sanitize":{
                 "html":false,
                 "filter":"[A-Za-z0-9_\\.@\\(\\)\\-]+"

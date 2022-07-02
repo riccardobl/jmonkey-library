@@ -1,4 +1,5 @@
 {
+    "libraryUrl":"https://library.jmonkeyengine.org/",
     "entryList":{
         "maxTitleLength":32,
         "maxSummaryLength":200

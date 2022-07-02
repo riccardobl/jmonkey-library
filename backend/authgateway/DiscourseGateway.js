@@ -78,7 +78,6 @@ export default  class DiscourseGateway extends AuthGateway{
                 'Api-Key':this.apiKey
             }
         }).then(res=>res.json());
-        console.log(userData);
         const out= {
             userName:userData.username,
             displayName:userData.name,

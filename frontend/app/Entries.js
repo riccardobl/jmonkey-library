@@ -31,7 +31,7 @@ export default class Entries {
     static async listIdsPage(query, page, listHidden,pageSize) {
         if(!pageSize)pageSize=10;
         const entryListApi = new Api(await Msg.getDef("entry/entry-list"));
-        let listReq = Auth.sign(await entryListApi.parse("request", { query: query, listHidden: listHidden }, false));
+        let listReq = (await entryListApi.parse("request",  Auth.sign({ query: query, listHidden: listHidden }), false));
         listReq.page = page;
         listReq.limit = pageSize;
 
@@ -67,7 +67,7 @@ export default class Entries {
         const entryGetApi = new Api(await Msg.getDef("entry/entry-get"));
         const entryApi = await this.getApi();
 
-        const msg = Auth.sign(await entryGetApi.parse("request", { entryId: entryId }), userId);
+        const msg = await entryGetApi.parse("request",  Auth.sign({ entryId: entryId },userId));
 
         let res = await fetch("/entry/get", {
             method: 'POST',
@@ -79,12 +79,40 @@ export default class Entries {
         return res;
     }
 
+    static async getLikes(userId, entryId) {
+        const api = new Api(await Msg.getDef("entry/entry-like"));
 
+        const msg = await api.parse("request", { userId:userId, entryId: entryId });
+
+        let res = await fetch("/entry/like-get", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify(msg),
+        }).then(r => r.json());
+
+        res = await api.parse("response", res);
+        return res;
+    }
+
+    static async toggleLike( entryUserId, entryId) {
+        const api = new Api(await Msg.getDef("entry/entry-like"));
+
+        const msg = await api.parse("request",  Auth.sign({  entryId: entryId,entryUserId:entryUserId }));
+
+        let res = await fetch("/entry/like-toggle", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify(msg),
+        }).then(r => r.json());
+
+        res = await api.parse("response", res);
+        return res;
+    }
 
     static async set(entry) {
         console.log("Update", entry);
         const entryApi = new Api(await Msg.getDef("entry/entry"));
-        const msg = Auth.sign(await entryApi.parse("request", entry), entry.userId);
+        const msg = (await entryApi.parse("request",  Auth.sign(entry,entry.userId)));
         let res = await fetch("/entry/set", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', },

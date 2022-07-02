@@ -1,5 +1,5 @@
 import Utils from "/common/Utils.js";
-const API_VERSION=1.2;
+const API_VERSION=1.3;
 export default class Msg {
     // static setApiVersion(v){
     //     this.v=v;

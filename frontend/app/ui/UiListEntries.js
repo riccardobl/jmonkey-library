@@ -55,6 +55,7 @@ export default class UiListEntries {
             }, 1000);
         });
 
+        this.userInfoEl = Ui.createSection(parentEl, ["responsiveWidth", "hlist", "list", "settings", "center"]);
 
         this.entriesEl = Ui.createSection(parentEl, ["entrylist", "list", "hlist", "responsive", "responsiveWidth"]);
         for (let i = 0; i < this.config.entriesPerPage; i++) {
@@ -101,6 +102,22 @@ export default class UiListEntries {
 
         if (searchQuery) this.searchBarInput.value = searchQuery;
 
+
+        
+        this.userInfoEl.innerHTML="";
+        const uidRegEx=/@([0-9A-Z]+)/ig;
+        const parseUid=async ()=>{
+            let userId=uidRegEx.exec(searchQuery);
+            if(!userId||!userId[1])return;
+            const userEl = Ui.createUserProfile(await Auth.getUser(userId[1]));
+            this.userInfoEl.append(userEl);
+            setTimeout(parseUid,100);
+        };
+        parseUid();
+
+
+    
+
         const entries = await Entries.listIdsPage(searchQuery ? searchQuery : ";order=asc ;sortby=updateDate", pageId, false, this.config.entriesPerPage);
         for (let i in entries) {
             const entryId = entries[i].entryId;
@@ -138,6 +155,13 @@ export default class UiListEntries {
                     UrlParams.replace({
                         entry: entry.userId + "/" + entry.entryId
                     });
+                });
+
+                const likesEl=Ui.toEl("<div class='likes'></div>");
+                newArticle.content.append(likesEl);
+
+                Entries.getLikes(entry.userId, entry.entryId).then(res => {
+                    likesEl.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
                 });
 
                 const detailsEl = Ui.createMenu();

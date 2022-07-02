@@ -22,7 +22,7 @@ export default class UiUser {
  
         const user = await Auth.getUser(Auth.getCurrentUserID());
 
-        const userInfoEl = Ui.createSection(parentEl, ["responsiveWidth", "hlist", "list", "settings"]);
+        const userInfoEl = Ui.createSection(parentEl, ["responsiveWidth", "hlist", "list", "settings", "center"]);
 
         const userEl = Ui.createUserProfile(user);
         userInfoEl.append(userEl);
@@ -85,7 +85,6 @@ export default class UiUser {
 
 
     static async loadPayInfo(settingsEl,config,user) {
-        const paymentConfig=config.paymentChains;
 
 
 

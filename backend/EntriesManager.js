@@ -154,7 +154,8 @@ export default  class EntriesManager{
     static async toggleLike(userId,entryId,likerId){  
         const lk=(await this.likeDb.get(userId,entryId))[0] ;
         const data=(await this.db.get(userId,entryId))[0];
-        const lki=lk.likedBy.indexOf(likerId);       
+        const lki=lk.likedBy.indexOf(likerId);     
+        console.log(lk,likerId,lki);  
         if(lki==-1){
             lk.likedBy.push(likerId);
             data.likes++;
@@ -163,6 +164,7 @@ export default  class EntriesManager{
             data.likes--;
         }
         await this.db.set(userId,entryId,data);
+        await this.likeDb.set(userId,entryId,lk);
         return {
             likes:data.likes,
             likedBy:lk.likedBy
@@ -220,7 +222,7 @@ export default  class EntriesManager{
         if(!KeysManager.validate(data.userId,data.authId,data.authKey,ip))throw "Unauthorized";
 
         // Search
-        return this.toggleLike(data.entryUserId,data.entryId,data.userId); 
+        return this.toggleLike(data.entryUserId||data.userId,data.entryId,data.userId); 
     }
 
     static async onLikeGetRequest(data,ip,checkReqPerms){      
@@ -230,7 +232,7 @@ export default  class EntriesManager{
         checkReqPerms(hints);
              
         // Search
-        return this.getLikes(data.userId,date.entryId);
+        return this.getLikes(data.userId,data.entryId);
     }
     
     static async onListRequest(data,ip,checkReqPerms){

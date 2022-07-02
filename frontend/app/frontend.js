@@ -191,6 +191,10 @@ import Msg from "./Msg.js";
 // }
 
 window.addEventListener("load", async () => {
+  fetch("https://raw.githubusercontent.com/jMonkeyEngine/jmonkeyengine-website/master/layouts/partials/topMenu.html").then(res=>res.text()).then(res=>{
+    const header = document.querySelector("header");
+    header.prepend(Ui.toEl(res));
+  });
   // let initialized = false;
   let config;
   let parentEl;
@@ -292,15 +296,17 @@ window.addEventListener("load", async () => {
         </span>
         `,
           [
+           
             {
-              text: `<i class="fas fa-times"></i> Cancel`
-            },
-            {
-              text: `Continue <i class="fas fa-key"></i>`,
+              text: `<i class="fas fa-key"></i> Continue`,
+              important:true,
               action: async () => {
                 Tasks.completable("log-in", "Logging in...", {}, true, false, 10000);
                 await Auth.login();
               }
+            },
+            {
+              text: `<i class="fas fa-times"></i> Cancel`
             }
           ]
 

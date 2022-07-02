@@ -508,11 +508,11 @@ export default class Ui {
         }
         document.querySelector("body").classList.add("lockedByDialog");
         const window = this.toEl(`   
-            <window id="confirmationWindow">
+            <div class="window" id="confirmationWindow">
                 <h1>${title}</h1>
                 <div class="content"></div>
                 <div class="buttons"></div>
-            </window>
+            </div>
         `);
         window.querySelector(".content").appendChild(this.toEl(content));
 
@@ -524,6 +524,9 @@ export default class Ui {
 
         buttons.forEach(btn => {
             const btnEl = this.toEl(`<button>${btn.text}</button>`);
+            if(btn.important){
+                btnEl.classList.add("highlightedCl");
+            }
             btnEl.addEventListener("click", () => {
                 if (btn.action) btn.action();
                 close();
