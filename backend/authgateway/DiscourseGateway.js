@@ -39,7 +39,7 @@ export default  class DiscourseGateway extends AuthGateway{
                     const realUrl=baseUrl+`/#!entry=${userId}/${entryId}`;
                     res.end(`<html>
                         <head>
-                            <title>${entry.name}</title>
+                            <title>${entry.name} | jMonkeyEngine | Library</title>
                             <meta http-equiv="refresh" content="1; URL=${realUrl}" />
                         </head>
                         <body>
