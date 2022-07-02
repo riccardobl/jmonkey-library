@@ -7,6 +7,7 @@ import fetch from 'node-fetch';
 import Fs from 'fs';
 import KeysManager from "../KeysManager.js";
 import BackendUtils from '../BackendUtils.js';
+import EntriesManager from "../EntriesManager.js";
 
 export default  class DiscourseGateway extends AuthGateway{
     static async init (server,options,register){
@@ -15,6 +16,40 @@ export default  class DiscourseGateway extends AuthGateway{
         this.discourseUrl=discourseUrl;
         this.apiUser=apiUser;
         this.nonces={};
+        server.get("/discourse/embedEntry", async (req, res) => {
+            console.log(req.query);
+            const entryId = req.query["entryId"];
+            const userId =""+(req.query["userId"]);
+            let entry=undefined;
+
+            if(entryId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
+            &&userId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
+            ){
+                entry = await EntriesManager.get(userId,entryId);
+            }
+
+            if(!entry){
+                res.status(404);
+                res.set('X-Robots-Tag', 'noindex');
+                res.end("404");
+            }else{
+                res.set('Content-Type', 'text/html');
+                res.set('X-Robots-Tag', 'noindex');
+                if(entry){
+                    const realUrl=baseUrl+`/#!entry=${userId}/${entryId}`;
+                    res.end(`<html>
+                        <head>
+                            <title>${entry.name}</title>
+                            <meta http-equiv="refresh" content="1; URL=${realUrl}" />
+                        </head>
+                        <body>
+                        <a href="${realUrl}">${entry.name}</a>
+                        </body>
+                        </html>`);  
+                } 
+            }
+        });
+
         server.get("/auth_confirm", async (req, res) => {
             try{
                 console.log("Receive auth confirm");

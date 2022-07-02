@@ -789,7 +789,7 @@ export default class UiEntry {
             const thirdRow = Ui.createSection(parentEl, ["responsiveWidth"]);
             const commentsEl = Ui.createArticle("comments",  "fa-comments", "Comments");
             thirdRow.appendChild(commentsEl);
-            const eurl = window.location.href;
+            const eurl = (await Config.get()).libraryUrl+"/discourse/embedEntry?userId="+encodeURIComponent(entry.userId)+"&entryId="+encodeURIComponent(entry.entryId);
             const discourseUsername = await Auth.getUser(entry.userId);
 
             
