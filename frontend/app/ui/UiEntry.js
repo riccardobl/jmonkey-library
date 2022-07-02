@@ -63,9 +63,17 @@ export default class UiEntry {
         entry=await (await Entries.getApi()).parse("database",entry,false);
         // Ui.loading(true, "Loading " + entry.entryId + (editMode ? " in edit mode..." : "..."), 10000);
         // Ui.waitTask("loading","Loading "+ entry.entryId + (editMode ? " in edit mode..." : "..."),{},false,false,10000);
+        
         Tasks.completable("loading", "Loading entry " + entry.entryId + "...", {}, true, false, undefined, false);
+
+
+        // set title
+        document.title = entry.name + " | jMonkeyEngine | Library"; 
+
+
         // Create destination for edited values if in editMode
         const editedEntry = editMode ? Utils.clone(entry) : undefined;
+
 
 
         // Create destination for edited values if in editMode
@@ -774,9 +782,9 @@ export default class UiEntry {
         // }
 
         // COMMENTS
-        let discourseUrl = (await Config.get()).discourse.discourseUrl;
+        const cnf=(await Config.get());
+        let discourseUrl = cnf.discourse? cnf.discourse.discourseUrl:undefined;
         if(!discourseUrl.endsWith("/"))discourseUrl=discourseUrl+"/";
-        console.info("Has dfiscourse embed",discourseUrl);
         if (discourseUrl) {
             const thirdRow = Ui.createSection(parentEl, ["responsiveWidth"]);
             const commentsEl = Ui.createArticle("comments",  "fa-comments", "Comments");
