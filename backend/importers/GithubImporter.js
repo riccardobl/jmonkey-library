@@ -28,13 +28,34 @@ export default class GithubImporter {
 
 
     static async fetch(url,token){
-        const options={headers: {
-            authorization: "token "+token
-          }};
-        return fetch(url,token?options:undefined);
-       
+        let lastError=undefined;
+        for(let i=0;i<4;i++){
+            try{
+                const options={headers: {
+                    authorization: "token "+token
+                }};
+                return await  fetch(url,token?options:undefined);
+            }catch(e){
+                lastError=e;
+                console.error(e);                
+            }
+        }
+        if(lastError)throw lastError;
     }
-    
+    static async fetchJSON(url,token){
+        let lastError=undefined;
+        for(let i=0;i<4;i++){
+            try{
+                const data = await this.fetch(url,token).then(res=>res.json());
+                
+                return data;
+            }catch(e){
+                lastError=e;
+                console.error(e);                
+            }
+        }
+        if(lastError)throw lastError;
+    }
 
     static async onImportEntry(data,ip){
         const entry=await this.getEntry(data.repo,data.token,data.ref);
@@ -53,7 +74,7 @@ export default class GithubImporter {
     }
 
     static async getRepoInfos(repo,token){
-        const info=await this.fetch(`https://api.github.com/repos/${repo}`,token).then(res=>res.json());
+        const info=await this.fetchJSON(`https://api.github.com/repos/${repo}`,token);
         if(info.message)throw info.message;        
         return info;
 
@@ -85,7 +106,7 @@ export default class GithubImporter {
         const info=await this.getRepoInfos(repo,token);
         ref=ref||info.default_branch||"main";
         const url=`https://api.github.com/repos/${repo}/git/trees/${ref}?recursive=1`;
-        const tree=await this.fetch(url,token).then(res=>res.json());
+        const tree=await this.fetchJSON(url,token);
         return tree.tree;
       
 
@@ -95,9 +116,9 @@ export default class GithubImporter {
     static async fetchReadme(repo,token,ref) {
         ref=ref||info.default_branch||"main";
 
-        const readmeData= await this.fetch(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(ref)}`,token).then(res=>res.json());
+        const readmeData= await this.fetchJSON(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(ref)}`,token);
 
-       const content= await this.fetch(readmeData.download_url,token).then(res=>res.text());
+       const content= await this.fetchJSON(readmeData.download_url,token);
 
        return {file:readmeData.html_url,content:content};
 
@@ -113,7 +134,7 @@ export default class GithubImporter {
     }
 
     static async fetchLastRelease(repo,token){
-        const releases=await this.fetch(`https://api.github.com/repos/${repo}/releases`,token).then(res=>res.json());
+        const releases=await this.fetchJSON(`https://api.github.com/repos/${repo}/releases`,token);
         for(let i in releases){
             const release=releases[i];
             if(!release.draft&&!release.prerelease){
