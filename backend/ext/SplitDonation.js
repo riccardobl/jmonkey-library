@@ -91,7 +91,7 @@ export default class SplitDonations{
             if(entries.entryId.length==0)break;
             for(let j=0;j<entries.entryId.length;j++){
                 const entry=await EntriesManager.get(entries.userId[j],entries.entryId[j]);
-                if(!entry.funding) continue;
+                if(!entry.funding||entry.suspended||entry.banned) continue;
                 const payInfo = await PaymentManager.get(entry.userId);
                 if(payInfo["ln-address"]){
                     const target = {
