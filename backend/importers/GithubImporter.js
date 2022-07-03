@@ -347,7 +347,7 @@ export default class GithubImporter {
         let version;
         let download;
         if(release&&release.tag_name==ref){
-            version=this.clean(releaseTag);
+            version=this.clean(release.tag_name);
             download=release.html_url
         }else{
             version=this.clean(ref);
