@@ -34,7 +34,7 @@ export default class GithubImporter {
                 const options={headers: {
                     authorization: "token "+token
                 }};
-                return await  fetch(url,token?options:undefined);
+                return await  fetch(url,token?options:undefined).then(res=>res.text());
             }catch(e){
                 lastError=e;
                 console.error(e);     
@@ -47,7 +47,7 @@ export default class GithubImporter {
         let lastError=undefined;
         for(let i=0;i<4;i++){
             try{
-                let data = await this.fetch(url,token).then(res=>res.text());
+                let data = await this.fetch(url,token);
                 console.log(data);
 
                 data = JSON.parse(data);
@@ -95,7 +95,7 @@ export default class GithubImporter {
             const d=url(possibleMatch);
 
             try{
-                const content=await this.fetch(d,token).then(res=>res.text());
+                const content=await this.fetch(d,token);
                 if(content.startsWith("404:"))throw "404";
                 console.log("Found",possibleMatch,"at",d);
                 return {file:possibleMatch,content:content.trim()};
@@ -123,7 +123,7 @@ export default class GithubImporter {
 
         const readmeData= await this.fetchJSON(`https://api.github.com/repos/${repo}/readme?ref=${encodeURIComponent(ref)}`,token);
 
-       const content= await this.fetchJSON(readmeData.download_url,token);
+       const content= await this.fetch(readmeData.download_url,token);
 
        return {file:readmeData.html_url,content:content};
 
