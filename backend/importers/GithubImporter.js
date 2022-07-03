@@ -47,7 +47,7 @@ export default class GithubImporter {
         let lastError=undefined;
         for(let i=0;i<4;i++){
             try{
-                let data = await this.fetch(url,token);
+                let data = await this.fetch(url,token).then(res=>res.text());
                 console.log(data);
 
                 data = JSON.parse(data);
