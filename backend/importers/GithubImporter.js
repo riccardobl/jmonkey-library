@@ -48,10 +48,7 @@ export default class GithubImporter {
         for(let i=0;i<4;i++){
             try{
                 let data = await this.fetch(url,token);
-                console.log(data);
-
                 data = JSON.parse(data);
-                
                 return data;
             }catch(e){
                 lastError=e;
@@ -390,7 +387,7 @@ export default class GithubImporter {
         let mediaFile=mediaFiles[mediaId];
         if(!mediaFile)throw "media not found";
 
-        let buffer=await this.fetch(mediaFile,token).then(res=>res.buffer());
+        let buffer=await fetch(mediaFile,token).then(res=>res.buffer());
         let ext=mediaFile.substring(mediaFile.lastIndexOf("."));
 
         const parser = new DatauriParser();
