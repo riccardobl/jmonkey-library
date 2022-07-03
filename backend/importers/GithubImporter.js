@@ -37,7 +37,8 @@ export default class GithubImporter {
                 return await  fetch(url,token?options:undefined);
             }catch(e){
                 lastError=e;
-                console.error(e);                
+                console.error(e);     
+                await Utils.sleep(1000);            
             }
         }
         if(lastError)throw lastError;
@@ -51,7 +52,8 @@ export default class GithubImporter {
                 return data;
             }catch(e){
                 lastError=e;
-                console.error(e);                
+                console.error(e);              
+                await Utils.sleep(100);  
             }
         }
         if(lastError)throw lastError;
