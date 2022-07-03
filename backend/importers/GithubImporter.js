@@ -324,6 +324,17 @@ export default class GithubImporter {
         let title;
         [title,readme.content]=this.extractTitleContent(readme.content);
 
+
+        let version;
+        let download;
+        if(release&&release.tag_name==ref){
+            version=this.clean(releaseTag);
+            download=release.html_url
+        }else{
+            version=this.clean(ref);
+            download=`https://github.com/${source}`;
+        }
+
         const entry = {};
         entry.entryId = info.name;
         entry.name = this.clean(title)||info.name;
@@ -333,9 +344,9 @@ export default class GithubImporter {
         entry.description = readme.content ||   entry.name;
         entry.descriptionSummary = this.clean(info.description)||  entry.name;
         entry.tags = info.topics;
-        entry.download=release?release.html_url:`https://github.com/${source}/releases`;
+        entry.download=download;
         entry.issues=`https://github.com/${source}/issues`;
-        entry.version=release?this.clean(release.tag_name):"SNAPSHOT";
+        entry.version=version;
         entry.license=license.file?license.content:undefined;
         entry["maven-repos"]=repos;        
         entry["maven-artifacts"]=artifacts;        
