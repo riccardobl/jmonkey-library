@@ -43,6 +43,25 @@ export default class GithubImporter {
         }
         if(lastError)throw lastError;
     }
+
+    static async fetchBuffer(url,token){
+        let lastError=undefined;
+        for(let i=0;i<4;i++){
+            try{
+                const options={headers: {
+                    authorization: "token "+token
+                }};
+                return await  fetch(url,token?options:undefined).then(res=>res.buffer());
+            }catch(e){
+                lastError=e;
+                console.error(e);     
+                await Utils.sleep(1000);            
+            }
+        }
+        if(lastError)throw lastError;
+    }
+
+
     static async fetchJSON(url,token){
         let lastError=undefined;
         for(let i=0;i<4;i++){
@@ -387,7 +406,7 @@ export default class GithubImporter {
         let mediaFile=mediaFiles[mediaId];
         if(!mediaFile)throw "media not found";
 
-        let buffer=await fetch(mediaFile,token).then(res=>res.buffer());
+        let buffer=await this.fetchBuffer(mediaFile,token);
         let ext=mediaFile.substring(mediaFile.lastIndexOf("."));
 
         const parser = new DatauriParser();
