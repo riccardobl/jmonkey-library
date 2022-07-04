@@ -10,7 +10,7 @@
             "required": true,
             "sanitize": {
                 "html": false,
-                "filter": "[A-Za-z .@:0-9_\\-]+"
+                "filter": "[A-Za-z .@/:0-9_\\-]+"
             }
         },
         "amountSatoshis": {

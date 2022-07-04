@@ -1109,3 +1109,7 @@ section>article>div.content>nav>ul li button{
 }
 
 
+
+section.entrylist article {
+    margin-bottom:1rem !important;
+}

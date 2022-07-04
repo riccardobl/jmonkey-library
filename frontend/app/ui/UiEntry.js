@@ -1182,7 +1182,7 @@ export default class UiEntry {
                         important:true,
                         action: async ()=>{
                      
-                            const invoice=await Payment.getLnInvoice(payinfo["ln-address"],3000);
+                            const invoice=await Payment.getLnInvoice(payinfo["ln-address"],inputSats.value);
                             
                          
                             const invoiceEL =Ui.createVList();
