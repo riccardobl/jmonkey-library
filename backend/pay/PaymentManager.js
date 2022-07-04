@@ -98,7 +98,8 @@ export default  class PaymentManager{
         return data;
     }
 
-    static async generateInvoice(lnAddr,amount){        
+    static async generateInvoice(lnAddr,amount){     
+        console.info("Generate invoice for "+lnAddr+" for "+amount+" satoshis");   
         const { invoice, params, successAction } = await LnUrlPay.requestInvoice({
             lnUrlOrAddress:lnAddr,
             tokens: amount, // satoshis
