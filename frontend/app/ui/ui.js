@@ -527,10 +527,10 @@ export default class Ui {
             if(btn.important){
                 btnEl.classList.add("highlightedCl");
             }
-            btnEl.addEventListener("click", () => {
+            btnEl.addEventListener("click", async () => {
                 if (btn.action) {
                     try{
-                        btn.action();
+                        await btn.action();
                     }catch(e){
                         console.error(e);
                         Tasks.error(title,""+e);
