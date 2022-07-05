@@ -528,7 +528,14 @@ export default class Ui {
                 btnEl.classList.add("highlightedCl");
             }
             btnEl.addEventListener("click", () => {
-                if (btn.action) btn.action();
+                if (btn.action) {
+                    try{
+                        btn.action();
+                    }catch(e){
+                        console.error(e);
+                        Tasks.error(title,""+e);
+                    }
+                }
                 close();
 
             });
