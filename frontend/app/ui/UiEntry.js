@@ -1181,7 +1181,7 @@ export default class UiEntry {
                         text: `<i class="fas fa-bolt"></i> Generate Invoice`,
                         important:true,
                         action: async ()=>{
-                     
+                            
                             const invoice=await Payment.getLnInvoice(payinfo["ln-address"],parseInt(inputSats.value));
                             
                          
@@ -1226,14 +1226,19 @@ export default class UiEntry {
                                     text: `<i class="fa-solid fa-rocket"></i> Open with App`,
                                     important:true,
                                     action: async ()=>{
-                                        const webln=await WebLN.requestProvider();
+                                        let webln;
+                                        try{
+                                            webln=await WebLN.requestProvider();
+                                        }catch(e){
+                                            console.error(e);
+                                        }
                                         if(webln){
                                             Tasks.ok("sentLNInvoice","Lightning payment sent.");
                                             webln.sendPayment(invoice);
                                         }else{                                        
                                             const invoiceUri='lightning:'+invoice;
                                             if(!await DeepLink.check(invoiceUri)){
-                                                Tasks.fail("notFoundAppLNInvoice","Lightning wallet not found.");
+                                                Tasks.error("notFoundAppLNInvoice","Lightning wallet not found.");
                                             }else{
                                                 Tasks.ok("sentLNInvoice","Lightning payment sent.");
                                             }

@@ -130,7 +130,7 @@ export default  class EntriesManager{
         return {entryId:uids,userId:namespaces};
     }
 
-    static async get(userId,entryId){        
+    static async get(userId,entryId){  
         const data=(await this.db.get(userId,entryId))[0];      
         return data;
     }

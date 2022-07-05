@@ -89,31 +89,32 @@ export default class UiUser {
 
 
 
-        const walletEl = Ui.createArticle("wallet", "fas fa-wallet", "Funding Info");
+        const walletEl = Ui.createArticle("wallet", "fas fa-wallet", "Funding");
         settingsEl.appendChild(walletEl);
-
+        walletEl.content.innerHTML=`
+        From here you can configure the ways users can fund your content.        
+        `;
         const payinfo=await Payment.getInfo(user.userId);
        
              // const headerEl=Ui.createVList();
             // walletEl.appendChild(headerEl);
-        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fas fa-bolt"></i> Bitcoin Lightning Address`));
-        walletEl.content.appendChild(Ui.createParagraph(`From here you can configure your lightning address to receive p2p 
-        ₿itcoin donations throught the lightning network.
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fas fa-bolt"></i> Bitcoin Lightning`));
+        walletEl.content.appendChild(Ui.createParagraph(`
+        A lightning address or LNURL to receive p2p donations throught the ₿itcoin lightning network.
         <br>
-        You can obtain your lightning address from a <a href="https://lightningaddress.com/#providers" target="_blank">provider</a> that supports the standard, such as the browser wallet add-on <a href="https://getalby.com">Alby</a>.
+        You can obtain a lightning address or lnurl from one of the <a target="_blank"  href="https://lightningaddress.com/#providers" target="_blank">providers</a> 
+        that supports the standard.
         <br>
-        Users will be able to donate from any lightning wallet.
+        Such as the browser wallet add-on <a target="_blank" href="https://getalby.com">Alby</a> or the mobile wallet <a target="_blank"  href="https://www.walletofsatoshi.com/">Wallet of Satoshi</a>.
         <br>
-        Leave empty to disable.
+        <i>Leave empty to disable.</i>
         
         `));
         const lnAddrEl = Ui.createInputField();
         lnAddrEl.value = payinfo["ln-address"]||"";
         lnAddrEl.placeholder="user@yournode.ln"
         walletEl.content.appendChild(lnAddrEl);
-        walletEl.content.appendChild(Ui.createParagraph(`Note: by adding a lightning address 
-        you will be also eligible to receive the experimental Split-Donations from jme-initializer.
-        `));
+   
         // let row = Ui.createHList();
         // walletEl.content.appendChild(row);
         // row.appendChild(Ui.createText("Lightning Address:    "));
@@ -121,11 +122,12 @@ export default class UiUser {
         // lnAddr.value = payinfo["ln-address"]||"";
         // row.appendChild(lnAddr);
 
-        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-paypal"></i> Paypal Donation URL`));
-        walletEl.content.appendChild(Ui.createParagraph(`From here you can add a PayPal donation url that will be used to show a "donate with PayPal" 
-        button on your published entries that are marked to receive donations. You can generate a donation URL from this page: <a target="_blank" href="https://www.paypal.com/donate/buttons?type=S&fromManage=true">PayPal - Donate Button</a>.
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-paypal"></i> PayPal`));
+        walletEl.content.appendChild(Ui.createParagraph(`The URL to a PayPal donation page.
+            <br>
+        You can generate a donation URL from this page: <a target="_blank" href="https://www.paypal.com/donate/buttons?type=S&fromManage=true">PayPal - Donate Button</a>.
         <br>
-        Leave this empty to disable donations with PayPal.
+        <i>Leave empty to disable.</i>
         `));
         const paypalUrlEl = Ui.createInputField();
         paypalUrlEl.value = payinfo["paypal-id"]?"https://www.paypal.com/donate/?hosted_button_id="+payinfo["paypal-id"]:"";
@@ -133,11 +135,11 @@ export default class UiUser {
         walletEl.content.appendChild(paypalUrlEl);
 
         walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-patreon"></i> Patreon Page`));
-        walletEl.content.appendChild(Ui.createText(`From here you can add a patreon page to your account. 
+        walletEl.content.appendChild(Ui.createParagraph(`Your patreon page.    
         <br>
-        A button to support you on patreon will be shown on your published entries that are marked for receiving donations.
-        <br>
-        Leave this empty to disable.`));
+        <i>Leave empty to disable.</i>
+
+        `));
         const patreonUrlEl = Ui.createInputField();
         patreonUrlEl.value = payinfo["patreon-id"]?"https://patreon.com/"+payinfo["patreon-id"]:"";
         patreonUrlEl.placeholder="https://patreon.com/XXXXXXXX"

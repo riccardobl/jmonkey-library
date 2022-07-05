@@ -533,7 +533,7 @@ export default class Ui {
                         await btn.action();
                     }catch(e){
                         console.error(e);
-                        Tasks.error(title,""+e);
+                        Tasks.error("action",""+e);
                     }
                 }
                 close();
