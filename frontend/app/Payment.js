@@ -54,13 +54,14 @@ export default class Payment {
         return res;
     }
 
-    static async setInfo(userId,lnAddr,paypalId,patreonId) {
+    static async setInfo(userId,lnAddr,paypalId,patreonId, githubId) {
         const payinfoApi =  new Api(await Msg.getDef("pay/payinfo"));
 
         const msg =await payinfoApi.parse("request",  Auth.sign({ 
             "ln-address":lnAddr,
             "paypal-id":paypalId,
-            "patreon-id":patreonId
+            "patreon-id":patreonId,
+            "github-id":githubId
         }, userId));
 
         let res = await fetch("/pay/set-payinfo", {

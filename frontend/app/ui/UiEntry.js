@@ -1088,7 +1088,7 @@ export default class UiEntry {
 
     static async loadPayment(parentEl, menuEl, entry, editedEntry, editMode, onSaveListeners) {
         const payinfo=await Payment.getInfo(entry.userId);
-        let hasPayInfo=payinfo["ln-address"]||payinfo["paypal-id"]||payinfo["patreon-id"];
+        let hasPayInfo=payinfo["ln-address"]||payinfo["paypal-id"]||payinfo["patreon-id"]||payinfo["github-id"];
         hasPayInfo=hasPayInfo?true:false
         if(editMode){
             const section = menuEl.addSection("Funding");
@@ -1261,7 +1261,7 @@ export default class UiEntry {
                     }
                 ]
             );
-            }, ["donateCl", "donateClLightning"])); // BUY
+            }, ["donateCl", "donateClLightning"])); 
         }
         
         if(payinfo["paypal-id"]){
@@ -1275,9 +1275,22 @@ export default class UiEntry {
                     }catch(e){
                         console.log(e);                        
                     }
-                } ,["donateCl", "donateClPaypal"])); // BUY
+                } ,["donateCl", "donateClPaypal"])); 
         }
  
+        if(payinfo["github-id"]){
+            section.addItem(Ui.createButton("fab fa-github-alt",
+                `Sponsor on GitHub`, "Support this developer with GitHub sponsor",async ()=>{
+                    Tasks.completable("popupGithub", "Opening GitHub sponsor page...", {}, false);
+                    try{
+                        window.open( `https://github.com/sponsors/${payinfo["github-id"]}`,"GitHub Sponsor");
+                        Tasks.ok("popupGithub");
+                    }catch(e){
+                        console.log(e);                        
+                    }
+                } ,["donateCl", "donateClGithub"])); 
+        }
+
         if(payinfo["patreon-id"]){
             const patreon = section.addItem(Ui.createButton("fab fa-patreon",
                 `Support on Patreon`, "Support this developer on patreon",  async ()=>{

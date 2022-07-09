@@ -70,7 +70,7 @@ export default  class PaymentManager{
 
 
 
-    static async set(userId,lnAddr,paypalId,patreonId){
+    static async set(userId,lnAddr,paypalId,patreonId,githubId){
 
         let entry=(await this.db.get(userId,userId))[0];
         if(!entry){
@@ -82,6 +82,7 @@ export default  class PaymentManager{
         entry["ln-address"]=lnAddr;
         entry["paypal-id"]=paypalId;
         entry["patreon-id"]=patreonId;
+        entry["github-id"]=githubId;
         
         entry=await this.payinfoApi.parse("database",entry);
         await this.db.set(entry.userId,entry.userId,entry);
@@ -130,7 +131,7 @@ export default  class PaymentManager{
         const canEdit=await KeysManager.canEdit(undefined,data.userId,data.authId,data.authKey,ip,hints);
         if(!canEdit) throw new Error("Unauthorized "+data.userId);
         checkReqPerms(hints);
-        return this.set(data.userId,data["ln-address"],data["paypal-id"],data["patreon-id"]);      
+        return this.set(data.userId,data["ln-address"],data["paypal-id"],data["patreon-id"],data["github-id"]);      
     }
 
     static async onGetPayInfo(dataIn,ip,checkReqPerms){

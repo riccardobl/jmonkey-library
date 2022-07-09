@@ -145,6 +145,21 @@ export default class UiUser {
         patreonUrlEl.placeholder="https://patreon.com/XXXXXXXX"
         walletEl.content.appendChild(patreonUrlEl);
 
+
+        walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-paypal"></i> GitHub Sponsor`));
+        walletEl.content.appendChild(Ui.createParagraph(`A github username that can riceve sponsorship through GitHub Sponsor.
+        <br>
+        This user needs to be opted-in to GitHub Sponsor <a href="https://github.com/sponsors" target="_blank">Click here to learn more</a>.
+            <br>
+
+        <i>Leave empty to disable.</i>
+        `));
+        const githubUrlEl = Ui.createInputField();
+        githubUrlEl.value = payinfo["github-id"]?payinfo["github-id"]:"";
+        githubUrlEl.placeholder="octocat"
+        walletEl.content.appendChild(githubUrlEl);
+
+
         walletEl.content.appendChild( Ui.createText("<br><br>"));
         walletEl.content.appendChild(Ui.createButton("","Save changes","Save changes.",async ()=>{
             let lnAddr=lnAddrEl.value;
@@ -154,11 +169,17 @@ export default class UiUser {
             }
             let patreonId=patreonUrlEl.value;
             if(patreonId){
-                patreonId=patreonId.split("patreon.com/")[1].split("/")[0]
+                patreonId=patreonId.split("patreon.com/")[1].split("/")[0];
             }
+
+            let githubId=githubUrlEl.value;
+            if(githubId&&githubId.startsWith("https://github.com/")){
+                githubId=githubId.split("github.com/")[1].split("/")[0];
+            }
+
             try{
                 Tasks.completable("savingPayinfo","Saving...",{},true);
-                await Payment.setInfo(user.userId,lnAddr,paypalId,patreonId);
+                await Payment.setInfo(user.userId,lnAddr,paypalId,patreonId, githubId);
                 Tasks.ok("savingPayinfo");
             }catch(e){
                 Tasks.error("savingPayinfo",e+"");
@@ -166,6 +187,9 @@ export default class UiUser {
             }
 
         }));
+
+   
+
 
         // const connectTable = Ui.createTable(["Blockchain","Wallets","Seller"], ["breakable"]);
         // for (let chain in paymentConfig) {
