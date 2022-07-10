@@ -39,6 +39,12 @@
             "type": "boolean",
             "required": true
         },
+        "isTrusted": {
+            "type": "boolean",
+            "?": "Is a trusted user",
+            "required": false,
+            "value": false
+        },
         "title": {
             "?": "Title of the user. Eg. role",
             "type": "string",

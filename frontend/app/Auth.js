@@ -22,6 +22,9 @@ export default class Auth {
         return Utils.getCookie("authIsMod").trim() == "true";
 
     }
+    static isCurrentUserTrusted() {
+        return Utils.getCookie("authIsTrusted").trim() == "true";
+    }
 
 
     /**
@@ -67,6 +70,7 @@ export default class Auth {
         Utils.setCookie("authUserId", undefined);
         Utils.setCookie("authKeyId", undefined);
         Utils.setCookie("authIsMod", undefined);
+        Utils.setCookie("authIsTrusted", undefined);
         Utils.setCookie("authKey", undefined);
     }
 

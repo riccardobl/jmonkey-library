@@ -9,8 +9,13 @@ export default  class AuthGateway{
     static verify(userId,options){
         console.assert("verify unimplemented");
         return null;
-
     }
+
+    static async getUser(userId){
+        return undefined;
+    }
+
+    
 
 }
 

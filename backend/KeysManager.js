@@ -4,7 +4,9 @@ import Database from './Database.js';
 import Api from '../common/Api.js';
 
 export default  class KeysManager{
-    static async init(register){
+    static async init(register,authGateway){
+        this.authGateway=authGateway;
+        
         this.db=new Database("keys.json");
         this.keyDbApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/key/key-db.json")));
         this.keySetApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/key/key-set.json")));
@@ -94,19 +96,32 @@ export default  class KeysManager{
 
         }
         console.log("Valid");
-        return keyE.isMod;
+
+        return this.authGateway?(await this.authGateway.getUser(keyE.userId)).isMod:false;
     }
 
 
     static async canEdit(modId,userId,keyId,key,ip,hints){
         if(modId){
             if(await this.validateAsMod(modId,keyId,key,ip)){
-                if(hints)hints.push("MOD");
+                if(hints){
+                    hints.push("TRUSTED");
+                    hints.push("MOD");
+                }
                 return true;
             }
             return false;
         }
-        return await this.validate(userId,keyId,key,ip);
+        if( await this.validate(userId,keyId,key,ip)){
+            if(hints&&this.authGateway){
+                const user=await this.authGateway.getUser(modId||userId);
+                if(user.isTrusted){
+                    hints.push("TRUSTED");
+                }
+            }
+            return true;
+        }      
+        return false;
     }
 
     static async set(data){

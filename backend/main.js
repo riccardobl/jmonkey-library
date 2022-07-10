@@ -141,9 +141,16 @@ function register(path, apiReq, apiResp, callback) {
     await Utils.init(Crypto,marked,fetch,DOMPurify);
 }
 
+let authGateway;
+if(config.discourse){
+    console.info("Init Discourse auth gateway...");
+    authGateway=DiscourseGateway;
+    await DiscourseGateway.init(server,   config.discourse,register);
+}
+
 {
     console.info("Init keys manager...");
-    await KeysManager.init(register);
+    await KeysManager.init(register,authGateway);
 }
 
 {
@@ -156,10 +163,7 @@ function register(path, apiReq, apiResp, callback) {
     await MediaManager.init(config,register,server);
 }
 
-if(config.discourse){
-    console.info("Init Discourse auth gateway...");
-    await DiscourseGateway.init(server,   config.discourse,register);
-}
+
 
 if(config.github){
     console.info("Init github OAUTH gateway...")

@@ -1,5 +1,5 @@
 import Utils from "/common/Utils.js";
-const API_VERSION=1.4;
+const API_VERSION=1.6;
 export default class Msg {
     // static setApiVersion(v){
     //     this.v=v;
@@ -9,7 +9,7 @@ export default class Msg {
         let content;
         try{
             content = localStorage.getItem(key);
-            console.log(content);
+            // console.log(content);
             if(content){
                 const cache = JSON.parse(content);
                 if(cache.v!=API_VERSION)throw "Old cache.";
@@ -21,7 +21,7 @@ export default class Msg {
         }
         content=await fetch("/common/messages/" + name + ".json").then(r => r.json());
         localStorage.setItem(key, JSON.stringify({
-            v:this.v,
+            v:API_VERSION,
             content:content
         }));
 

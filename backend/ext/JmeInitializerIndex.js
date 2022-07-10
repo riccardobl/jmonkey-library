@@ -29,6 +29,8 @@ export default class JmeInitializerIndex{
             if(entries.entryId.length==0)break;
             for(let j=0;j<entries.entryId.length;j++){
                 const entry=await EntriesManager.get(entries.userId[j],entries.entryId[j]);
+                if(!entry.initializerCategory)continue;
+                
                 if(entry["maven-artifacts"]&&!entry.suspended&&!entry.banned){
                     const compatiblePlatforms=[];
                     const compatibleDeployments=[];
@@ -92,7 +94,7 @@ export default class JmeInitializerIndex{
                         const library={
                             key: entry.userId + "/" + entry.entryId,
                             displayName: `${entry.name} <i class="fa-solid fa-puzzle-piece" title="Community library" ></i> - <a target="_blank" href="${config.libraryUrl}/#!entry=${entry.userId}/${entry.entryId}" title="Open library page"><i class="fa-solid fa-question"></i></a>`,
-                            category: entry.category||"GENERAL",
+                            category: entry.initializerCategory,
                             descriptionText: entry.descriptionSummary,
                             artifacts: artifacts,
                             additionalMavenRepos: repos,

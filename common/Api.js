@@ -46,9 +46,9 @@ export default class Api {
                 &&
                 (typeof entryDef["maxLength"] == "undefined" || value.length < entryDef["maxLength"])
             ) {
-                for (let ok in entryDef["options"]) {
-                    if (ok == value) {
-                        return entryDef["options"][ok]["id"];
+                for (let [k,v] of Object.entries(entryDef["options"])) {
+                    if (k == value) {
+                        return v;
                     }
                 }
                 throw "Invalid option " + k;

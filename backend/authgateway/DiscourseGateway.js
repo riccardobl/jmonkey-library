@@ -11,11 +11,12 @@ import EntriesManager from "../EntriesManager.js";
 
 export default  class DiscourseGateway extends AuthGateway{
     static async init (server,options,register){
-        const {secret,baseUrl,discourseUrl,apiKey,apiUser} = options;
+        const {secret,baseUrl,discourseUrl,apiKey,apiUser,minTrustLevel} = options;
         this.apiKey=apiKey;
         this.discourseUrl=discourseUrl;
         this.apiUser=apiUser;
         this.nonces={};
+        this.minTrustLevel=minTrustLevel;
         server.get("/discourse/embedEntry", async (req, res) => {
             console.log(req.query);
             const entryId = req.query["entryId"];
@@ -66,7 +67,10 @@ export default  class DiscourseGateway extends AuthGateway{
                 res.cookie('authKey',credentialData.key);
                 res.cookie('authUserId',credentialData.userId);
                 res.cookie('authKeyId',credentialData.keyId);
-                res.cookie('authIsMod',credentialData.isMod);
+
+                const user=await this.getUser(credentialData.userId);
+                res.cookie('authIsMod',user.isMod);
+                res.cookie('authIsTrusted',user.isTrusted);
 
                 // setInterval(async ()=>{
                 //     console.log(await KeysManager.list(credentialData.namespace,false));
@@ -99,8 +103,12 @@ export default  class DiscourseGateway extends AuthGateway{
         register("/user/get",this.userApi,this.userApi,(d,ip,checkReqPerms)=>this.onUserNameRequest(d,ip,checkReqPerms));
       
     }
+
     static async onUserNameRequest(data,ip,checkReqPerms){
-        const external_id=data.userId;
+        return this.getUser(data.userId);
+    }
+
+    static async getUser(external_id){
         if(!this.userCache)this.userCache={};
         if(this.userCache[external_id])return this.userCache[external_id];
         
@@ -119,11 +127,13 @@ export default  class DiscourseGateway extends AuthGateway{
             isMod:userData.admin||userData.moderator,
             title:userData.title,
             userId:""+userData.id,
+            isTrusted:userData.trust_level>=(this.minTrustLevel||2),
             avatar:userData.avatar_template?this.discourseUrl+userData.avatar_template.replace("{size}",512):undefined
         };
         this.userCache[external_id]=out;
         return out;
     }
+
     static authorize(userId,secret,baseUrl,discourseUrl){
         const nonce=uuidv4();
         this.nonces[userId]={
@@ -164,7 +174,8 @@ export default  class DiscourseGateway extends AuthGateway{
         resp.key=uuidv4();
         resp.expire=Date.now()+(1000*60*60*24*2);
         resp.ips=ips;
-        resp.isMod=query.searchParams.get("moderator")=="true";
+        // resp.isMod=query.searchParams.get("moderator")=="true";
+        // resp.isTrusted=this.getUser(resp.userId).isTrusted;
         return [resp];
 
     }

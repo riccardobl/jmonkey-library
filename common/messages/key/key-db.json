@@ -55,12 +55,7 @@
                 "html": false
             }
         },
-        "isMod": {
-            "type": "boolean",
-            "?": "Is a moderator",
-            "required": true,
-            "value": false
-        },
+   
         "error": {
             "type": "string",
             "sanitize": {

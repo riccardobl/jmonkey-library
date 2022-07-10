@@ -378,9 +378,21 @@ export default class UiEntry {
             if (entry["maven-artifacts"]&&entry["maven-artifacts"].length>0 ) {
                 const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
                 secondRowEl.appendChild(usageEl);
-                let content=``;
+                let content=``; 
 
+                content+="<h3>Supported Platforms</h3>";
                 
+                const findPlatform = (partial) => {
+                    for(const platform of entry.platforms){
+                        if(platform.indexOf(partial)!=-1) return platform;
+                    }
+                    return undefined;
+                }
+                if(findPlatform("_WINDOWS"))content+=`<i title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
+                if(findPlatform("_LINUX"))content+=`<i title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
+                if(findPlatform("_MACOS"))content+=`<i title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
+                if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
+                if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
 
 
                 content+=`<h3>Gradle Coordinates</h3>
@@ -427,13 +439,44 @@ export default class UiEntry {
             if (editMode) {
                 const thirdRowEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
     
-                
+
              
                 const jmeInitializerEl =  Ui.createArticle("maven", "fas fa-rocket", "Deployment",["content","text-left"]);
                 thirdRowEl.appendChild(jmeInitializerEl);
+                jmeInitializerEl.content.appendChild(Ui.createSubTitle("jMonkeyEngine Initializer"));
+                jmeInitializerEl.content.appendChild(Ui.toEl(`<span>
+                    You can toggle this option to include your entry in the <a href="https://start.jmonkeyengine.org" target="_blank">jMonkeyEngine Initializer</a>.
+                    <br>
+                    <i>This option is available only for entries that have maven coordinates. </i>
+                    <br><br>
+                    </span>
+                `,[]));
 
+
+                if(!Auth.isCurrentUserTrusted()){
+                    jmeInitializerEl.content.appendChild(Ui.createText("Only users trusted users can deploy to the initializer."));
+                }
+
+
+                jmeInitializerEl.content.appendChild(Ui.createToggle("Deploy to jme-initializer",(v)=>{
+                    if(Auth.isCurrentUserTrusted()){
+                        if(v){
+                            editedEntry.initializerCategory="GENERAL";
+                        }else{
+                            editedEntry.initializerCategory=undefined;
+                        }
+                    }
+                },editedEntry.initializerCategory
+                &&editedEntry.initializerCategory!="HIDDEN",
+                Auth.isCurrentUserTrusted(),true));
+
+             
 
                 jmeInitializerEl.content.appendChild(Ui.createSubTitle("Supported Platforms"));
+                jmeInitializerEl.content.appendChild(Ui.toEl(`<span>
+                Please select the platforms suppored by this entry
+                </span>
+            `,[]));
                 jmeInitializerEl.content.appendChild(Ui.createSubSubTitle("Mobile"));
                 jmeInitializerEl.content.appendChild( Ui.createToggle("Android",(v)=>{
                     editedEntry.platforms=editedEntry.platforms.filter(p=>p!="MOBILE_ANDROID");

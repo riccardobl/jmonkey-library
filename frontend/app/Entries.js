@@ -110,9 +110,10 @@ export default class Entries {
     }
 
     static async set(entry) {
-        console.log("Update", entry);
+  
         const entryApi = new Api(await Msg.getDef("entry/entry"));
         const msg = (await entryApi.parse("request",  Auth.sign(entry,entry.userId)));
+      
         let res = await fetch("/entry/set", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', },

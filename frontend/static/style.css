@@ -10,8 +10,10 @@ h1,h2,h3{
 h2,
 h3 {
  margin-top:0.5rem;
- margin-bottom:0.4rem;
+ margin-bottom:0.3rem;
 }
+
+
 section > article > div.content > h2:first-child,section > article > div.content > h1:first-child,section > article > div.content > h3:first-child{
     margin-top:0;
 }
@@ -265,10 +267,12 @@ nav editor label{
 }
 
 *>i.fas:first-child,
-*>i.fab:first-child {
+*>i.fab:first-child,
+*>i.far:first-child {
     padding-right:.3rem;
 }
 h1>i.fas:first-child,
+h1>i.far:first-child,
 h1>i.fab:first-child {
     padding-right:.8rem;
     padding-left:.4rem;
@@ -1117,4 +1121,10 @@ section.entrylist article {
 
 .donateClGithub{
     background-color: #bd2c00;
+}
+
+
+.platformIcon{
+    font-size:2rem;
+    margin:1rem;
 }

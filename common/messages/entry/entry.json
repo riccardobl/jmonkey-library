@@ -236,16 +236,17 @@
         },
 
  
-        "category":{
+        "initializerCategory":{
             "?":"Category",
             "type":"options",
             "options":{
-                "GUI":"GUI",
                 "GENERAL":"GENERAL",
-                "NETWORKING":"NETWORKING",
-                "PHYSICS":"PHYSICS"
+                "HIDDEN":"HIDDEN"
             },
-            "value":"GENERAL",
+            "permHints": [
+                "TRUSTED"
+            ],
+            "value":"HIDDEN",
             "required":false            
         }
         
