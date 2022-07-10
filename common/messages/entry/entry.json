@@ -164,20 +164,7 @@
             "type": "boolean",
             "required": false
         },
-        "paid": {
-            "?": "True if the entry accepts payments or donations",
-            "type": "boolean",
-            "required": false
-        },
-        "paidFields": {
-            "?": "Fields hidden to users that didn't pay for the entry",
-            "type": "string-array",
-            "value": [],
-            "sanitize": {
-                "html": false,
-                "filter": "[A-Za-z 0-9_\\-]+"
-            }
-        },
+     
         "suspended": {
             "?": "Reason for which the entry is suspended. Undefined if not suspended",
             "type": "string",

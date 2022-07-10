@@ -312,7 +312,7 @@ export default class Ui {
         return toggleBtn;
     }
 
-    static createEditorFor(forElement, label, editArea, onContentPull, onEdit, onToggle, toggled, attachEditorTo, attachButtonTo, onEditButtonClick, paid, onPaidToggle) {
+    static createEditorFor(forElement, label, editArea, onContentPull, onEdit, onToggle, toggled, attachEditorTo, attachButtonTo, onEditButtonClick) {
 
         let editAreaEl = this.toEl(editArea);
 
@@ -404,43 +404,7 @@ export default class Ui {
             });
 
         }
-        if (onPaidToggle) {
-            const toggleBtn = document.createElement("span");
-            toggleBtn.classList.add("toggleBtn");
-            toggleBtn.classList.add("paidBtn");
-            editorButtons.append(toggleBtn);
-
-            const toggleBtnText = document.createElement("span");
-            toggleBtnText.innerText = "Paid ";
-            toggleBtn.append(toggleBtnText);
-
-            const toggleBtnIcon = document.createElement("i");
-            toggleBtnIcon.className = "fas fa-check-square";
-            toggleBtn.append(toggleBtnIcon);
-
-
-
-
-            const toggle = (toggled, transparent) => {
-                if (toggled) {
-                    toggleBtnIcon.classList = "far fa-square";
-                    if (!transparent) onPaidToggle(false, editAreaEl);
-                    toggled = false;
-
-                } else {
-                    toggleBtnIcon.classList = "fas fa-check-square";
-                    if (!transparent) onPaidToggle(true, editAreaEl);
-                    toggled = true;
-
-                }
-                return toggled;
-            };
-            toggle(!paid, true);
-            toggleBtn.addEventListener("click", ev => {
-                paid = toggle(paid);
-            });
-
-        }
+        
 
         return editAreaEl;
 

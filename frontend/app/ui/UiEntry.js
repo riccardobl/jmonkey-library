@@ -7,7 +7,6 @@ import Config from "../Config.js";
 import Payment from "../Payment.js";
 import ExtImporter from "../ExtImporter.js";
 import Tasks from './Tasks.js';
-import Dialogs from '../Dialogs.js';
 import DeepLink from '../thirdparty/DeepLink.js';
 import VanillaQR from "../thirdparty/VanillaQR.js";
 
@@ -242,13 +241,8 @@ export default class UiEntry {
                             else editedEntry.download = editArea.value;
                         },
                         entry.download,
-                        undefined, undefined, undefined,
-                        entry.paidFields && entry.paidFields.includes("download"),
-                        (toggle) => {
-                            if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                            if (toggle) editedEntry.paidFields.push("download")
-                            else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "download")
-                        }
+                        undefined, undefined, undefined
+            
                     );
                     if (!entry.download) downloadBtn.classList.add("disabled");
                 }
@@ -269,13 +263,8 @@ export default class UiEntry {
                             else editedEntry.repo = editArea.value;
                         },
                         entry.repo,
-                        undefined, undefined, undefined,
-                        entry.paidFields && entry.paidFields.includes("repo"),
-                        (toggle) => {
-                            if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                            if (toggle) editedEntry.paidFields.push("repo")
-                            else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "repo")
-                        }
+                        undefined, undefined, undefined
+                      
                     );
                     if (!entry.repo) repoBtn.classList.add("disabled");
                 }
@@ -299,13 +288,8 @@ export default class UiEntry {
                             else editedEntry.docs = editArea.value;
                         },
                         entry.docs,
-                        undefined, undefined, undefined,
-                        editedEntry.paidFields && entry.paidFields.includes("docs"),
-                        (toggle) => {
-                            if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                            if (toggle) editedEntry.paidFields.push("docs")
-                            else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "docs")
-                        }
+                        undefined, undefined, undefined
+             
                     );
                     if (!entry.docs) menuSupportDocsEl.classList.add("disabled");
                 }
@@ -325,13 +309,7 @@ export default class UiEntry {
                             else editedEntry.issues = editArea.value;
                         },
                         entry.issues,
-                        undefined, undefined, undefined,
-                        editedEntry.paidFields && entry.paidFields.includes("issues"),
-                        (toggle) => {
-                            if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                            if (toggle) editedEntry.paidFields.push("issues")
-                            else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "issues")
-                        }
+                        undefined, undefined, undefined
                     );
                     if (!entry.issues) menuSupportIssuesEl.classList.add("disabled");
                 }
@@ -351,13 +329,7 @@ export default class UiEntry {
                             else editedEntry.discussions = editArea.value;
                         },
                         entry.discussions,
-                        undefined, undefined, undefined,
-                        editedEntry.paidFields && entry.paidFields.includes("discussions"),
-                        (toggle) => {
-                            if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                            if (toggle) editedEntry.paidFields.push("discussions")
-                            else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "discussions")
-                        }
+                        undefined, undefined, undefined
                     );
                     if (!entry.discussions) menuSupportDiscussionsEl.classList.add("disabled");
                 }
@@ -449,26 +421,7 @@ export default class UiEntry {
                 usageEl.content.innerHTML+=content;
 
                 
-                // usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
-                // if (editMode) Ui.createEditorFor(
-                //     usageEl.content,
-                //     "Usage Instructions: Supports Markdown and basic HTML",
-                //     `<textarea></textarea>`,
-                //     (el) => el.value = entry.usage || "",
-                //     (e) => editedEntry.usage = e.target.value || "",
-                //     (toggled, editArea) => {
-                //         if (!toggled) delete editedEntry.usage;
-                //         else editedEntry.usage = editArea.value;
-                //     },
-                //     entry.usage,
-                //     undefined, undefined, undefined,
-                //     editedEntry.paidFields && entry.paidFields.includes("usage"),
-                //     (toggle) => {
-                //         if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                //         if (toggle) editedEntry.paidFields.push("usage")
-                //         else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
-                //     }
-                // );
+               
             }
         }else{
             if (editMode) {
@@ -603,30 +556,7 @@ export default class UiEntry {
                 };
                 reloadRepoTable();
         }
-            // if (entry.usage || editMode) {
-        //     const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
-        //     secondRowEl.appendChild(usageEl);
-        //     usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
-        //     if (editMode) Ui.createEditorFor(
-        //         usageEl.content,
-        //         "Usage Instructions: Supports Markdown and basic HTML",
-        //         `<textarea></textarea>`,
-        //         (el) => el.value = entry.usage || "",
-        //         (e) => editedEntry.usage = e.target.value || "",
-        //         (toggled, editArea) => {
-        //             if (!toggled) delete editedEntry.usage;
-        //             else editedEntry.usage = editArea.value;
-        //         },
-        //         entry.usage,
-        //         undefined, undefined, undefined,
-        //         editedEntry.paidFields && entry.paidFields.includes("usage"),
-        //         (toggle) => {
-        //             if (!editedEntry.paidFields) editedEntry.paidFields = [];
-        //             if (toggle) editedEntry.paidFields.push("usage")
-        //             else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
-        //         }
-        //     );
-        // }
+
     }
 
         if (entry.license || editMode) {
@@ -644,142 +574,10 @@ export default class UiEntry {
                     else editedEntry.license = editArea.value;
                 },
                 entry.license,
-                undefined, undefined, undefined,
-                editedEntry.paidFields && entry.paidFields.includes("license"),
-                (toggle) => {
-                    if (!editedEntry.paidFields) editedEntry.paidFields = [];
-                    if (toggle) editedEntry.paidFields.push("license")
-                    else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "license")
-                }
+                undefined, undefined, undefined
             );
         }
 
-
-        
-
-        // Jme initializer
-        // if (editMode) {
-        //     const thirdRowEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
-
-       
-
-
-        //     const jmeInitializerEl =  Ui.createArticle("maven", "fas fa-rocket", "JME Initializer",["content","text-left"]);
-        //     thirdRowEl.appendChild(jmeInitializerEl);
-      
-        //     jmeInitializerEl.content.appendChild(Ui.createText(`
-        //         From this section you can specify the maven coordinates of your library to be included in jme initializer./
-        //     `));
-        //     jmeInitializerEl.content.appendChild(Ui.createSubTitle("Artifacts"));
-        //     jmeInitializerEl.content.appendChild(Ui.createText(`
-        //         List of maven artifacts needed to use this entry.
-        //     `));
-        
-        //     const artifactsTables=Ui.createTable(["Group","Artifact","Version<br>( use $VERSION for last version )",""],["text-left"])
-           
-
-
-        //     jmeInitializerEl.content.appendChild(artifactsTables);
-
-        //     const reloadArtifactsTable=()=>{
-        //         artifactsTables.querySelectorAll("tr.generated").forEach(el=>el.remove());
-        //         let row;
-        //         if( editedEntry["maven-artifacts"]){
-        //             for(let i=0;i<editedEntry["maven-artifacts"].length;i++){
-        //                 const art=editedEntry["maven-artifacts"][i];
-        //                 row=artifactsTables.addRow(["generated"]);
-        //                 const [group,repo,version]=art.split(":");
-        //                 row.addCell(Ui.createText(group));
-        //                 row.addCell(Ui.createText(repo));
-        //                 row.addCell(Ui.createText(version));
-        //                 row.addCell(Ui.createButton(undefined,"x","Remove this artifact",()=>{
-        //                     editedEntry["maven-artifacts"].splice(i,1);
-        //                     if(editedEntry["maven-artifacts"].length==0)editedEntry["maven-artifacts"]=undefined;
-        //                     reloadArtifactsTable();
-        //                 }),["smallest"]);
-
-        //             }
-        //         }
-                
-        //         row=artifactsTables.addRow(["generated"]);
-        //         let newGroupEl,newArtifactEl,newVersionEl;
-        //         row.addCell(newGroupEl=Ui.createInputField(def["maven-artifacts"],"text"));
-        //         row.addCell(newArtifactEl=Ui.createInputField(def["maven-artifacts"],"text"));
-        //         row.addCell(newVersionEl=Ui.createInputField(def["maven-artifacts"],"text"));
-        //         row.addCell(Ui.createButton(undefined,"+","Add artifacts",()=>{
-        //             const v=`${newGroupEl.value}:${newArtifactEl.value}:${newVersionEl.value}`;
-        //             if(!editedEntry["maven-artifacts"])editedEntry["maven-artifacts"]=[];
-        //             editedEntry["maven-artifacts"].push(v);
-        //             reloadArtifactsTable();
-        //         }),["smallest"]);
-        //     };
-        //     reloadArtifactsTable();
-
-        //     jmeInitializerEl.content.appendChild(Ui.createSubTitle("Additional Repositories"));
-        //     const repoTable=Ui.createTable(["Maven Repositories",""],["text-left"]);
-        //     jmeInitializerEl.content.appendChild(Ui.createText(`
-        //     Extra repositories needed to use this entry.
-        // `));
-        // jmeInitializerEl.content.appendChild(repoTable);
-
-        //     const reloadRepoTable=()=>{
-        //         repoTable.querySelectorAll("tr.generated").forEach(el=>el.remove());
-        //         let row;
-        //         if( editedEntry["maven-repos"]){
-        //             for(let i=0;i<editedEntry["maven-repos"].length;i++){
-        //                 const repo=editedEntry["maven-repos"][i];
-        //                 row=repoTable.addRow(["generated"]);
-        //                 row.addCell(Ui.createText(repo));
-        //                 row.addCell(Ui.createButton(undefined,"x","Remove this repo",()=>{
-        //                     editedEntry["maven-repos"].splice(i,1);
-        //                     if(editedEntry["maven-repos"].length==0)editedEntry["maven-repos"]=undefined;
-        //                     reloadRepoTable();
-        //                 }),["smallest"]);
-        //             }
-        //         }
-                
-        //         row=repoTable.addRow(["generated"]);
-    
-        //         const repoInput=Ui.createInputField(def["maven-repos"],"text");
-        //         repoInput.setAttribute("placeholder","mavenCentral()");
-        //         row.addCell(repoInput);
-        //         row.addCell(Ui.createButton(undefined,"+","Add repo",()=>{
-        //             if(!editedEntry["maven-repos"])editedEntry["maven-repos"]=[];
-        //             editedEntry["maven-repos"].push(repoInput.value);
-        //             reloadRepoTable();
-        //         }),["smallest"]);
-        //     };
-        //     reloadRepoTable();
-
-           
-
-
-          
-            // jmeInitializerEl.appendChild(Ui.createToggle("Add entity to jme-initializer"));
-            // jmeInitializerEl.appendChild(Ui.creast);
-
-
-            // usageEl.content.innerHTML += Utils.renderMarkdown(entry.usage || "");
-            // if (editMode) Ui.createEditorFor(
-            //     usageEl.content,
-            //     "Usage Instructions: Supports Markdown and basic HTML",
-            //     `<textarea></textarea>`,
-            //     (el) => el.value = entry.usage || "",
-            //     (e) => editedEntry.usage = e.target.value || "",
-            //     (toggled, editArea) => {
-            //         if (!toggled) delete editedEntry.usage;
-            //         else editedEntry.usage = editArea.value;
-            //     },
-            //     entry.usage,
-            //     undefined, undefined, undefined,
-            //     editedEntry.paidFields && entry.paidFields.includes("usage"),
-            //     (toggle) => {
-            //         if (!editedEntry.paidFields) editedEntry.paidFields = [];
-            //         if (toggle) editedEntry.paidFields.push("usage")
-            //         else editedEntry.paidFields = editedEntry.paidFields.filter(el => el != "usage")
-            //     }
-            // );
-        // }
 
         // COMMENTS
         const cnf=(await Config.get());
@@ -1305,164 +1103,5 @@ export default class UiEntry {
                 ["donateCl", "donateClPatreon"])
             );
         }
- 
-        // if (!await Auth.isLoggedIn() && (entry.paid || editMode)) {
-        //     const section = menuEl.addSection("");
-
-        //     section.addItem(Ui.createWarningMessage("", `<b>LogIn required.</b>
-        //     <br />
-        //     <br />
-        //     This entry has paid features that are accessible only to logged in users.
-        //     `));
-
-        //     return;
-        // }
-        // const userId = entry.userId;
-        // const entryId = entry.entryId;
-
-
-        // const config = await Config.get();
-        // const chain = Object.keys(config.paymentChains)[0];
-
-        // if (entry.paid || editMode) {
-
-        //     if (!await Payment.isCurrentWalletConnected(chain)) {
-        //         // if (entry.paid||editMode) {
-        //         const section = menuEl.addSection("");
-        //         section.addItem(Ui.createWarningMessage("", `Wallet is not connected.
-        //         <br />
-        //         Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">connect a wallet</a> to enable payment options.`));
-
-
-        //         return;
-        //     } else if (editMode && !await Payment.isSellerContractEnabled((await Payment.getAddresses(userId, chain))[0], userId, chain)) {
-        //         if (entry.paid || editMode) {
-        //             const section = menuEl.addSection("");
-        //             section.addItem(Ui.createWarningMessage("", `The current user is not a seller.
-        //         <br />
-        //         Please <a href="#Wallet!user=${Auth.getCurrentUserID()}">enable the seller contract</a> for this user
-        //         to use payment features.`));
-
-        //         }
-        //         return;
-        //     }
-
-
-        //     const purchaseId = await Payment.getPurchaseId(userId, entryId, Auth.getCurrentUserID(), chain);
-        //     console.log("Paid entry", entry.paid);
-        //     let price = (await Payment.getPrice(userId, entryId, chain)) || 0;
-
-        //     if (!entry.paid && !editMode && !purchaseId) return;
-        //     if( !purchaseId&&price==0&&!editMode)return;
-
-        //     const symbol = config.paymentChains[chain].nativeCurrency.symbol;
-
-        //     const initialPrice = await Payment.getPrice(userId, entryId, chain) || 0;
-        //     const initialText = await Payment.getMessage(userId, entryId, chain) || "Donate";
-
-        //     console.log(config.paymentChains[chain]);
-        //     let text = await Payment.getMessage(userId, entryId, chain) || "Donate";
-        //     onSaveListeners.push(async () => {
-        //         // (async () => {
-        //             if (price <= 0) Ui.error("Can't sell for <=0");
-        //             console.log("Sell for", price, editedEntry.paid);
-        //             if (editedEntry.paid) {
-        //                 if (price != initialPrice || text != initialText) {
-        //                     await Payment.sell(entry.entryId, price, text, chain);
-        //                 }
-        //             } else if (!editedEntry.paid && entry.paid) {
-        //                 await Payment.unsell(entry.entryId, chain);
-        //             }
-        //         // })();
-        //     });
-
-        //     let menuPaySectionEl;
-
-        //     if (purchaseId && !editMode) { // If entry has been purchased
-        //         const price = await Payment.getPurchasePrice(userId, purchaseId, chain);
-        //         const message = await Payment.getPurchaseMessage(userId, purchaseId, chain);
-        //         menuPaySectionEl = menuEl.addSection(message);
-        //         const shownPrice=(await Payment.toHumanValue(price, chain));
-
-        //         menuPaySectionEl.addItem(Ui.createText(`<i class="fas fa-check"></i> You paid ` + shownPrice + ` ${symbol}`));
-        //         const isRefundable = await Payment.isPurchaseRefundable(userId, purchaseId, chain);
-                
-        //         menuPaySectionEl.addItem(Ui.createButton("fas fa-exchange-alt", isRefundable ? "Request a refund" : "Refund time expired",
-        //             "Request a refund", async () => {
-        //                 if (!isRefundable) return;
-        //                 const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
-        //                 const sellerContract= (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
-
-        //                 Dialogs.showRefundDialog(config.paymentChains[chain],sellerContract,shownPrice,async ()=>{
-        //                await Payment.refund(entry.userId, entry.entryId, chain);
-
-        //                 })
-        //             }, [isRefundable ? "enabled" : "disabled"]));
-        //     }
-
-        //     // if ((price && entry.paid) || editMode) { // If entry is a paid entry or in editmode
-        //     if (!menuPaySectionEl) menuPaySectionEl = menuEl.addSection(!editMode ? text : "Payment Settings");
-
-        //     if (!purchaseId  || editMode) { // If never bought  or edit mode        
-        //         let shownPrice = await Payment.toHumanValue(price, chain);
-        //         if (shownPrice == 0) shownPrice = config.paymentChains[chain].defaultPricing;
-        //         const buyButtonEl = menuPaySectionEl.addItem(Ui.createButton("fas fa-shopping-cart",
-        //             "Pay " + shownPrice + " " + symbol, "Pay", async () => {
-        //                 if (!editMode) {
-        //                     const sellerAddr=(await Payment.getAddresses(userId, chain))[0]
-        //                     Dialogs.showBuyDialog(config.paymentChains[chain],sellerAddr,
-        //                         (await Payment.getSellerContract(sellerAddr,userId,chain)).options.address
-        //                         ,shownPrice,async ()=>{
-        //                         await Payment.buy(entry.userId, entry.entryId, chain);
-        //                     });
-        //                 }
-        //             }, ["donateCl"])); // BUY
-
-        //         if (editMode) { // EDITOR FOR BUY
-        //             if (editedEntry.paid) {
-        //                 parentEl.classList.add("paid");
-        //             } else {
-        //                 parentEl.classList.remove("paid");
-        //             }
-        //             Ui.createEditorFor( // PRICE EDITOR
-        //                 buyButtonEl,
-        //                 "Price: ",
-        //                 Ui.createInputField(shownPrice),
-        //                 async (el) => {
-        //                     el.value = shownPrice;
-        //                     price = await Payment.fromHumanValue(el.value, chain);
-
-        //                 },
-        //                 async (e) => {
-        //                     price = await Payment.fromHumanValue(e.target.value, chain);
-        //                 },
-        //                 (toggled, editArea) => {
-        //                     if (!toggled) {
-        //                         delete editedEntry.paidFields;
-        //                         delete editedEntry.paid;
-        //                         parentEl.classList.remove("paid");
-        //                     } else {
-        //                         editedEntry.paid = true
-        //                         parentEl.classList.add("paid");
-        //                     }
-        //                 },
-        //                 entry.paid
-        //             );
-
-        //             Ui.createEditorFor( // TITLE EDITOR
-        //                 menuPaySectionEl.addItem(Ui.createText("Title: " + text)),
-        //                 "Title: ",
-        //                 Ui.createInputField(text),
-        //                 (el) => {
-        //                     el.value = text;
-        //                 },
-        //                 (e) => {
-        //                     text = e.target.value;
-        //                 }
-        //             );
-        //         }
-        //     }
-        //     // }
-        // }
     }
 }

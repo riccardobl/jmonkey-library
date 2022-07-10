@@ -171,12 +171,10 @@ if(config.github){
     await AutoImporter.initApi(register);
 }
 
-// const paymentGateway=new PaymentGateway();
-
-
+{
     console.info("Init payment manager...");
-    await PaymentManager.init(register,config.paymentChains)
-
+    await PaymentManager.init(register)
+}
 
 try{
     JmeInitializerIndex.init(server,config);

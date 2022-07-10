@@ -7,56 +7,8 @@ import Abi from "../../common/Abi.js";
 import Web3 from 'web3';
 import LnUrlPay from 'lnurl-pay';
 export default  class PaymentManager{
-    static init(register,paymentChainsConfig){
-        
-        // this.config=paymentChainsConfig;
-        
-        
-        // this.web3s={};
+    static init(register){
 
-        // for(let chain in paymentChainsConfig){
-        //     const web3providerUrl=paymentChainsConfig[chain].rpcUrls[0];
-        //     let web3provider;
-        //     if (web3providerUrl.startsWith("https://")) {
-        //         web3provider = new Web3.providers.HttpProvider(web3providerUrl, {
-        //             keepAlive: true,
-        //             withCredentials: false,
-        //         });
-        //     } else {
-        //         web3provider = new Web3.providers.WebsocketProvider(web3providerUrl, {
-        //             clientConfig: {      
-        //                 keepalive: true,
-        //                 keepaliveInterval: 1000
-        //             },
-        //             reconnect: {
-        //                 auto: true,
-        //                 delay: 1000,
-        //                 maxAttempts: 999,
-        //                 onTimeout: false
-        //             }
-        //         });
-        //     }
-        //     if(web3providerUrl){
-        //         console.log("Load web3 with provider",web3providerUrl,"for chain",chain);
-            
-        //         const web3 = new Web3(web3provider);
-        //         this.web3s[chain]=web3;
-        //     }else{
-        //         console.error("Can't load web3 with provider",web3providerUrl,"for chain",chain,". Unsupported provider.");
-        //     }
-        // }
-        
-
-               
-        
-        // this.db=new Database("payments.json");
-        // this.setAddrApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/pay/addr-set.json")));
-        // this.addrApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/pay/addr.json")));
-        // this.factories={};
-
-        // register("/pay/set-address",this.setAddrApi,this.setAddrApi,(d,ip,checkReqPerms,checkRespPerms)=>this.onSetRequest(d,ip,checkReqPerms));
-        // register("/pay/get-address",this.addrApi,this.addrApi,(d,ip,checkReqPerms,checkRespPerms)=>this.onGetRequest(d,ip,checkReqPerms));
-        
         this.db=new Database("payinfo.json");
         this.payinfoApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/pay/payinfo.json")));
         this.payinfoGetApi=new Api(JSON.parse(Fs.readFileSync("./common/messages/pay/payinfo-get.json")));

@@ -79,7 +79,7 @@ export default class SplitDonations{
                 "collective": "jmonkeyengine",
                 "minSats": 5034,
                 "description": "jMonkeyEngine opencollective",
-                "weight": 0.2
+                "weight": 0.0
             }
         ];
     }
