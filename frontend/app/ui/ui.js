@@ -533,7 +533,7 @@ export default class Ui {
         <img src="${user.avatar}">
         <figcaption>
         <h2 alt="${user.userName}" style="display: inline-block;">${user.displayName}</h2>
-        <span class="ghbio">${user.title}</span>
+        <span class="ghbio">${user.title||""}</span>
         <div>
         <a alt="hub profile" title="Hub Profile" href="https://hub.jmonkeyengine.org/u/${user.userName}" style="display: inline-block;"><i class="fab fa-discourse"></i></a>
         </div>
