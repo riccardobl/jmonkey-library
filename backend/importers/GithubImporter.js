@@ -86,9 +86,9 @@ export default class GithubImporter {
 
 
     static async onImportMedia(data,ip){
-        const media=await this.getMedia(data.repo,data.mediaId,data.token,data.ref);
+        const [info,media]=await this.getMedia(data.repo,data.mediaId,data.token,data.ref);
         return {
-            entryId:"entry",
+            entryId:info.name,
             userId:data.userId,
             data:media
         };
@@ -278,7 +278,7 @@ export default class GithubImporter {
         let mediaId=0;
         while(true){
             try{
-                const data=await this.getMedia(id,mediaId,token,ref);
+                const data=await this.getMedia(id,mediaId,token,ref)[1];
                 mediaId++;
                 if(!data) throw "Undefined media";
                 media.push(data);
@@ -413,7 +413,7 @@ export default class GithubImporter {
         let dataUrl=await parser.format(ext, buffer).content; 
 
       
-        return dataUrl;
+        return [info,dataUrl];
         
     }
 };
