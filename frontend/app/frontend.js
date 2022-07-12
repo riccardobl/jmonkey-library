@@ -235,7 +235,7 @@ window.addEventListener("load", async () => {
 
   mainMenu = document.querySelector("#mainMenu");
 
-  document.body.querySelector("header").append(Ui.createMessage("", config.globalMessage));
+  if( config.globalMessage)document.body.querySelector("header").append(Ui.createMessage("", config.globalMessage));
 
   await Payment.init();
 

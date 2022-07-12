@@ -375,7 +375,7 @@ export default class UiEntry {
 
         // USAGE & LICENSE
         if(!editMode){
-            if (entry["maven-artifacts"]&&entry["maven-artifacts"].length>0 ) {
+            // if ( ) {
                 const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
                 secondRowEl.appendChild(usageEl);
                 let content=``; 
@@ -394,47 +394,48 @@ export default class UiEntry {
                 if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
                 if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
 
+                if(entry["maven-artifacts"]&&entry["maven-artifacts"].length>0){
+                    content+=`<h3>Gradle Coordinates</h3>
 
-                content+=`<h3>Gradle Coordinates</h3>
+                    <pre class="language-gradle">`;
+                    
 
-                <pre class="language-gradle">`;
-                
-
-                let githubPackageRegistry=false;
-    
-                let repoContent=`repositories {\n`;
-                
-                for( const repo of entry["maven-repos"]){
-                    if(repo.startsWith("https://github.com/")){
-                        const [,,,ghowner,ghrepo, ]=repo.split("/");
-                        repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
-                        githubPackageRegistry=true;
-                    }else if(repo.startsWith("http")  ){
-                        repoContent+=`    maven { url "${repo}" }\n`;
-                    }else{
-                        repoContent+=`    ${repo}\n`;
+                    let githubPackageRegistry=false;
+        
+                    let repoContent=`repositories {\n`;
+                    
+                    for( const repo of entry["maven-repos"]){
+                        if(repo.startsWith("https://github.com/")){
+                            const [,,,ghowner,ghrepo, ]=repo.split("/");
+                            repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
+                            githubPackageRegistry=true;
+                        }else if(repo.startsWith("http")  ){
+                            repoContent+=`    maven { url "${repo}" }\n`;
+                        }else{
+                            repoContent+=`    ${repo}\n`;
+                        }
                     }
+                    repoContent+=`}\n\n`;
+
+                    if(githubPackageRegistry){
+                        content+=`\nplugins {\n    id "io.github.0ffz.github-packages" version "1.2.1"\n}\n\n`;
+                    }
+
+                    content+=repoContent;
+
+                    content+=`dependencies {\n`;
+                    for( let artifact of entry["maven-artifacts"]){
+                        artifact=artifact.replace("$VERSION", entry.version)
+                        content+=`    implementation "${artifact}"\n`;
+                    }
+
+                    content+=`}\n</pre>`;
                 }
-                repoContent+=`}\n\n`;
-
-                if(githubPackageRegistry){
-                    content+=`\nplugins {\n    id "io.github.0ffz.github-packages" version "1.2.1"\n}\n\n`;
-                }
-
-                content+=repoContent;
-
-                content+=`dependencies {\n`;
-                for( let artifact of entry["maven-artifacts"]){
-                    artifact=artifact.replace("$VERSION", entry.version)
-                    content+=`    implementation "${artifact}"\n`;
-                }
-
-                content+=`}\n</pre>`;
                 usageEl.content.innerHTML+=content;
 
                 
                
-            }
+            // }
         }else{
             if (editMode) {
                 const thirdRowEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
@@ -454,7 +455,11 @@ export default class UiEntry {
 
 
                 if(!Auth.isCurrentUserTrusted()){
-                    jmeInitializerEl.content.appendChild(Ui.createText("Only users trusted users can deploy to the initializer."));
+                    jmeInitializerEl.content.appendChild(Ui.createText(`Only trusted users can deploy to the initializer.
+                        <br>
+                    If you are a trusted user and you see this message, please logout and login again.
+                    
+                    `));
                 }
 
 
@@ -692,11 +697,11 @@ export default class UiEntry {
     }
 
     static async loadMainMenu(parentEl, entry, editedEntry, saveEntry, reload) {
-        if (!await Auth.isLoggedIn()) {
-            const msg = Ui.createMessage("", "LogIn to interract with this entry");
-            parentEl.appendChild(msg);
-            return;
-        }
+        // if (!await Auth.isLoggedIn()) {
+        //     const msg = Ui.createMessage("", "LogIn to interract with this entry");
+        //     parentEl.appendChild(msg);
+        //     return;
+        // }
         const callerId = Auth.getCurrentUserID();
         const isCallerMod = Auth.isCurrentUserMod();
 
@@ -822,9 +827,11 @@ export default class UiEntry {
 
         const likeButton = Ui.createButton(
             "fas fa-spinner fa-spin", "Likes", "", async () => {
-                likeButton.querySelector("i").setAttribute("class","fas fa-spinner fa-spin");
-                await Entries.toggleLike(entry.userId, entry.entryId)
-                reloadLikes(likeButton)
+                if(await Auth.isLoggedIn()){
+                    likeButton.querySelector("i").setAttribute("class","fas fa-spinner fa-spin");
+                    await Entries.toggleLike(entry.userId, entry.entryId)
+                    reloadLikes(likeButton);
+                }
         });
         mainMenuRow.append(likeButton);
         reloadLikes(likeButton);

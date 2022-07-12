@@ -1128,3 +1128,7 @@ section.entrylist article {
     font-size:2rem;
     margin:1rem;
 }
+
+pre,code{
+    pointer-events: all!important;
+}
