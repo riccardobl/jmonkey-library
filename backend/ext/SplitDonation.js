@@ -99,7 +99,8 @@ export default class SplitDonations{
                         "description": entry.name,
                         "id":entry.userId+"/"+entry.entryId,
                         "enabled":false,
-                        "weight": 0.6
+                        "weight": 0.6,
+                        "addr": payInfo["ln-address"]
                     };
                     targets.unshift(target);              
                 }
