@@ -814,27 +814,29 @@ export default class UiEntry {
             }
         }
 
-        const reloadLikes = (likeButton) => {
-            Entries.getLikes(entry.userId, entry.entryId).then(res => {
-                if(Auth.getCurrentUserID()&&res.likedBy.indexOf(Auth.getCurrentUserID())!=-1 ){
-                    likeButton.classList.add("highlightedCl");
-                }else{
-                    likeButton.classList.remove("highlightedCl");
-                }
-                likeButton.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
-            });
-        };
+        if(!editedEntry){
+            const reloadLikes = (likeButton) => {
+                Entries.getLikes(entry.userId, entry.entryId).then(res => {
+                    if(Auth.getCurrentUserID()&&res.likedBy.indexOf(Auth.getCurrentUserID())!=-1 ){
+                        likeButton.classList.add("highlightedCl");
+                    }else{
+                        likeButton.classList.remove("highlightedCl");
+                    }
+                    likeButton.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
+                });
+            };
 
-        const likeButton = Ui.createButton(
-            "fas fa-spinner fa-spin", "Likes", "", async () => {
-                if(await Auth.isLoggedIn()){
-                    likeButton.querySelector("i").setAttribute("class","fas fa-spinner fa-spin");
-                    await Entries.toggleLike(entry.userId, entry.entryId)
-                    reloadLikes(likeButton);
-                }
-        });
-        mainMenuRow.append(likeButton);
-        reloadLikes(likeButton);
+            const likeButton = Ui.createButton(
+                "fas fa-spinner fa-spin", "Likes", "", async () => {
+                    if(await Auth.isLoggedIn()){
+                        likeButton.querySelector("i").setAttribute("class","fas fa-spinner fa-spin");
+                        await Entries.toggleLike(entry.userId, entry.entryId)
+                        reloadLikes(likeButton);
+                    }
+            });
+            mainMenuRow.append(likeButton);
+            reloadLikes(likeButton);
+        }
     }
 
     static async loadWarns(parentEl, entry) {

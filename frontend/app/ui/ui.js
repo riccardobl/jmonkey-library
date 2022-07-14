@@ -597,8 +597,9 @@ export default class Ui {
         return menu;
     }
 
-    static createShowCase(title, isGallery) {
+    static createShowCase(title, isGallery,classes) {
         const showcaseEl = document.createElement("section");
+        this.addClasses(showcaseEl, classes);
         showcaseEl.setAttribute("id", "showcase");
         showcaseEl.className = "responsiveWidth";
         if (isGallery) {

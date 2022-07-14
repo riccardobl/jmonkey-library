@@ -31,7 +31,7 @@ export default class UiListEntries {
         this.config = await Config.get();
 
 
-        this.showcase = Ui.createShowCase("", false);
+        this.showcase = Ui.createShowCase("", false,["cycle"]);
         parentEl.appendChild(this.showcase);
 
         this.searchBarEl = parentEl.querySelector(".searchbar");
@@ -82,7 +82,7 @@ export default class UiListEntries {
 
     static cycle() {
         const showcase = document.querySelector("#showcase");
-        if (showcase) {
+        if (showcase && showcase.classList.contains("cycle")) {
             showcase.showcase.cycleShowCase(1);
             setTimeout(this.cycle, 10000);
         }
