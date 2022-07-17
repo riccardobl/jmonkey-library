@@ -249,7 +249,7 @@ export default class UiEntry {
             }
 
             if (entry.repo || editMode) {
-                const repoBtn = menuDownloadEl.addItem(Ui.createButton("fab fa-git-alt", "Repository / Source", entry.repo || "", entry.repo || ""));
+                const repoBtn = menuDownloadEl.addItem(Ui.createButton("fab fa-git-alt", "Source", entry.repo || "", entry.repo || ""));
                 if (editMode) {
                     const input = Ui.createInputField(def.repo);
                     Ui.createEditorFor(
@@ -957,7 +957,7 @@ export default class UiEntry {
 
         if(payinfo["ln-address"]){
             const lightning = section.addItem(Ui.createButton("fas fa-bolt",
-                `Donate ₿ on Lightning`, "Support this developer with a donation in Bitcoin on the Lightning Network", async () => {
+                `Donate ₿itcoin`, "Support this developer with a donation in Bitcoin on the Lightning Network", async () => {
                
             // const content = Ui.toEl(`
             //     <span>                                           
