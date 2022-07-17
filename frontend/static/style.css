@@ -268,7 +268,9 @@ nav editor label{
 
 *>i.fas:first-child,
 *>i.fab:first-child,
-*>i.far:first-child {
+*>i.far:first-child,
+*>i.fa-solid:first-child
+ {
     padding-right:.3rem;
 }
 h1>i.fas:first-child,
@@ -408,6 +410,7 @@ section.entrylist article .likes{
 
 section.entrylist article{
     position: relative;
+
 /* display: flex;
 flex-direction: column;
 align-items: center;
@@ -418,15 +421,28 @@ section.entrylist article .content{
 }
 section.entrylist article .cover{
     border-radius:.4rem;
-}
-
-section.entrylist  nav{
-    text-align: center!important;;
-
-    margin-top:auto!important;
+    opacity:0.7;    
 }
 
 
+
+section.list>article>div.content{
+    text-align: left;
+}
+section.list>article>div.content nav{
+    text-align: left;
+
+    margin-top:auto;
+    margin-bottom:1rem;
+
+}
+
+section.entrylist>article>div.content>nav>ul li
+{
+    line-height: 80%;
+    font-size:0.7rem;
+
+}
 section.entrylist nav ul{
     flex-direction: row;
     flex-wrap:wrap;
@@ -441,7 +457,7 @@ section.entrylist ul{
 section.entrylist article h1{
     z-index:1;
     /* background:none; */
-    text-align: center;;
+    padding-left:1rem;
     /* font-size: 2.4rem; */
     /* margin-left:0;
     margin-right:0;

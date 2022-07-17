@@ -183,7 +183,7 @@ export default class GithubImporter {
 
             const code = codeEl.innerHTML;
 
-            let repos=Utils.extractMavenRepos(code);
+            const repos=Utils.extractMavenRepos(code);
             // let repo;
             // let rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
             // while((repo=rx.exec(code))!=null){
