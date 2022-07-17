@@ -57,7 +57,7 @@
             "type": "number",
             "require": true,
             "min": 0,
-            "max": 3
+            "max": 9
         },
         "data": {
             "?": "Media encoded in base64 dataUrl",

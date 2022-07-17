@@ -27,7 +27,7 @@
             "require": true,
             "?": "Numeric id of the media to return",
             "min": 0,
-            "max": 3
+            "max": 9
         },
         "modId": {
             "?": "Id of the mod that is sending the request on behalf of userId, if needed, otherwise undefined",

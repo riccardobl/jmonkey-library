@@ -23,7 +23,7 @@
             "type": "string-array",
             "required": true,
             "minArrayLength": 0,
-            "maxArrayLength": 4,
+            "maxArrayLength": 10,
             "value": []
         }
     }

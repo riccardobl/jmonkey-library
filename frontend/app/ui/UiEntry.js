@@ -36,7 +36,7 @@ export default class UiEntry {
             const media = await Media.getAll(
                 userId,
                 entryId,
-                4 // 4 media per page
+                10 // 10 media per page
             );
 
 
@@ -108,7 +108,7 @@ export default class UiEntry {
                 // if (editedMedia.changed) {
                 console.log("Update media");
                 const editedMediaNonNull = editedMedia.media;//.filter(m => m&&m.data); // remove undefined
-                for (let i = 0; i < Math.min(editedMediaNonNull.length, 4); i++) {
+                for (let i = 0; i < Math.min(editedMediaNonNull.length, 10); i++) {
 
                     // if (!forceSave&&editedMediaNonNull[i] == media[i]) { // media is the same, don't reupload
                     //     console.log("Media", i, "unchanged. Skip update");
@@ -915,7 +915,7 @@ export default class UiEntry {
             <br />
             Supported video files: .webp .mp4
             
-            `, 4,
+            `, 10,
 
 
                 (i, data) => { // on change
