@@ -183,60 +183,61 @@ export default class GithubImporter {
 
             const code = codeEl.innerHTML;
 
-            let repos=[];
-            let repo;
-            let rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
-            while((repo=rx.exec(code))!=null){
-                if(repo&&repo[1]){
-                    repo=repo[1];
-                    repos.push(repo);
-                }               
-            }
+            let repos=Utils.extractMavenRepos(code);
+            // let repo;
+            // let rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
+            // while((repo=rx.exec(code))!=null){
+            //     if(repo&&repo[1]){
+            //         repo=repo[1];
+            //         repos.push(repo);
+            //     }               
+            // }
             
-            rx=/^\s*maven\s*githubPackage\.invoke\s*\(\s*['"]+([^'"]+)["']+/img;
-            while((repo=rx.exec(code))!=null){
-                if(repo&&repo[1]){
-                    repo=repo[1];
-                    repos.push("https://github.com/"+repo);
-                }               
-            }
+            // rx=/^\s*maven\s*githubPackage\.invoke\s*\(\s*['"]+([^'"]+)["']+/img;
+            // while((repo=rx.exec(code))!=null){
+            //     if(repo&&repo[1]){
+            //         repo=repo[1];
+            //         repos.push("https://github.com/"+repo);
+            //     }               
+            // }
          
 
-            let deps=/^\s*dependencies\s*{\s*([^}]+)/img.exec(code);
-            if(deps&&deps[1]){
-                deps=deps[1];
-                deps=deps.split("\n");
-                deps = deps.map(d=>{
-                    d=d.trim();
-                    d=d.split(/[ (]/);
-                    d.shift();
-                    d= d.join(" ").trim();     
-                    console.log(d);
-                    if(d.indexOf("group:")!=-1&&d.indexOf("name:")!=-1){
-                        let group=/group: ["']([^"']+)/i.exec(d);
-                        let name=/name: ["']([^"']+)/i.exec(d);
-                        let version=/version: ["']([^"']+)/i.exec(d);
+            // let deps=/^\s*dependencies\s*{\s*([^}]+)/img.exec(code);
+            // if(deps&&deps[1]){
+            //     deps=deps[1];
+            //     deps=deps.split("\n");
+            //     deps = deps.map(d=>{
+            //         d=d.trim();
+            //         d=d.split(/[ (]/);
+            //         d.shift();
+            //         d= d.join(" ").trim();     
+            //         console.log(d);
+            //         if(d.indexOf("group:")!=-1&&d.indexOf("name:")!=-1){
+            //             let group=/group: ["']([^"']+)/i.exec(d);
+            //             let name=/name: ["']([^"']+)/i.exec(d);
+            //             let version=/version: ["']([^"']+)/i.exec(d);
 
-                        if(group)group=group[1];
-                        if(name)name=name[1];
-                        if(version)version=version[1];
-                        else version="$VERSION";
+            //             if(group)group=group[1];
+            //             if(name)name=name[1];
+            //             if(version)version=version[1];
+            //             else version="$VERSION";
                         
-                        if(group&&name&&version){
-                            d=`${group}:${name}:${version}`;
-                        }else{
-                            d=undefined;
-                        }
+            //             if(group&&name&&version){
+            //                 d=`${group}:${name}:${version}`;
+            //             }else{
+            //                 d=undefined;
+            //             }
                         
-                    }else{
-                        d=d.substring(1);
-                        d=d.substring(0,d.length-1);
-                    }
+            //         }else{
+            //             d=d.substring(1);
+            //             d=d.substring(0,d.length-1);
+            //         }
                     
                     
-                    return d;
-                });
-            } else deps=[];
+            //         return d;
+            //     });
+            // } else deps=[];
+            const deps=Utils.extractMavenDeps(code);
 
             outRepos.push(...repos.filter(v=>v));
             outDeps.push(...deps.filter(v=>v));            

@@ -28,6 +28,69 @@ export default class Utils {
 
     }
 
+    static extractMavenDepsFromDepBlock(deps){
+        deps=deps.split("\n");
+        deps = deps.map(d=>{
+            d=d.trim();
+            d=d.split(/[ (]/);
+            d.shift();
+            d= d.join(" ").trim();     
+            if(d.indexOf("group:")!=-1&&d.indexOf("name:")!=-1){
+                let group=/group: ["']([^"']+)/i.exec(d);
+                let name=/name: ["']([^"']+)/i.exec(d);
+                let version=/version: ["']([^"']+)/i.exec(d);
+
+                if(group)group=group[1];
+                if(name)name=name[1];
+                if(version)version=version[1];
+                else version="$VERSION";
+                
+                if(group&&name&&version){
+                    d=`${group}:${name}:${version}`;
+                }else{
+                    d=undefined;
+                }
+                
+            }else{
+                d=d.substring(1);
+                d=d.substring(0,d.length-1);
+            }
+            
+            
+            return d;
+        });
+        return deps;
+    }
+
+    static extractMavenDeps(code){
+        let deps=/^\s*dependencies\s*{\s*([^}]+)/img.exec(code);
+        if(deps&&deps[1]){
+            deps=deps[1];
+            deps=this.extractMavenDepsFromDepBlock(deps);
+        } else deps=[];
+        return deps;
+    }
+
+    static extractMavenRepos(code){
+        let repos=[];
+        let repo;
+        let rx=/^\s*maven\s*{\s*url\s*['"]+([^'"]+)["']+\s*}/img;
+        while((repo=rx.exec(code))!=null){
+            if(repo&&repo[1]){
+                repo=repo[1];
+                repos.push(repo);
+            }               
+        }
+        rx=/^\s*maven\s*githubPackage\.invoke\s*\(\s*['"]+([^'"]+)["']+/img;
+        while((repo=rx.exec(code))!=null){
+            if(repo&&repo[1]){
+                repo=repo[1];
+                repos.push("https://github.com/"+repo);
+            }               
+        }
+        return repos;
+    }
+
     static enqueue(action){
         this.loadingQueue.push(action);
     }

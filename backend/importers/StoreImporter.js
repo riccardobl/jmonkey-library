@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 import DatauriParser from 'datauri/parser.js';
 import Api from "../../common/Api.js";
 import Fs from 'fs';
+import Utils from "../../common/Utils.js";
 
 export default class StoreImporter {
     static initApi(register){
@@ -84,6 +85,31 @@ export default class StoreImporter {
         entry.tags.push(data.category.name);
         entry.tags.push(data.category.parent.name);
         entry.tags.push(data.id);
+
+        console.log(data.buildData.repositories);
+        if(data.buildData&&data.buildData.repositories){
+            const repos=data.buildData.repositories.split(",");
+            for(const repo of repos){
+                const extractedRepos=Utils.extractMavenRepos(repo);
+                if(extractedRepos.length>0){
+                    entry["maven-repos"]=[];
+                    entry["maven-repos"].push(...extractedRepos);
+                }
+            }            
+        }
+
+        if(data.buildData&&data.buildData.hostedDependencies){
+            const deps=data.buildData.hostedDependencies.split(",");
+            for(const dep of deps){
+                const extractedDeps=Utils.extractMavenDepsFromDepBlock(dep);
+                if(extractedDeps.length>0){
+                    entry["maven-artifacts"]=[];
+                    entry["maven-artifacts"].push(...extractedDeps);
+                }
+            }            
+        }
+
+  
 
         // if(data.buildData){
         //     let usage="Add this software to your project\n```gradle";
