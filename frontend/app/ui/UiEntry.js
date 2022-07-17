@@ -402,20 +402,23 @@ export default class UiEntry {
 
                     let githubPackageRegistry=false;
         
-                    let repoContent=`repositories {\n`;
+                    let repoContent=``;
                     
-                    for( const repo of entry["maven-repos"]){
-                        if(repo.startsWith("https://github.com/")){
-                            const [,,,ghowner,ghrepo, ]=repo.split("/");
-                            repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
-                            githubPackageRegistry=true;
-                        }else if(repo.startsWith("http")  ){
-                            repoContent+=`    maven { url "${repo}" }\n`;
-                        }else{
-                            repoContent+=`    ${repo}\n`;
+                    if(entry["maven-repos"]&&entry["maven-repos"].length>0){
+                        repoContent+=`repositories {\n`;
+                        for( const repo of entry["maven-repos"]){
+                            if(repo.startsWith("https://github.com/")){
+                                const [,,,ghowner,ghrepo, ]=repo.split("/");
+                                repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
+                                githubPackageRegistry=true;
+                            }else if(repo.startsWith("http")  ){
+                                repoContent+=`    maven { url "${repo}" }\n`;
+                            }else{
+                                repoContent+=`    ${repo}\n`;
+                            }
                         }
+                        repoContent+=`}\n\n`;
                     }
-                    repoContent+=`}\n\n`;
 
                     if(githubPackageRegistry){
                         content+=`\nplugins {\n    id "io.github.0ffz.github-packages" version "1.2.1"\n}\n\n`;
