@@ -192,9 +192,20 @@ import Msg from "./Msg.js";
 
 window.addEventListener("load", async () => {
   fetch("https://raw.githubusercontent.com/jMonkeyEngine/jmonkeyengine-website/master/layouts/partials/topMenu.html").then(res=>res.text()).then(res=>{
-    const header = document.querySelector("header");
-    header.prepend(Ui.toEl(res));
+    const dom= new DOMParser().parseFromString(res, "text/html");
+    const scripts=[...dom.querySelectorAll("script")].map(scriptEl=>scriptEl.innerHTML);
+    const nav=dom.querySelector("nav");
+    const header = document.querySelector("header")
+    header.prepend(nav);
+
+    scripts.forEach(script=>{
+      const scriptEl = document.createElement("script");
+      scriptEl.innerHTML = script;
+      document.body.append(scriptEl);
+    });
+    window.initJmeMenu();
   });
+
   // let initialized = false;
   let config;
   let parentEl;
