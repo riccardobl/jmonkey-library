@@ -146,7 +146,7 @@ export default class UiUser {
 
 
         walletEl.content.appendChild(Ui.createSubTitle(`<i class="fab fa-paypal"></i> GitHub Sponsor`));
-        walletEl.content.appendChild(Ui.createParagraph(`A github username that can riceve sponsorship through GitHub Sponsor.
+        walletEl.content.appendChild(Ui.createParagraph(`A github username that can receive sponsorship through GitHub Sponsor.
         <br>
         This user needs to be opted-in to GitHub Sponsor <a href="https://github.com/sponsors" target="_blank">Click here to learn more</a>.
             <br>
