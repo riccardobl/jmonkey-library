@@ -55,6 +55,63 @@ export default class UiListEntries {
             }, 1000);
         });
 
+        this.sortByEl = Ui.createSection(parentEl, ["responsiveWidth", "right","hlist", "list", "settings"]);
+        this.sortByEl.append(Ui.toEl(`
+        <div>
+        <b style="padding:0.9rem" >Sort by:</b> 
+            <a style="padding:0.5rem" class="clickable" id="sortBylikes"><i class="fa-regular fa-square"></i> Likes</a> 
+            <a style="padding:0.5rem" class="clickable"  id="sortByupdateDate"><i class="fa-regular fa-square-caret-down"></i> Date</a>
+            </div>
+        `));
+
+        const resort=(by)=>{
+            let search=this.searchBarInput.value;
+            search=search.split(";");
+            let asc=by=="updateDate";
+            for(let i=0;i<search.length;i++){
+                let part=search[i].trim();
+                if(part.startsWith("sortby=")){
+                    search[i]="";
+                }else if(part.startsWith("order=")){
+                    search[i]="";
+                    asc=part.split("=")[1]=="asc";
+                }
+            }
+           asc=!asc;
+                search.push("order="+(asc?"asc":"desc"));
+            
+            search.push("sortby="+by);
+
+            let emptySearch=!(search[0].trim());
+
+            search=search.map(s=>s.trim()).filter(s=>s);
+         
+       
+            if(emptySearch){
+                search.unshift(" ");
+            }
+
+            search=search.join(" ;");
+            this.searchBarInput.value=search;          
+            UrlParams.replace({ s:  search });
+
+            this.sortByEl.querySelectorAll("i").forEach(i=>{
+                i.className="fa-regular fa-square";
+            });
+            
+            this.sortByEl.querySelector("#sortBy"+by).querySelector("i").className="fa-regular fa-square-"+(asc?"caret-down":"caret-up");
+            
+        };
+
+        this.sortByEl.querySelector("#sortBylikes").addEventListener("click", () => {
+            resort("likes");
+        });
+
+       this.sortByEl.querySelector("#sortByupdateDate").addEventListener("click", () => {
+            resort("updateDate");
+        });
+
+
         this.userInfoEl = Ui.createSection(parentEl, ["responsiveWidth", "hlist", "list", "settings", "center"]);
 
         this.entriesEl = Ui.createSection(parentEl, ["entrylist", "list", "hlist", "responsive", "responsiveWidth"]);

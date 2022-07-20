@@ -1125,6 +1125,10 @@ section>article>div.content>nav>ul li button{
      
      justify-content:center;
 }
+.list.right{
+     padding-right:2rem;
+    justify-content:end;
+}
 
 #confirmationWindow{
     text-align: center;

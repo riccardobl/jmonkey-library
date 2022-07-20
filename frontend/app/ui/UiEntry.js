@@ -428,7 +428,7 @@ export default class UiEntry {
 
                     content+=`dependencies {\n`;
                     for( let artifact of entry["maven-artifacts"]){
-                        artifact=artifact.replace("$VERSION", entry.version)
+                        artifact=artifact?artifact.replace("$VERSION", entry.version):""
                         content+=`    implementation "${artifact}"\n`;
                     }
 
