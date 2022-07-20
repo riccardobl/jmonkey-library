@@ -708,6 +708,7 @@ code{
 
 .window .content{
     margin-top: auto;
+    word-break: break-all;
 }
 .window .buttons{
     /* margin-top:auto; */
