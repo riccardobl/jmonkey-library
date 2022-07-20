@@ -31,7 +31,7 @@ export default class UiUser {
         const assetsEl = Ui.createSection(parentEl, ["responsiveWidth", "list", "responsive", "vlist", "settings"]);
         const publishedAssetsEl = Ui.createArticle("entries", "fas  fa-copyright", "Published Assets");
         assetsEl.appendChild(publishedAssetsEl)
-        const publishedAssetsTableEl = publishedAssetsEl.content.appendChild(Ui.createTable(["UserID", "AssetId","Name","Version","Status", ""]));
+        const publishedAssetsTableEl = publishedAssetsEl.content.appendChild(Ui.createTable(["UserID", "EntryID","Name","Version","Status", ""]));
 
         const entryIds = (await Entries.listIds("@" + user.userId,true));
         for (let i in entryIds) {

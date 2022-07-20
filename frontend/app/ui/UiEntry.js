@@ -728,6 +728,8 @@ export default class UiEntry {
             }
             if (editedEntry) {
 
+
+
                 if (!entry.suspended) {
                     mainMenuRow.append(Ui.createButton("fas fa-dungeon", "Suspend", "The access to this entry will be suspended temporarily", () => {
                         const dialogContent = document.createElement("span");
@@ -816,6 +818,57 @@ export default class UiEntry {
                 }));
             }
         }
+
+        if(editedEntry){
+            mainMenuRow.append( Ui.createButton(
+                "fab fa-github-alt", "Github Actions Snippet", "", async () => {
+                    const key={
+                        userId: Auth.getCurrentUserID(),
+                        keyId: entry.entryId+"_github_action_"+Utils.uuidv4(),
+                        key: Utils.uuidv4(),
+                        description: "Github Action Deployment",
+                        ips: undefined
+                    };
+                    await Auth.setKey(key);
+
+                    const snippet=`- name: Publish to jMonkeyEngine Library
+  if: github.event_name == 'release'
+  uses: jMonkeyEngine/jme-library-publish-action@1.1
+  with:
+    userId: ${editedEntry.userId}
+    entryId: ${editedEntry.entryId}
+    authId: ${key.keyId}
+    authKey: \${{ secrets.AUTH_KEY }}
+    token: \${{ secrets.GITHUB_TOKEN }}
+    funding: true                     
+                    `;
+
+                    Ui.showDialog("Github Action Snippet", Ui.toEl(`
+                        <div  style="text-align:left!important">
+                            
+                            Add this secret to your repository
+                            <pre><code lang="yaml">AUTH_KEY = ${key.key}</code></pre>
+                            <br >
+                            <br >
+                            Add this snippet to your workflow
+                            <pre ><code lang="yaml">${snippet}</code></pre>
+                        </div>
+                    
+                    `), [
+                        
+                        {
+                            text: `<i class="fa-solid fa-check"></i> Ok `,
+                            important:true,
+                            action: async () => {
+                               
+                            }
+                        }
+                       
+                    ])
+
+            }));
+        }
+
 
         if(!editedEntry){
             const reloadLikes = (likeButton) => {
