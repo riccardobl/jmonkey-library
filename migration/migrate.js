@@ -26,7 +26,7 @@ const EntriesExclusion=[
 ];
 
 async function apiCall(api, body) {
-    const host=process.env.LIBRARY_HOST||"http://localhost:8081";
+    const host=process.env.LIBRARY_HOST||"https://library.jmonkeyengine.org";
 
     const url = `${host}/${api}`;
     let data = await fetch(url, {
@@ -36,8 +36,15 @@ async function apiCall(api, body) {
             "Content-Type": "application/json"
         }
     }).then(res => res.text());
-    data=JSON.parse(data);
-    if (data.error) throw data.error;
+    try{
+        data=JSON.parse(data);
+        if (data.error) throw data.error;
+    }catch(e){
+        console.log(e);
+        console.log(data);
+        throw e;
+
+    }
     return data;
 
 }
@@ -60,6 +67,7 @@ async function importAll(){
     const authId=process.env.AUTH_ID;
     
     for(const [storeUser,hubUser] of Object.entries(Users)){
+        console.log("Import",storeUser,"=>",hubUser);
         if(!hubUser)continue;
         try{
             const entries = await getEntries(storeUser);
@@ -110,16 +118,16 @@ async function importAll(){
                         mediaData.authKey = authKey;
                         mediaData.authId = authId;
                         await apiCall("media/set", mediaData);
-                    }catch(e){
-                        console.error(e);
+                    }catch(e1){
+                        console.error(e1);
                     }
                 }
             }
 
         
 
-        }catch(e){
-            console.error(e);
+        }catch(e2){
+            console.error(e2);
         }
     }
 }
