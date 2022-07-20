@@ -544,7 +544,7 @@ export default class UiEntry {
                         for(let i=0;i<editedEntry["maven-artifacts"].length;i++){
                             const art=editedEntry["maven-artifacts"][i];
                             row=artifactsTables.addRow(["generated"]);
-                            const [group,repo,version]=art.split(":");
+                            const [group,repo,version]=art?art.split(":"):["","",""];
                             row.addCell(Ui.createText(group));
                             row.addCell(Ui.createText(repo));
                             row.addCell(Ui.createText(version));
