@@ -138,6 +138,10 @@ const scrollTo = (contentAnchor) => {
 }
 
 
+window.scrollToElement=(el)=>{
+    scrollTo(el)
+};
+
 window.addEventListener("DOMContentLoaded", function () {
     updateFloatingHeader();
 

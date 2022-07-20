@@ -125,12 +125,15 @@ export default class UiListEntries {
             pageId--;
             if (pageId < 0) pageId = 0;
             UrlParams.set({ "page": pageId });
+            window.scrollToElement(document.querySelector("#entry0"));
+
 
         }));
         this.pageControlEl.appendChild(this.pageN = Ui.createText(`  Page ${pageId}  `)).setAttribute("id", "pageN");
         this.pageControlEl.appendChild(this.nextPageBtn = Ui.createButton("", `<i class="fas fa-caret-right"></i>`, "Next Page", () => {
             pageId++;
             UrlParams.set({ "page": pageId });
+            window.scrollToElement(document.querySelector("#entry0"));
         }));
 
 
