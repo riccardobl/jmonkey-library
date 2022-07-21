@@ -6,5 +6,15 @@
     },
     "entriesPerPage":9,
     "globalMessage":"This instance is a development preview. All its content will be deleted on release or anytime it's necessary.<br />The payment system runs on ethereum ropsten testnet, test coins can be obtained freely from here: <a target='_blank' href='https://faucet.ropsten.be/'>faucet.ropsten.be</a>",
+    "quickSearch":{
+        "Physics":"#physics #minie #bullet #ragdoll #collisions #collision",
+        "Assets":"#assets #models #3d models #animations #animation #model #asset #sound #music",
+        "Shaders":"#shaders #filter #shader #filters #glsl",
+        "VR":"#vr #virtual reality",
+        "Utilities":"#utilities #utility",
+        "Effects & Particles":"#effect #effects #particle #particles",
+        "Voxels":"#voxels #blocks #voxel #isosurface",
+        "Demo & Games":"#demo #games #techdemo #tech-demo"
+    }
    
 }

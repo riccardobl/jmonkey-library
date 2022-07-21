@@ -34,6 +34,36 @@ export default class UiListEntries {
         this.showcase = Ui.createShowCase("", false,["cycle"]);
         parentEl.appendChild(this.showcase);
 
+        if(this.config.quickSearch){
+            this.quickSearch = Ui.createSection(parentEl, ["responsiveWidth", "center","hlist", "list", "settings"]);
+            this.quickSearch.append(Ui.toEl(`
+            <div style="padding-top:0.8rem;">
+                    <b >Quick Search:</b> 
+                    </br>
+                    <span>
+                    
+                        
+                    </span>
+            
+            </div>
+            `));
+
+            
+            const quickSearchOptions=this.quickSearch.querySelector("span");
+            quickSearchOptions.innerHTML="";
+
+            for(const [key,value] of Object.entries(this.config.quickSearch)){
+                const a=document.createElement("a");
+                a.className="clickable";
+                a.style.padding="0.3rem";
+                a.innerHTML=`<i class="fa-brands fa-searchengin"></i> ${key}`;
+                a.addEventListener("click",()=>{
+                    UrlParams.replace({ s: value });
+                });         
+                quickSearchOptions.append(a);   
+            }            
+        }
+
         this.searchBarEl = parentEl.querySelector(".searchbar");
         this.searchBarEl = Ui.createSection(parentEl, ["searchbar"]);
 
@@ -54,14 +84,15 @@ export default class UiListEntries {
                 icon.className = "fas fa-search";
             }, 1000);
         });
-
+   
         this.sortByEl = Ui.createSection(parentEl, ["responsiveWidth", "right","hlist", "list", "settings"]);
         this.sortByEl.append(Ui.toEl(`
         <div>
-        <b style="padding:0.9rem" >Sort by:</b> 
-            <a style="padding:0.5rem" class="clickable" id="sortBylikes"><i class="fa-regular fa-square"></i> Likes</a> 
-            <a style="padding:0.5rem" class="clickable"  id="sortByupdateDate"><i class="fa-regular fa-square-caret-down"></i> Date</a>
-            </div>
+      
+                <b style="padding:0.9rem" >Sort by:</b> 
+                <a style="padding:0.5rem" class="clickable" id="sortBylikes"><i class="fa-regular fa-square"></i> Likes</a> 
+                <a style="padding:0.5rem" class="clickable"  id="sortByupdateDate"><i class="fa-regular fa-square-caret-down"></i> Date</a>
+        </div>
         `));
 
         const resort=(by)=>{

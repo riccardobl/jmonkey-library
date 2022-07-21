@@ -71,7 +71,8 @@ export default  class EntriesManager{
             console.log("Found words",words);
             queryData=[];
             if(tags.length>0){
-                queryData.push({"tags":{$in:tags}});      
+                // queryData.push({"tags":{$in:tags}});      
+                queryData.push({"tags":{$regex:new RegExp(tags.join("|"),'i')}});      
             }
             if(authors.length>0){
                 queryData.push({"userId":{$in:authors}});      
@@ -108,10 +109,10 @@ export default  class EntriesManager{
                     regex+=w.trim();
                 });
                 queryData.push(...[
-                    { "description":{$regex:new RegExp(regex)} },
-                    { "summary":{$regex:new RegExp(regex)} },
-                    { "tags":{$regex:new RegExp(regex)} },
-                    { "name":{$regex:new RegExp(regex)} }
+                    { "description":{$regex:new RegExp(regex,"i")} },
+                    { "summary":{$regex:new RegExp(regex,"i")} },
+                    { "tags":{$regex:new RegExp(regex,"i")} },
+                    { "name":{$regex:new RegExp(regex,"i")} }
                 ]);
 
             }
