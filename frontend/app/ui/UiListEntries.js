@@ -194,7 +194,7 @@ export default class UiListEntries {
             // const r = await Media.get(userId, entryId, 0);
             // const authorUser = await Auth.getUser(entry.userId);
 
-            Utils.enqueue(async () => {
+            // Utils.enqueue(async () => {
 
                 const media = r.data;
                 const preview = r.preview;
@@ -248,7 +248,7 @@ export default class UiListEntries {
                         );
                 });
            
-            });
+            // });
         }
 
         for (let i = entries.length; i < this.config.entriesPerPage; i++) {
