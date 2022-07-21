@@ -179,77 +179,75 @@ export default class UiListEntries {
     
 
         const entries = await Entries.listIdsPage(searchQuery ? searchQuery : ";order=asc ;sortby=updateDate", pageId, false, this.config.entriesPerPage);
+        const entiresLoadPromises = [];
+
         for (let i in entries) {
-            const entryId = entries[i].entryId;
-            const userId = entries[i].userId;
-
-
-
-            const entryP =  Entries.get(userId, entryId);
-            const mediaP =  Media.get(userId, entryId, 0);
-            const authorUserP =  Auth.getUser(userId);
-
-            const [entry,r,authorUser] = await Promise.all([entryP,mediaP,authorUserP]);
-            // const entry = await Entries.get(userId, entryId);
-            // const r = await Media.get(userId, entryId, 0);
-            // const authorUser = await Auth.getUser(entry.userId);
-
-            // Utils.enqueue(async () => {
-
-                const media = r.data;
-                const preview = r.preview;
-                const blurred = r.blurred;
-
-                let title = entry.name;
-                const maxTitleLength =  this.config.entryList.maxTitleLength;
-                if (title && title.length > maxTitleLength) title = title.substring(0, maxTitleLength) + "...";
-
-
-                const oldArticle = this.entriesEl.querySelector("#entry" + i);
-                const newArticle = Ui.createArticle("entry" + i, undefined, title);
-                this.entriesEl.replaceChild(newArticle, oldArticle);
-                newArticle.content.classList.add("textShadowedIntense");
-                newArticle.content.innerHTML = Utils.getSummary(entry.descriptionSummary,this.config.entryList.maxSummaryLength);
-                Ui.appendCover(newArticle.content, preview);
-                Ui.setClickAction(newArticle, ()=>{
-                    UrlParams.replace({
-                        entry: entry.userId + "/" + entry.entryId
-                    });
-                });
-
-                const likesEl=Ui.toEl("<div class='likes'></div>");
-                newArticle.content.append(likesEl);
-
-                Entries.getLikes(entry.userId, entry.entryId).then(res => {
-                    likesEl.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
-                });
-
-                const detailsEl = Ui.createMenu();
-                newArticle.content.append(detailsEl);
-
-
-                const authorSectionEl = detailsEl.addSection();
-                const authorEl = Ui.createUserElement(authorUser);
-                authorSectionEl.addItem(authorEl);
-
-                const tagsSectionEl = detailsEl.addSection();
-                entry.tags.forEach(tag => {
-                    const tagEl = Ui.createTagElement(tag);
-                    tagsSectionEl.addItem(tagEl);
-                });
-
-                Utils.enqueue(async () => {
-                    const item = this.showcase.addItem(media, blurred);
-                    if (item) Ui.setClickAction(item, ()=>{
+            entiresLoadPromises.push(
+                (async ()=>{
+                    const entryId = entries[i].entryId;
+                    const userId = entries[i].userId;
+        
+                    const entryP =  Entries.get(userId, entryId);
+                    const mediaP =  Media.get(userId, entryId, 0);
+                    const authorUserP = Auth.getUser(userId);
+        
+                    const [entry, r, authorUser] = await Promise.all([entryP, mediaP, authorUserP]);
+        
+                    const media = r.data;
+                    const preview = r.preview;
+                    const blurred = r.blurred;
+        
+                    let title = entry.name;
+                    const maxTitleLength = this.config.entryList.maxTitleLength;
+                    if (title && title.length > maxTitleLength) title = title.substring(0, maxTitleLength) + "...";
+        
+        
+                    const oldArticle = this.entriesEl.querySelector("#entry" + i);
+                    const newArticle = Ui.createArticle("entry" + i, undefined, title);
+                    this.entriesEl.replaceChild(newArticle, oldArticle);
+                    newArticle.content.classList.add("textShadowedIntense");
+                    newArticle.content.innerHTML = Utils.getSummary(entry.descriptionSummary, this.config.entryList.maxSummaryLength);
+                    Ui.appendCover(newArticle.content, preview);
+                    Ui.setClickAction(newArticle, () => {
                         UrlParams.replace({
                             entry: entry.userId + "/" + entry.entryId
                         });
-                    }
+                    });
+        
+                    const likesEl = Ui.toEl("<div class='likes'></div>");
+                    newArticle.content.append(likesEl);
+        
+                    Entries.getLikes(entry.userId, entry.entryId).then(res => {
+                        likesEl.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
+                    });
+        
+                    const detailsEl = Ui.createMenu();
+                    newArticle.content.append(detailsEl);
+        
+        
+                    const authorSectionEl = detailsEl.addSection();
+                    const authorEl = Ui.createUserElement(authorUser);
+                    authorSectionEl.addItem(authorEl);
+        
+                    const tagsSectionEl = detailsEl.addSection();
+                    entry.tags.forEach(tag => {
+                        const tagEl = Ui.createTagElement(tag);
+                        tagsSectionEl.addItem(tagEl);
+                    });
+        
+                    Utils.enqueue(async () => {
+                        const item = this.showcase.addItem(media, blurred);
+                        if (item) Ui.setClickAction(item, () => {
+                            UrlParams.replace({
+                                entry: entry.userId + "/" + entry.entryId
+                            });
+                        }
                         );
-                });
-           
-            // });
+                    });
+                })()
+            )  
         }
+        await Promise.all(entiresLoadPromises);
 
         for (let i = entries.length; i < this.config.entriesPerPage; i++) {
             this.reset(this.entriesEl, i);
