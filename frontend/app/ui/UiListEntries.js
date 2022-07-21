@@ -125,7 +125,7 @@ export default class UiListEntries {
             pageId--;
             if (pageId < 0) pageId = 0;
             UrlParams.set({ "page": pageId });
-            window.scrollToElement(document.querySelector("#entry0"));
+            // window.scrollToElement(document.querySelector("#entry0"));
 
 
         }));
@@ -133,7 +133,7 @@ export default class UiListEntries {
         this.pageControlEl.appendChild(this.nextPageBtn = Ui.createButton("", `<i class="fas fa-caret-right"></i>`, "Next Page", () => {
             pageId++;
             UrlParams.set({ "page": pageId });
-            window.scrollToElement(document.querySelector("#entry0"));
+            // window.scrollToElement(document.querySelector("#entry0"));
         }));
 
 
@@ -176,9 +176,28 @@ export default class UiListEntries {
         parseUid();
 
 
-    
+   
+
 
         const entries = await Entries.listIdsPage(searchQuery ? searchQuery : ";order=asc ;sortby=updateDate", pageId, false, this.config.entriesPerPage);
+
+
+        this.pageN.innerHTML = `  Page ${pageId}  `;
+        if (pageId == 0) {
+            if (!this.previousPageBtn.classList.contains('diabled')) this.previousPageBtn.classList.add("disabled");
+        } else {
+            this.previousPageBtn.classList.remove("disabled");
+        }
+
+        if (entries.length == 0) {
+            if (!this.nextPageBtn.classList.contains('diabled')) this.nextPageBtn.classList.add("disabled");
+
+        } else {
+            this.nextPageBtn.classList.remove("disabled");
+
+        }
+
+
         const entiresLoadPromises = [];
 
         for (let i in entries) {
@@ -253,21 +272,7 @@ export default class UiListEntries {
             this.reset(this.entriesEl, i);
         }
 
-        this.pageN.innerHTML = `  Page ${pageId}  `;
-        if (pageId == 0) {
-            if (!this.previousPageBtn.classList.contains('diabled')) this.previousPageBtn.classList.add("disabled");
-        } else {
-            this.previousPageBtn.classList.remove("disabled");
-        }
-
-        if (entries.length == 0) {
-            if (!this.nextPageBtn.classList.contains('diabled')) this.nextPageBtn.classList.add("disabled");
-
-        } else {
-            this.nextPageBtn.classList.remove("disabled");
-
-        }
-
+        
         if (this.showcaseCycleTimeout) {
             clearTimeout(this.showcaseCycleTimeout);
             this.showcaseCycleTimeout = null;

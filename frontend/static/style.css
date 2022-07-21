@@ -1057,6 +1057,7 @@ td.smallest{
     opacity: 0.99;
     margin:auto;
     bottom:4vh;
+    right:1vw;
     max-width: 600px;
     width:100vw;
     min-height: 0;
