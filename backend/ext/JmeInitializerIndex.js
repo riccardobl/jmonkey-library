@@ -68,6 +68,7 @@ export default class JmeInitializerIndex{
                     const artifacts = [];
 
                     for (const ar of entry["maven-artifacts"]) {
+                        if(!ar)continue;
                         const [group, artifact, version] = ar.split(":");
                         artifacts.push({
                             "groupId": group,
@@ -79,6 +80,7 @@ export default class JmeInitializerIndex{
                     const repos = [];
                     if (entry["maven-repos"]) {
                         for (const repo of entry["maven-repos"]) {
+                            if(!repo)continue;
                             if (repo.startsWith("https://github.com/")) {
                                 const [, , , ghowner, ghrepo,] = repo.split("/");
                                 repos.push(`maven githubPackage.invoke("${ghowner}/${ghrepo}")`);
