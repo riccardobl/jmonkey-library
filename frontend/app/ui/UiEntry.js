@@ -275,7 +275,8 @@ export default class UiEntry {
         
             const supportedPlatformsEl = menuEl.addSection("Platforms");
 
-            const platformsListEl = supportedPlatformsEl.addItem(Ui.createDiv(["center"]));
+            const platformsListEl = Ui.createDiv(["center"]);
+            supportedPlatformsEl.addItem(platformsListEl);
             let content=``;
                     
             const findPlatform = (partial) => {
@@ -290,7 +291,7 @@ export default class UiEntry {
             if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
             if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
             
-            if(entry["maven-repos"]&&entry["initializerCategory"]&&entry["initializerCategory"]=="HIDDEN"){
+            if(entry["maven-repos"]&&entry["initializerCategory"]&&entry["initializerCategory"]!="HIDDEN"){
                 supportedPlatformsEl.addItem(Ui.toEl(`
                 <a style="width: 100%;white-space: nowrap; padding: 0; margin: 0;text-align: center;" target="_blank" href="https://jmonkeyengine.org/start/"><i class="fa-solid fa-rocket"></i> Available in JME Initializer</a>
                 `));
