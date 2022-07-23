@@ -275,7 +275,7 @@ export default class UiEntry {
         
             const supportedPlatformsEl = menuEl.addSection("Platforms");
 
-            const platformsListEl = Ui.toEl(`<div style="width:100%; text-align:center"></div>`);
+            const platformsListEl = Ui.toEl(`<div style="width:100%; display:flex;align-items:center"></div>`);
 
             supportedPlatformsEl.addItem(platformsListEl);
             let content=``;
@@ -286,11 +286,11 @@ export default class UiEntry {
                 }
                 return undefined;
             }
-            if(findPlatform("_WINDOWS"))content+=`<i style="margin:0.2rem; margin-left:0" title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
-            if(findPlatform("_LINUX"))content+=`<i style="margin:0.2rem" title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
-            if(findPlatform("_MACOS"))content+=`<i style="margin:0.2rem" title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
-            if(findPlatform("ANDROID"))content+=`<i style="margin:0.2rem" title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
-            if(findPlatform("VR_"))content+=`<i title="VR" style="margin:0.4rem" class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
+            if(findPlatform("_WINDOWS"))content+=`<i style="flex-grow:1" title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
+            if(findPlatform("_LINUX"))content+=`<i style="flex-grow:1" title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
+            if(findPlatform("_MACOS"))content+=`<i style="flex-grow:1" title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
+            if(findPlatform("ANDROID"))content+=`<i style="flex-grow:1" title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
+            if(findPlatform("VR_"))content+=`<i title="VR" style="flex-grow:1" class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
             
             if(entry["maven-artifacts"]&&entry["initializerCategory"]&&entry["initializerCategory"]!="HIDDEN"){
                 supportedPlatformsEl.addItem(Ui.toEl(`
