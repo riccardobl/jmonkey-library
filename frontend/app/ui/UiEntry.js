@@ -218,7 +218,6 @@ export default class UiEntry {
         menuElArt.content.append(menuEl);
 
         
-       
         // Payments
         await this.loadPayment(parentEl, menuEl, entry, editedEntry, editMode, onSaveListeners);
 
@@ -270,6 +269,33 @@ export default class UiEntry {
                 }
             }
 
+        }
+
+        if(!editMode){
+        
+            const supportedPlatformsEl = menuEl.addSection("Platforms");
+
+            const platformsListEl = supportedPlatformsEl.addItem(Ui.createDiv(["center"]));
+            let content=``;
+                    
+            const findPlatform = (partial) => {
+                for(const platform of entry.platforms){
+                    if(platform.indexOf(partial)!=-1) return platform;
+                }
+                return undefined;
+            }
+            if(findPlatform("_WINDOWS"))content+=`<i title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
+            if(findPlatform("_LINUX"))content+=`<i title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
+            if(findPlatform("_MACOS"))content+=`<i title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
+            if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
+            if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
+            
+            if(entry["maven-repos"]&&entry["initializerCategory"]&&entry["initializerCategory"]=="HIDDEN"){
+                supportedPlatformsEl.addItem(Ui.toEl(`
+                <a style="width: 100%;white-space: nowrap; padding: 0; margin: 0;text-align: center;" target="_blank" href="https://jmonkeyengine.org/start/"><i class="fa-solid fa-rocket"></i> Available in JME Initializer</a>
+                `));
+            }
+            platformsListEl.innerHTML=content;
         }
         if (entry.docs || entry.issues || entry.discussions || editMode) {
             const menuSupportEl = menuEl.addSection("Support");
@@ -374,28 +400,35 @@ export default class UiEntry {
         const secondRowEl = Ui.createSection(parentEl, ["responsiveWidth", entry["maven-artifacts"]&&entry["maven-artifacts"].length>0 && entry.license &&!editMode ? "withSide" : ""]);
 
         // USAGE & LICENSE
-        if(!editMode){
+        if(!editMode&&entry["maven-artifacts"]&&entry["maven-artifacts"].length>0){
             // if ( ) {
-                const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Usage");
+                const usageEl = Ui.createArticle("usage", "fas fa-book-dead", "Gradle Snippet");
                 secondRowEl.appendChild(usageEl);
-                let content=``; 
+                let content=``;
 
-                content+="<h3>Supported Platforms</h3>";
+              
+
+                // content+="<h2>Supported Platforms</h2>";
                 
-                const findPlatform = (partial) => {
-                    for(const platform of entry.platforms){
-                        if(platform.indexOf(partial)!=-1) return platform;
-                    }
-                    return undefined;
-                }
-                if(findPlatform("_WINDOWS"))content+=`<i title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
-                if(findPlatform("_LINUX"))content+=`<i title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
-                if(findPlatform("_MACOS"))content+=`<i title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
-                if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
-                if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
+                // const findPlatform = (partial) => {
+                //     for(const platform of entry.platforms){
+                //         if(platform.indexOf(partial)!=-1) return platform;
+                //     }
+                //     return undefined;
+                // }
+                // if(findPlatform("_WINDOWS"))content+=`<i title="Windows" class="platformIcon fa-brands fa-windows"></i>`;
+                // if(findPlatform("_LINUX"))content+=`<i title="Linux" class="platformIcon  fa-brands fa-linux"></i>`;
+                // if(findPlatform("_MACOS"))content+=`<i title="MacOS"  class="platformIcon  fa-brands fa-apple"></i>`;
+                // if(findPlatform("ANDROID"))content+=`<i title="Android"  class="platformIcon  fa-brands fa-android"></i>`;
+                // if(findPlatform("VR_"))content+=`<i title="VR"  class="platformIcon  fa-solid fa-vr-cardboard"></i>`;
+                
+                // if(entry["maven-repos"]&&entry["initializerCategory"]&&entry["initializerCategory"]!="HIDDEN"){
+                //     content+=`<br><a target="_blank" href="https://jmonkeyengine.org/start/"><i class="fa-solid fa-rocket"></i> Available in jMonkeyEngine Initializer</a>`; 
+                // }
 
                 if(entry["maven-artifacts"]&&entry["maven-artifacts"].length>0){
-                    content+=`<h3>Gradle Coordinates</h3>
+                    //<h2>Gradle Coordinates</h2>
+                    content+=`
 
                     <pre class="language-gradle">`;
                     
@@ -1124,41 +1157,42 @@ export default class UiEntry {
                                 Tasks.ok("copiedLNInvoice","Copied.");
                             });
 
-
-                            Ui.showDialog(`<i class="fa-solid fa-bolt fa-bounce"></i> Lightning Invoice`, invoiceEL,
-                            [
-                          
-                                {
-                                    text: `<i class="fa-solid fa-rocket"></i> Open with App`,
-                                    important:true,
-                                    action: async ()=>{
-                                        let webln;
-                                        try{
-                                            webln=await WebLN.requestProvider();
-                                        }catch(e){
-                                            console.error(e);
-                                        }
-                                        if(webln){
-                                            Tasks.ok("sentLNInvoice","Lightning payment sent.");
-                                            webln.sendPayment(invoice);
-                                        }else{                                        
-                                            const invoiceUri='lightning:'+invoice;
-                                            if(!await DeepLink.check(invoiceUri)){
-                                                Tasks.error("notFoundAppLNInvoice","Lightning wallet not found.");
-                                            }else{
-                                                Tasks.ok("sentLNInvoice","Lightning payment sent.");
+                            setTimeout(()=>{
+                                Ui.showDialog(`<i class="fa-solid fa-bolt fa-bounce"></i> Lightning Invoice`, invoiceEL,
+                                [
+                            
+                                    {
+                                        text: `<i class="fa-solid fa-rocket"></i> Open with App`,
+                                        important:true,
+                                        action: async ()=>{
+                                            let webln;
+                                            try{
+                                                webln=await WebLN.requestProvider();
+                                            }catch(e){
+                                                console.error(e);
                                             }
-                                            window.open(invoiceUri);
+                                            if(webln){
+                                                Tasks.ok("sentLNInvoice","Lightning payment sent.");
+                                                webln.sendPayment(invoice);
+                                            }else{                                        
+                                                const invoiceUri='lightning:'+invoice;
+                                                if(!await DeepLink.check(invoiceUri)){
+                                                    Tasks.error("notFoundAppLNInvoice","Lightning wallet not found.");
+                                                }else{
+                                                    Tasks.ok("sentLNInvoice","Lightning payment sent.");
+                                                }
+                                                window.open(invoiceUri);
+                                            }
                                         }
+                                    },
+                                    {
+                                        text: `<i class="fas fa-times"></i> Close`,
+                                        action: undefined
                                     }
-                                },
-                                {
-                                    text: `<i class="fas fa-times"></i> Close`,
-                                    action: undefined
-                                }
-                                
-                            ]
-                        );
+                                    
+                                ]
+                            );
+                            },100);
                         }
                     },
                     {

@@ -14,8 +14,9 @@ h3 {
 }
 
 
-section > article > div.content > h2:first-child,section > article > div.content > h1:first-child,section > article > div.content > h3:first-child{
+section > article > div.content > h2:first-child,section > article > div.content > h3:first-child,section > article > div.content > h1:first-child,section > article > div.content > h3:first-child{
     margin-top:0;
+    padding-top:0;
 }
 section>article>div.content nav{
     line-height:80%;
@@ -763,7 +764,7 @@ section#showcase  .showcaseElement > .blur
     /* margin: 0.1rem; */
    /* } */
 section.hlist > article > div.content > nav > ul li > * {
-    margin-left:0.05rem;
+    margin-left:1rem;
 }
 
 section#showcase .showcaseElement > .blur{
@@ -1121,6 +1122,7 @@ td.smallest{
 
 section>article>div.content>nav>ul li button{
     max-width: 100%;
+    min-width: 100%;
     white-space:pre-wrap;
     margin:0.1rem;
 }
