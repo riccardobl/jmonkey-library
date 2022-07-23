@@ -275,7 +275,7 @@ export default class UiEntry {
         
             const supportedPlatformsEl = menuEl.addSection("Platforms");
 
-            const platformsListEl = Ui.toEl(`<div style="margin:0;width:100%; display:flex;align-items:center"></div>`);
+            const platformsListEl = Ui.toEl(`<div style="text-align:center;margin:0;width:100%; display:flex;align-items:center"></div>`);
 
             supportedPlatformsEl.addItem(platformsListEl);
             let content=``;
