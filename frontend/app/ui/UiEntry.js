@@ -884,7 +884,7 @@ export default class UiEntry {
     userId: ${editedEntry.userId}
     entryId: ${editedEntry.entryId}
     authId: ${key.keyId}
-    authKey: \${{ secrets.AUTH_KEY }}
+    authKey: \${{ secrets.JME_LIBRARY_AUTH_KEY }}
     token: \${{ secrets.GITHUB_TOKEN }}
     funding: true                     
                     `;
@@ -893,7 +893,7 @@ export default class UiEntry {
                         <div  style="text-align:left!important">
                             
                             Add this secret to your repository
-                            <pre><code lang="yaml">AUTH_KEY = ${key.key}</code></pre>
+                            <pre><code lang="yaml">JME_LIBRARY_AUTH_KEY = ${key.key}</code></pre>
                             <br >
                             <br >
                             Add this snippet to your workflow
