@@ -51,7 +51,7 @@ export default  class KeysManager{
         console.log("Validate",userId,keyId,key,ip);
         const keyE=await this.get(userId,keyId);
         if(!keyE){
-            console.log("Key does not exist.");
+            console.log("Key ",userId,keyId," does not exist.");
             return false;
         }
         if(keyE.key!=key){

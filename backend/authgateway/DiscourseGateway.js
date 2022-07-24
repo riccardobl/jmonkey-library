@@ -69,6 +69,7 @@ export default  class DiscourseGateway extends AuthGateway{
                 res.cookie('authKeyId',credentialData.keyId);
 
                 const user=await this.getUser(credentialData.userId);
+                
                 res.cookie('authIsMod',user.isMod);
                 res.cookie('authIsTrusted',user.isTrusted);
 
