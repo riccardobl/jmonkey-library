@@ -29,7 +29,7 @@ export default class JmeInitializerIndex{
             if(entries.entryId.length==0)break;
             for(let j=0;j<entries.entryId.length;j++){
                 const entry=await EntriesManager.get(entries.userId[j],entries.entryId[j]);
-                if(!entry.initializerCategory)continue;
+                if(!entry.initializerCategory||entry.initializerCategory=="HIDDEN")continue;
                 
                 if(entry["maven-artifacts"]&&!entry.suspended&&!entry.banned){
                     const compatiblePlatforms=[];
