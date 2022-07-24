@@ -1,12 +1,34 @@
 
 export default class UrlParams {
 
+    static lockPage(msg,callback){
+        this.pageLock={
+            msg:msg,
+            callback:callback,
+        };
+    }
+
+    static unlockPage(){
+        this.pageLock=null;
+    }
+
     static init() {
         this.params={};
         this.onHashChange = [];
         this.silent = false;
         this.parse();
-        window.addEventListener("hashchange",  ()=> {
+        window.addEventListener("hashchange",  async ()=> {
+            if(this.pageLock) {
+                
+                const res=confirm(this.pageLock.msg);
+                if(this.pageLock.callback) {
+                    if(!this.pageLock.callback(res))return;
+                }else{
+                    if(!res)return;
+                }                 
+                this.unlockPage();
+            }
+
             if (this.silent) {
                 this.silent = false;
                 return;

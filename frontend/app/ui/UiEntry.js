@@ -9,6 +9,7 @@ import ExtImporter from "../ExtImporter.js";
 import Tasks from './Tasks.js';
 import DeepLink from '../thirdparty/DeepLink.js';
 import VanillaQR from "../thirdparty/VanillaQR.js";
+import UrlParams from '../UrlParams.js';
 
 export default class UiEntry {
 
@@ -95,7 +96,8 @@ export default class UiEntry {
         // Save action
         const onSaveListeners = [];
         const saveEntry = !editMode ? () => { console.log("Do nothing. Edit mode disabled") } : async () => {
-            try {
+            try {   
+                UrlParams.unlockPage();
 
                 Tasks.completable("save", "Saving...", {}, true, false, false, undefined, false);
                 // update entry
@@ -161,6 +163,13 @@ export default class UiEntry {
         // Warning messages for blocked entries
         await this.loadWarns(parentEl, entry);
         //
+
+        if(editMode){
+            UrlParams.lockPage("There are unsaved changes. Do you wish to save?",(v)=>{
+                if(v)saveEntry();
+                return true;
+            });
+        }
 
         // Importer
         if (editMode) await this.loadImporter(parentEl, reload);
@@ -740,8 +749,8 @@ export default class UiEntry {
         //     parentEl.appendChild(msg);
         //     return;
         // }
-        const callerId = Auth.getCurrentUserID();
-        const isCallerMod = Auth.isCurrentUserMod();
+        const callerId = (await Auth.isLoggedIn())?Auth.getCurrentUserID():undefined;
+        const isCallerMod = (await Auth.isLoggedIn())?Auth.isCurrentUserMod():false;
 
         const mainMenuRow = Ui.createSection(parentEl, ["responsiveWidth", "entryMenu"]);
 
