@@ -453,7 +453,9 @@ export default class UiEntry {
                         for( const repo of entry["maven-repos"]){
                             if(repo.startsWith("https://github.com/")){
                                 const [,,,ghowner,ghrepo, ]=repo.split("/");
-                                repoContent+=`    maven githubPackage.invoke("${ghowner}/${ghrepo}")\n`;
+                                repoContent+=`    maven githubPackage.invoke("${ghowner}`;
+                                if(ghrepo) repoContent+=`/${ghrepo}`;
+                                repoContent+=`")\n`;
                                 githubPackageRegistry=true;
                             }else if(repo.startsWith("http")  ){
                                 repoContent+=`    maven { url "${repo}" }\n`;
