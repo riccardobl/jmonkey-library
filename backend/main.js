@@ -101,6 +101,7 @@ function register(path, apiReq, apiResp, callback) {
                 return apiResp.checkPermissions("response",data,hints)
             });
             data = await apiResp.parse("response", data, false);
+            if(data.authKey||data.key)throw "Leaking auth data";
             res.json(data);
         } catch (e) {
             console.log("Error:", e,e.stack);
