@@ -896,6 +896,8 @@ export default class UiEntry {
     userId: ${editedEntry.userId}
     entryId: ${editedEntry.entryId}
     authId: ${key.keyId}
+    platforms: "DESKTOP_WINDOWS,DESKTOP_LINUX,DESKTOP_MACOS" # ...?
+    importMedia: true
     authKey: \${{ secrets.JME_LIBRARY_AUTH_KEY }}
     token: \${{ secrets.GITHUB_TOKEN }}
     funding: true                     
