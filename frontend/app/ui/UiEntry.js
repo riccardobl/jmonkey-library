@@ -303,7 +303,7 @@ export default class UiEntry {
             
             if(entry["maven-artifacts"]&&entry["initializerCategory"]&&entry["initializerCategory"]!="HIDDEN"){
                 supportedPlatformsEl.addItem(Ui.toEl(`
-                <a style="width: 100%;white-space: nowrap; padding: 0; margin: 0;text-align: center;" target="_blank" href="https://jmonkeyengine.org/start/"><i class="fa-solid fa-rocket"></i> Available in JME Initializer</a>
+                <a style="width: 100%;white-space: nowrap; padding: 0; margin:0;margin-top: 0.5rem;text-align: center;" target="_blank" href="https://jmonkeyengine.org/start/"><i class="fa-solid fa-rocket"></i> Available in JME Initializer</a>
                 `));
             }
             platformsListEl.innerHTML=content;
