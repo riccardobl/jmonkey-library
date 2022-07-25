@@ -244,7 +244,6 @@
             "permHints": [
                 "TRUSTED"
             ],
-            "value":"HIDDEN",
             "required":false            
         }
         
@@ -450,7 +449,7 @@
         "platforms":{
             "?":"Platforms supported by this library. Possible options: MOBILE_ANDROID DESKTOP_WINDOWS DESKTOP_LINUX DESKTOP_MACOS VR_WINDOWS VR_LINUX VR_MACOS",
             "type":"string-array",
-            "required":true,
+            "required":false,
             "value":["DESKTOP_LINUX","DESKTOP_WINDOWS","DESKTOP_MACOS"],
             "sanitize": {
                 "html": false,
@@ -469,7 +468,6 @@
             "permHints": [
                 "TRUSTED"
             ],
-            "value":"HIDDEN",
             "required":false            
         }
         

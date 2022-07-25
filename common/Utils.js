@@ -59,7 +59,7 @@ export default class Utils {
             
             return d;
         });
-        return deps;
+        return deps.filter(v=>v&&v.trim());
     }
 
     static extractMavenDeps(code){
@@ -68,7 +68,7 @@ export default class Utils {
             deps=deps[1];
             deps=this.extractMavenDepsFromDepBlock(deps);
         } else deps=[];
-        return deps;
+        return deps.filter(d=>d&&d.trim());
     }
 
     static extractMavenRepos(code){
@@ -88,7 +88,7 @@ export default class Utils {
                 repos.push("https://github.com/"+repo);
             }               
         }
-        return repos;
+        return repos.filter(r=>r&&r.trim());
     }
 
     static enqueue(action){

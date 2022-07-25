@@ -239,8 +239,8 @@ export default class GithubImporter {
             // } else deps=[];
             const deps=Utils.extractMavenDeps(code);
 
-            outRepos.push(...repos.filter(v=>v));
-            outDeps.push(...deps.filter(v=>v));            
+            outRepos.push(...repos.filter(v=>v&&v.trim()));
+            outDeps.push(...deps.filter(v=>v&&v.trim()));            
             found=deps.length>0;
         });
 
@@ -369,7 +369,7 @@ export default class GithubImporter {
         entry.version=version;
         entry.license=license.file?license.content:undefined;
         entry["maven-repos"]=repos;        
-        entry["maven-artifacts"]=artifacts;        
+        entry["maven-artifacts"]=artifacts;     
 
         return entry;
 

@@ -172,7 +172,7 @@ export default class UiEntry {
         }
 
         // Importer
-        if (editMode) await this.loadImporter(parentEl, reload);
+        if (editMode) await this.loadImporter(editedEntry, parentEl, reload);
         //
 
         // Showcase
@@ -280,7 +280,7 @@ export default class UiEntry {
 
         }
 
-        if(!editMode){
+        if(!editMode&&entry.platforms){
         
             const supportedPlatformsEl = menuEl.addSection("Platforms");
 
@@ -677,7 +677,11 @@ export default class UiEntry {
             );
         }
 
+        if(editMode){
+            await this.loadMainMenu(parentEl, entry, editedEntry, saveEntry, reload);
+        }
 
+        if(!editMode){
         // COMMENTS
         const cnf=(await Config.get());
         let discourseUrl = cnf.discourse? cnf.discourse.discourseUrl:undefined;
@@ -706,7 +710,7 @@ export default class UiEntry {
                 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
               })();
         }
-        
+    }
 
         setTimeout(() => {
             Prism.highlightAll();
@@ -717,7 +721,7 @@ export default class UiEntry {
     }
 
 
-    static async loadImporter(parentEl, reload) {
+    static async loadImporter(currentEntry, parentEl, reload) {
         parentEl.appendChild(Ui.toEl("<hr>"));
         const autoImporterRow0 = Ui.createSection(parentEl, ["responsiveWidth", "hlist"]);
         autoImporterRow0.appendChild(Ui.createText(`<h2>Parse a remote source</h2>
@@ -741,7 +745,13 @@ export default class UiEntry {
             const source = autoImporterField.value;
 
             const importedData = await ExtImporter.import(source);
-            await reload(true, importedData.entry, importedData.media, true);
+            const importedEntry=Utils.clone(currentEntry);
+            for(let [key,value] of Object.entries(importedData.entry)){
+                if(value)importedEntry[key]=value;
+            }
+            console.info("Imported",importedData);
+
+            await reload(true, importedEntry, importedData.media, true);
 
         });
 
@@ -766,7 +776,7 @@ export default class UiEntry {
                 mainMenuRow.append(Ui.createButton(
                     "fas fa-save", "Save", "Save changes", () => {
                         saveEntry()
-                    }));
+                    },["highlightedCl"]));
 
             } else {
                 mainMenuRow.append(Ui.createButton("fas fa-edit", "Edit", "Open editor", () => {

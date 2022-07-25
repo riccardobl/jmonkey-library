@@ -135,6 +135,8 @@ export default class ExtImporter{
             media = importedMedia;
         }
         Tasks.ok("import","Imported!");
+        entry.platforms=undefined;
+
         return { entry: entry, media: media };
     }
 
