@@ -509,10 +509,9 @@ export default class UiEntry {
                     If you are a trusted user and you see this message, please logout and login again.
                     
                     `));
-                }else{
                     editedEntry.initializerCategory=undefined;
-                }
 
+                }
 
                 jmeInitializerEl.content.appendChild(Ui.createToggle("Deploy to jme-initializer",(v)=>{
                     if(Auth.isCurrentUserTrusted()){
