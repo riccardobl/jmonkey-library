@@ -569,8 +569,9 @@ export default class Ui {
         sc.content = content;
         return sc;
     }
-    static createMenu() {
+    static createMenu(classes) {
         const menu = document.createElement("nav");
+        this.addClasses(menu, classes);
         // const sc = document.createElement("article");
         // sc.innerHTML = `<h1><i class="fas ${icon} useless"></i> ${title}</h1>
         // <div class="content">

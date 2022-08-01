@@ -255,8 +255,8 @@ export default class UiListEntries {
                     const oldArticle = this.entriesEl.querySelector("#entry" + i);
                     const newArticle = Ui.createArticle("entry" + i, undefined, title);
                     this.entriesEl.replaceChild(newArticle, oldArticle);
-                    newArticle.content.classList.add("textShadowedIntense");
-                    newArticle.content.innerHTML = Utils.getSummary(entry.descriptionSummary, this.config.entryList.maxSummaryLength);
+                    
+                    newArticle.content.innerHTML = `<span class="dropShadowText">${Utils.getSummary(entry.descriptionSummary, this.config.entryList.maxSummaryLength)}</span>`;
                     Ui.appendCover(newArticle.content, preview);
                     Ui.setClickAction(newArticle, () => {
                         UrlParams.replace({
@@ -264,14 +264,14 @@ export default class UiListEntries {
                         });
                     });
         
-                    const likesEl = Ui.toEl("<div class='likes'></div>");
+                    const likesEl = Ui.toEl("<div class='dropShadowText likes'></div>");
                     newArticle.content.append(likesEl);
         
                     Entries.getLikes(entry.userId, entry.entryId).then(res => {
                         likesEl.innerHTML = `<i class="fa-solid fa-heart"></i> ${res.likes}`
                     });
         
-                    const detailsEl = Ui.createMenu();
+                    const detailsEl = Ui.createMenu(["dropShadowText"]);
                     newArticle.content.append(detailsEl);
         
         
