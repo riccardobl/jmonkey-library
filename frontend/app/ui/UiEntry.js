@@ -451,6 +451,7 @@ export default class UiEntry {
                     if(entry["maven-repos"]&&entry["maven-repos"].length>0){
                         repoContent+=`repositories {\n`;
                         for( const repo of entry["maven-repos"]){
+                            if(!repo) continue;
                             if(repo.startsWith("https://github.com/")){
                                 const [,,,ghowner,ghrepo, ]=repo.split("/");
                                 repoContent+=`    maven githubPackage.invoke("${ghowner}`;
@@ -474,6 +475,7 @@ export default class UiEntry {
 
                     content+=`dependencies {\n`;
                     for( let artifact of entry["maven-artifacts"]){
+                        if(!artifact) continue;
                         artifact=artifact?artifact.replace("$VERSION", entry.version):""
                         content+=`    implementation "${artifact}"\n`;
                     }
