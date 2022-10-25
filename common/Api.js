@@ -48,7 +48,7 @@ export default class Api {
             ) {
                 for (let [k,v] of Object.entries(entryDef["options"])) {
                     if (k == value) {
-                        return v;
+                        return k;
                     }
                 }
                 throw "Invalid option " + k;

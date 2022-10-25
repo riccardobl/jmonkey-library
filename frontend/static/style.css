@@ -155,12 +155,20 @@ li.editing{
     padding-right:1rem;
     font-weight: bold;;
 }
-input[type=text], input[type=search]{
+select,input[type=text], input[type=search]{
    
     min-width: 200px;
     border-radius: 0.1rem;
     max-width:100%;
 
+}
+
+select{
+    border: 0.1rem solid var(--highlightFg);
+    font-family: inherit;
+    font-size: inherit;
+    font-size: 0.9rem;
+    
 }
 
 editor.uploader b64enc{
@@ -256,7 +264,7 @@ editor.disabled .toggleBtn{
     
 } */
 
-input[type=text],input[type=search],textarea{
+select,input[type=text],input[type=search],textarea{
     background:var(--background4);
     color:var(--highlightedColor);
     padding:0.9rem;
@@ -443,9 +451,9 @@ section.entrylist article .content{
     filter: drop-shadow(0 0 0.2rem var(--textShadowColor)) 
     drop-shadow(0 0 0.2rem var(--textShadowColor)) 
     
-    drop-shadow(0 0 1.5rem var(--textShadowColor))
-    drop-shadow(0 0 1.5rem var(--textShadowColor))
-    drop-shadow(0 0 1.5rem var(--textShadowColor))
+    /* drop-shadow(0 0 1.5rem var(--textShadowColor)) */
+    /* drop-shadow(0 0 1.5rem var(--textShadowColor))
+    drop-shadow(0 0 1.5rem var(--textShadowColor)) */
     
     ;
 }
@@ -852,7 +860,7 @@ hr{
 
 
 
-@media only screen and (max-width:1024px), only screen and (orientation:portrait) {
+@media only screen and (max-width:1167px), only screen and (orientation:portrait) {
    
 
     main > section.withSideMenu article,main > section.withSide article {

@@ -430,6 +430,26 @@ export default class Ui {
         return e;
     }
 
+    static createSelector(options,onChange,classes){
+        const cnt=document.createElement("div");
+        const e = document.createElement("select");
+        this.addClasses(e,classes);
+        for(let [k,v] of Object.entries(options)){
+            const option = document.createElement("option");
+            option.value = k;
+            option.innerText = v;
+            e.append(option);
+        
+        }
+        if(onChange){
+            e.addEventListener("change",ev=>{
+                onChange(ev.target.value);
+            });
+        }
+        cnt.appendChild(e);
+        return cnt;
+    }
+
     static createSubSubTitle(content, classes) {
         const e = document.createElement("h3");
         this.addClasses(e, classes);

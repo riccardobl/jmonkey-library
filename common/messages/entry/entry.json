@@ -237,9 +237,16 @@
         "initializerCategory":{
             "?":"Category",
             "type":"options",
+            "value":"HIDDEN",
             "options":{
-                "GENERAL":"GENERAL",
-                "HIDDEN":"HIDDEN"
+                "GENERAL":"General",
+                "NETWORKING":"Networking",
+                "ASSETS":"Assets",
+                "MATERIALS_AND_EFFECTS":"Materials & Effects",
+                "TERRAIN":"Terrain",
+                "GUI":"GUI",
+                "PHYSICS":"Physics",
+                "HIDDEN":"Undeployed"
             },
             "permHints": [
                 "TRUSTED"
@@ -461,9 +468,16 @@
         "initializerCategory":{
             "?":"Category",
             "type":"options",
+            "value":"HIDDEN",
             "options":{
-                "GENERAL":"GENERAL",
-                "HIDDEN":"HIDDEN"
+                "HIDDEN":"Undeployed",
+                "GENERAL":"General",
+                "NETWORKING":"Networking",
+                "ASSETS":"Assets",
+                "MATERIALS_AND_EFFECTS":"Materials & Effects",
+                "TERRAIN":"Terrain",
+                "GUI":"GUI",
+                "PHYSICS":"Physics"
             },
             "permHints": [
                 "TRUSTED"

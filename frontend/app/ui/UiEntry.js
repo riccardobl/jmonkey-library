@@ -497,10 +497,12 @@ export default class UiEntry {
                 thirdRowEl.appendChild(jmeInitializerEl);
                 jmeInitializerEl.content.appendChild(Ui.createSubTitle("jMonkeyEngine Initializer"));
                 jmeInitializerEl.content.appendChild(Ui.toEl(`<span>
-                    You can toggle this option to include your entry in the <a href="https://start.jmonkeyengine.org" target="_blank">jMonkeyEngine Initializer</a>.
+                    You can select in which category to include your entry 
+                    in the <a href="https://start.jmonkeyengine.org" target="_blank">jMonkeyEngine Initializer</a>.
                     <br>
                     <i>This option is available only for entries that have maven coordinates. </i>
                     <br><br>
+
                     </span>
                 `,[]));
 
@@ -513,25 +515,23 @@ export default class UiEntry {
                     `));
                     editedEntry.initializerCategory=undefined;
 
+                }else{            
+                    jmeInitializerEl.content.appendChild(Ui.createSelector(def["initializerCategory"]["options"],(c)=>{
+                        editedEntry.initializerCategory=c;
+                    }));
+
+                    jmeInitializerEl.content.appendChild( 
+                        Ui.toEl(`
+                        <span><br>
+                        <i><small>
+                        Leave Undeployed if you don't want your entry to be visible in the initializer.
+                        </small></i></span>`
+                    ));
+
                 }
-
-                jmeInitializerEl.content.appendChild(Ui.createToggle("Deploy to jme-initializer",(v)=>{
-                    if(Auth.isCurrentUserTrusted()){
-                        if(v){
-                            editedEntry.initializerCategory="GENERAL";
-                        }else{
-                            editedEntry.initializerCategory=undefined;
-                        }
-                    }
-                },editedEntry.initializerCategory
-                &&editedEntry.initializerCategory!="HIDDEN",
-                Auth.isCurrentUserTrusted(),true));
-
-             
-
                 jmeInitializerEl.content.appendChild(Ui.createSubTitle("Supported Platforms"));
                 jmeInitializerEl.content.appendChild(Ui.toEl(`<span>
-                Please select the platforms suppored by this entry
+                Please select the platforms supported by this entry
                 </span>
             `,[]));
                 jmeInitializerEl.content.appendChild(Ui.createSubSubTitle("Mobile"));
