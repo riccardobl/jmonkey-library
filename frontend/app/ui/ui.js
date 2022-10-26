@@ -430,7 +430,7 @@ export default class Ui {
         return e;
     }
 
-    static createSelector(options,onChange,classes){
+    static createSelector(options,onChange,selected, classes){
         const cnt=document.createElement("div");
         const e = document.createElement("select");
         this.addClasses(e,classes);
@@ -438,9 +438,9 @@ export default class Ui {
             const option = document.createElement("option");
             option.value = k;
             option.innerText = v;
-            e.append(option);
-        
+            e.append(option);        
         }
+        e.value=selected;
         if(onChange){
             e.addEventListener("change",ev=>{
                 onChange(ev.target.value);

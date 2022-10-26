@@ -518,7 +518,7 @@ export default class UiEntry {
                 }else{            
                     jmeInitializerEl.content.appendChild(Ui.createSelector(def["initializerCategory"]["options"],(c)=>{
                         editedEntry.initializerCategory=c;
-                    }));
+                    },editedEntry.initializerCategory));
 
                     jmeInitializerEl.content.appendChild( 
                         Ui.toEl(`
