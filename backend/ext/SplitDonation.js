@@ -72,15 +72,15 @@ export default class SplitDonations{
                 ],
                 "description": "jMonkeyEngine top 10 monthly contributors",
                 "weight": 0.4
-            },
-            {
-                "type": "opencollective",
-                "id":"jMonkeyEngine/opencollective",
-                "collective": "jmonkeyengine",
-                "minSats": 5034,
-                "description": "jMonkeyEngine opencollective",
-                "weight": 0.0
             }
+            // {
+            //     "type": "opencollective",
+            //     "id":"jMonkeyEngine/opencollective",
+            //     "collective": "jmonkeyengine",
+            //     "minSats": 5034,
+            //     "description": "jMonkeyEngine opencollective",
+            //     "weight": 0.0
+            // }
         ];
     }
 
