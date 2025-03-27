@@ -808,7 +808,7 @@ section.hlist > article > div.content > nav > ul li > * {
 }
 
 section#showcase .showcaseElement > .blur{
-    z-index: -1;
+    z-index: 0;
     filter:blur(20px);
     border-radius:unset;
     background-color:unset;
