@@ -23,8 +23,8 @@ export default  class DiscourseGateway extends AuthGateway{
             const userId =""+(req.query["userId"]);
             let entry=undefined;
 
-            if(entryId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
-            &&userId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
+            if(entryId&&entryId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
+            &&userId&&userId.match(/^[A-Za-z0-9_\\.@\\(\\)\\-]+$/)
             ){
                 entry = await EntriesManager.get(userId,entryId);
             }
