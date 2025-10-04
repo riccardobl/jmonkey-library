@@ -174,7 +174,7 @@ export default  class DiscourseGateway extends AuthGateway{
         resp.userId=query.searchParams.get("external_id");
         resp.key=uuidv4();
         resp.expire=Date.now()+(1000*60*60*24*2);
-        resp.ips=ips;
+        resp.ips=[];
         // resp.isMod=query.searchParams.get("moderator")=="true";
         // resp.isTrusted=this.getUser(resp.userId).isTrusted;
         return [resp];
